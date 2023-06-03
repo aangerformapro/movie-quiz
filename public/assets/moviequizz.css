@@ -61,19 +61,19 @@
   --progress: 0;
 }
 .loader-g {
-  --loader-g-size: 8rem;
+  --loader-g-size: 50vmin;
   --loader-g-inner-size: 10%;
   --loader-g-inner-bg: #ddd;
   --loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   --loader-g-inner-text: #000;
   position: relative;
-  width: 8rem;
+  width: 50vmin;
   width: var(--loader-g-size);
-  height: 8rem;
+  height: 50vmin;
   height: var(--loader-g-size);
-  font-size: calc(8rem * 0.375);
+  font-size: calc(50vmin * 0.375);
   font-size: calc(var(--loader-g-size) * 0.375);
-  margin: calc(8rem / 6);
+  margin: calc(50vmin / 6);
   margin: calc(var(--loader-g-size) / 6);
   animation: spin 0.5s linear infinite;
   box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);
@@ -3906,11 +3906,11 @@ body::after {
   --progress-color: #dddddd;
   --progress-bar-color: #dddddd;
   --progress-loading: #212529;
-  --progress-bar-bg: #0d6efd;
+  --progress-bar-bg: #02d7f2;
   --progress-bar-complete-bg: #198754;
   --progress-bar-error-bg: #dc3545;
-  --progress-border-radius: 0;
-  --progress-bar-border-radius: 0;
+  --progress-border-radius: 24px;
+  --progress-bar-border-radius: 24px;
   --progress-border-size: 1px;
   --progress-border-color: rgba(0, 0, 0, 0.3);
   position: relative;
@@ -3922,7 +3922,7 @@ body::after {
   font-size: var(--progress-font-size);
   background: rgba(221, 221, 221, 0.867);
   background: var(--progress-bg);
-  border-radius: 0;
+  border-radius: 24px;
   border-radius: var(--progress-border-radius);
   border: 1px solid rgba(0, 0, 0, 0.3);
   border: var(--progress-border-size) solid var(--progress-border-color);

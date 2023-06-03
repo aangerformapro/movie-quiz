@@ -45,3 +45,7 @@ $fluorescent-cyan-rgb: 10, 255, 237;
     --cyberpunk-blue-rgb: #{$cyberpunk-blue-rgb};
     --cyberpunk-red-rgb: #{$cyberpunk-red-rgb};
 }
+
+$progress-bar-bg: $cyberpunk-cyan;
+
+$loader-g-size: 50vmin;

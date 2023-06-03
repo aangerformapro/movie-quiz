@@ -11,23 +11,26 @@ const
         class: 'progress-line grow',
     }),
     g = document.querySelector('.loader-g'),
-    loader = new Progress();
+    loader = new Progress(),
+    style = createElement('style');
 
 
 loader
     .one('start', e =>
     {
-        document.body.appendChild(progress);
 
-        document.body.appendChild(line);
+        body.appendChild(style);
+        body.appendChild(progress);
+
+        body.appendChild(line);
     })
     .on('change', e =>
     {
         let { percentage } = e.data;
 
         // progress.dataset.percent = percentage;
-
-        body.style = `--progress: ${percentage}`;
+        style.innerHTML = `:root{--progress: ${percentage};}`;
+        // body.style = `--progress: ${percentage}`;
 
         g.dataset.percent =
             progress.firstElementChild.innerHTML =
@@ -40,10 +43,10 @@ loader
     .on('complete', e =>
     {
         //progress.textContent = 'Chargement fini.';
-        clearInterval(inter);
-        progress.classList.add("complete");
+        // clearInterval(inter);
+        // progress.classList.add("complete");
 
-
+        loader.reset();
 
     });
 
@@ -55,13 +58,5 @@ let inter = setInterval(() =>
 {
     //console.debug(loader, loader.current);
     loader.current += Math.floor(Math.random() * 7);
-
-
-
-
-
-
-
-
-}, 100);
+}, 200);
 
