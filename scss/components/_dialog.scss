@@ -1,0 +1,99 @@
+@use 'sass:string';
+@use '../helpers' as *;
+@use 'animations';
+
+$overlay-bg: rgba(8, 25, 43, 0.85) !default;
+$overlay-close-bg: rgba(0, 0, 0, 0) !default;
+$overlay-close-bg-hover: rgba(255, 255, 255, 0.2) !default;
+$overlay-close-color: #fff !default;
+$overlay-close-color-hover: $overlay-close-color !default;
+
+@mixin dialog($prefix: '') {
+    @if string.length($prefix) > 0 {
+        $prefix: string.insert($prefix, '__', 5000);
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+
+    .#{$prefix}overlay {
+        --overlay-bg: #{$overlay-bg};
+        --overlay-close-bg: #{$overlay-close-bg};
+        --overlay-close-bg-hover: #{$overlay-close-bg-hover};
+        --overlay-close-color: #{$overlay-close-color};
+        --overlay-close-color-hover: #{$overlay-close-color-hover};
+
+        margin: 0;
+        padding: 0;
+        outline: 0;
+        box-sizing: border-box;
+        background: var(--overlay-bg);
+        box-shadow: inset 0 0 16px 16px var(--overlay-bg);
+        backface-visibility: hidden;
+        z-index: 2147483630;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        min-height: 100vh;
+        line-height: 100vh;
+        overflow-y: auto;
+        transition: opacity 0.5s cubic-bezier(1, 0, 0, 1);
+
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        align-items: center;
+
+        &__close {
+            animation: fade-in 0.25s linear 0.5s both;
+            z-index: 2147483632;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            line-height: 32px;
+            @include sizer(40px);
+            transition: background 0.25s linear, color 0.25s linear;
+            cursor: pointer;
+            user-select: none;
+            background: var(--overlay-close-bg);
+            color: var(--overlay-close-color);
+            position: absolute;
+            right: 1vw;
+            top: 1vh;
+            border-radius: 3px;
+            font-weight: 400;
+
+            &:hover {
+                background: var(--overlay-close-bg-hover);
+                color: var(--overlay-close-color);
+            }
+            &:empty:before {
+                content: '×';
+            }
+        }
+
+        .#{$prefix}dialog {
+            z-index: 2147483631;
+            animation: zoom-in 0.25s ease-out 0.5s both;
+        }
+
+        &:not([data-open='true']) {
+            pointer-events: none;
+            z-index: -1;
+            visibility: hidden;
+            transform: scale(0);
+            opacity: 0;
+
+            .#{$prefix}dialog {
+                display: none;
+                opacity: 0;
+                visibility: hidden;
+                z-index: -1;
+            }
+        }
+    }
+}

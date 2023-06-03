@@ -1,0 +1,44 @@
+@keyframes blink {
+    from,
+    50% {
+        opacity: 1;
+    }
+    25%,
+    75% {
+        opacity: 0;
+    }
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes zoom-in {
+    0% {
+        opacity: 0;
+        visibility: hidden;
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+
+    50% {
+        opacity: 1;
+        visibility: visible;
+    }
+    // 100% {
+    //     transform: scale3d(1, 1, 1);
+    // }
+}

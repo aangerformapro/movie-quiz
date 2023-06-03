@@ -1,0 +1,36 @@
+@use 'sass:map';
+
+$__AppStore: ();
+
+@function StoreGet($name, $default-value: null) {
+    @if type-of($name) == 'string' {
+        $value: map.get($__AppStore, $name);
+        @if $value != null {
+            @return $value;
+        }
+    }
+
+    @return $default-value;
+}
+
+@function StoreSet($name, $value) {
+    @if type-of($name) == 'string' {
+        $__AppStore: map.set($__AppStore, $name, $value) !global;
+    }
+
+    @return $value;
+}
+
+@function StoreRemove($name) {
+    @if type-of($name) == 'string' {
+        $__AppStore: map.remove($__AppStore, $name) !global;
+        @return true;
+    }
+
+    @return false;
+}
+
+@function StoreClear($name) {
+    $__AppStore: () !global;
+    @return true;
+}

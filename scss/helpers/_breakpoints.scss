@@ -1,0 +1,142 @@
+$app-break: (
+    'xs': 0px,
+    'sm': 576px,
+    'md': 768px,
+    'lg': 992px,
+    'xl': 1200px,
+    'xxl': 1400px,
+) !default;
+
+@mixin breakpoint-up($min) {
+    @media (min-width: $min) {
+        @content;
+    }
+}
+
+@mixin breakpoint-down($max) {
+    @media (max-width: $max) {
+        @content;
+    }
+}
+
+@mixin add-breakpoint($min: null, $max: null) {
+    @if $min {
+        @if $max {
+            @include breakpoint-between($min, $max) {
+                @content;
+            }
+        } @else {
+            @include breakpoint-up($min) {
+                @content;
+            }
+        }
+    } @else if $max {
+        @include breakpoint-down($max) {
+            @content;
+        }
+    } @else {
+        @content;
+    }
+}
+
+@mixin breakpoint-between($min, $max) {
+    @media (min-width: $min) and (max-width: $max) {
+        @content;
+    }
+}
+
+@mixin xs {
+    @include breakpoint-up(map-get($app-break, 'xs')) {
+        @content;
+    }
+}
+
+@mixin sm {
+    @include breakpoint-up(map-get($app-break, 'sm')) {
+        @content;
+    }
+}
+
+@mixin md {
+    @include breakpoint-up(map-get($app-break, 'md')) {
+        @content;
+    }
+}
+
+@mixin lg {
+    @include breakpoint-up(map-get($app-break, 'lg')) {
+        @content;
+    }
+}
+
+@mixin xl {
+    @include breakpoint-up(map-get($app-break, 'xl')) {
+        @content;
+    }
+}
+
+@mixin xxl {
+    @include breakpoint-up(map-get($app-break, 'xxl')) {
+        @content;
+    }
+}
+
+@mixin sm-down {
+    @include breakpoint-down(map-get($app-break, 'sm')) {
+        @content;
+    }
+}
+
+@mixin md-down {
+    @include breakpoint-down(map-get($app-break, 'md')) {
+        @content;
+    }
+}
+
+@mixin lg-down {
+    @include breakpoint-down(map-get($app-break, 'lg')) {
+        @content;
+    }
+}
+
+@mixin xl-down {
+    @include breakpoint-down(map-get($app-break, 'xl')) {
+        @content;
+    }
+}
+
+@mixin xxl-down {
+    @include breakpoint-down(map-get($app-break, 'xxl')) {
+        @content;
+    }
+}
+
+@mixin xs-to-sm {
+    @include breakpoint-down(map-get($app-break, 'sm')) {
+        @content;
+    }
+}
+
+@mixin sm-to-md {
+    @include breakpoint(map-get($app-break, 'sm'), map-get($app-break, 'md')) {
+        @content;
+    }
+}
+
+@mixin md-to-lg {
+    @include breakpoint(map-get($app-break, 'md'), map-get($app-break, 'lg')) {
+        @content;
+    }
+}
+
+@mixin lg-to-xl {
+    @include breakpoint(map-get($app-break, 'lg'), map-get($app-break, 'xl')) {
+        @content;
+    }
+}
+
+@mixin xl-to-xxl {
+    @include breakpoint(map-get($app-break, 'xl'), map-get($app-break, 'xxl')) {
+        @content;
+    }
+}

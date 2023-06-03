@@ -1,0 +1,35 @@
+$font-family: 'Bebas Neue';
+$neflix-red: #db202c;
+$netflix-black: #010101;
+$neflix-red-rgb: 219, 32, 44;
+
+// https://colorswall.com/palette/154112
+$cyberpunk-cyan: #02d7f2;
+$cyberpunk-yellow: #f2e900;
+$cyberpunk-blue: #007aff;
+$cyberpunk-red: #ff1111;
+
+$cyberpunk: linear-gradient(
+    -225deg,
+    $cyberpunk-cyan 0%,
+    $cyberpunk-yellow 29%,
+    $cyberpunk-blue 67%,
+    $cyberpunk-red 100%
+);
+
+$purpureus: #9d44b5;
+$raspberry-rose: #b5446e;
+$davys-gray: #525252;
+$uranian-blue: #badefc;
+$fluorescent-cyan: #0affef;
+
+$purpureus-rgb: 157, 68, 181;
+$raspberry-rose-rgb: 181, 68, 110;
+$davys-gray-rgb: 82, 82, 82;
+$uranian-blue-rgb: 186, 222, 252;
+$fluorescent-cyan-rgb: 10, 255, 237;
+
+//overrides
+
+$spinner-rotate-color: #{$neflix-red};
+$progress-color: $cyberpunk-blue;

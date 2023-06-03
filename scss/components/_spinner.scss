@@ -1,0 +1,113 @@
+@use '../helpers' as *;
+@use './sizes' as *;
+
+$spinner-border-opacity: 0.867 !default;
+$spinner-rotate-opacity: 1 !default;
+$spinner-border-rgb: 221, 221, 221 !default;
+$spinner-rotate-rgb: 10, 255, 237 !default;
+
+$spinner-size: 64px !default;
+$spinner-border-size: 12px !default;
+$spinner-border-radius: 50% !default;
+$spinner-outline-size: 0 !default;
+
+$spinner-border-color: rgba(var(--spinner-border-rgb), var(--spinner-border-opacity)) !default;
+$spinner-rotate-color: rgba(var(--spinner-rotate-rgb), var(--spinner-rotate-opacity)) !default;
+
+$generate-spinner-sizes: true !default;
+
+@mixin spinner {
+    :root {
+        /* Spinner */
+        --spinner-size: #{$spinner-size};
+        --spinner-border-opacity: #{$spinner-border-opacity};
+        --spinner-rotate-opacity: #{$spinner-rotate-opacity};
+        --spinner-border-rgb: #{$spinner-border-rgb};
+        --spinner-border-size: #{$spinner-border-size};
+        --spinner-rotate-rgb: #{$spinner-rotate-rgb};
+        --spinner-border-color: #{$spinner-border-color};
+        --spinner-border-radius: #{$spinner-border-radius};
+        --spinner-rotate-color: #{$spinner-rotate-color};
+    }
+
+    .spinner {
+        animation: spin 3s linear infinite;
+        @include sizer(var(--spinner-size));
+        border-radius: var(--spinner-border-radius);
+        border: var(--spinner-border-size) solid var(--spinner-border-color);
+
+        // margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        transform-origin: center center;
+        position: relative;
+
+        &,
+        &.x1 {
+            border-top-color: var(--spinner-rotate-color);
+        }
+
+        &.x2,
+        &.x3 {
+            border-left-color: var(--spinner-rotate-color);
+        }
+
+        &.x3 {
+            border-bottom-color: var(--spinner-rotate-color);
+        }
+
+        &.fast {
+            animation-duration: 2s;
+        }
+        &.faster {
+            animation-duration: 1s;
+        }
+
+        &.reverse {
+            animation-direction: reverse;
+        }
+        &.roll {
+            animation-name: roll;
+        }
+    }
+
+    .loader {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    @if $generate-spinner-sizes {
+        @include generate-sizes;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0turn);
+        }
+
+        to {
+            transform: rotate(5turn);
+        }
+    }
+
+    @keyframes roll {
+        from {
+            transform: translate(-100%) rotate(0turn);
+        }
+
+        to {
+            transform: translate(100vw) rotate(10turn);
+        }
+    }
+}

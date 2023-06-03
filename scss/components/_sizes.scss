@@ -1,0 +1,167 @@
+@use '../helpers' as *;
+
+$size-list: (
+    '1px': 1px,
+    '2px': 2px,
+    '4px': 4px,
+    '6px': 6px,
+    '8px': 8px,
+    '10px': 10px,
+    '12px': 12px,
+    '14px': 14px,
+    '16px': 16px,
+    '20px': 20px,
+    '24px': 24px,
+    '28px': 28px,
+    '32px': 32px,
+    '36px': 36px,
+    '40px': 40px,
+    '44px': 44px,
+    '48px': 48px,
+    '52px': 52px,
+    '56px': 56px,
+    '60px': 60px,
+    '64px': 64px,
+    '72px': 72px,
+    '80px': 80px,
+    '88px': 88px,
+    '96px': 96px,
+    '104px': 104px,
+    '112px': 112px,
+    '120px': 120px,
+    '128px': 128px,
+    '136px': 136px,
+    '144px': 144px,
+    '160px': 160px,
+    '192px': 192px,
+    '224px': 224px,
+    '256px': 256px,
+    '320px': 320px,
+    '384px': 384px,
+    '400px': 400px,
+    '440px': 440px,
+    '480px': 480px,
+    '512px': 512px,
+    '1024px': 1024px,
+    '1rem': 1rem,
+    '2rem': 2rem,
+    '3rem': 3rem,
+    '4rem': 4rem,
+    '5rem': 5rem,
+    '6rem': 6rem,
+    '7rem': 7rem,
+    '8rem': 8rem,
+    '9rem': 9rem,
+    '10rem': 10rem,
+    'auto': auto,
+) !default;
+
+$__dirs: (
+    s: left,
+    e: right,
+    t: top,
+    b: bottom,
+);
+
+@mixin __generate-rules($prefix, $alias) {
+    @if $prefix and $alias {
+        @each $name, $value in $app-break {
+            @if $value > 0px {
+                @include breakpoint-up($value) {
+                    @if & {
+                        &.#{$prefix}-#{$name}-#{$alias} {
+                            @content;
+                        }
+                    } @else {
+                        .#{$prefix}-#{$name}-#{$alias} {
+                            @content;
+                        }
+                    }
+                }
+            }
+        }
+        @if & {
+            &.#{$prefix}-#{$alias} {
+                @content;
+            }
+        } @else {
+            .#{$prefix}-#{$alias} {
+                @content;
+            }
+        }
+    }
+}
+
+@mixin generate-size($size, $alias: null) {
+    @if $size {
+        @if $alias == null {
+            $alias: #{$size};
+        }
+
+        // sizes
+        @include __generate-rules(w, $alias) {
+            width: $size;
+        }
+
+        @include __generate-rules(h, $alias) {
+            height: $size;
+        }
+
+        //squares
+
+        @include __generate-rules(wh, $alias) {
+            @include sizer($size);
+        }
+
+        //margins
+        @include __generate-rules(mx, $alias) {
+            @include margin-x($size);
+        }
+
+        @include __generate-rules(my, $alias) {
+            @include margin-y($size);
+        }
+
+        @include __generate-rules(px, $alias) {
+            @include padding-x($size);
+        }
+
+        @include __generate-rules(py, $alias) {
+            @include padding-y($size);
+        }
+
+        //borders
+        @include __generate-rules('border', $alias) {
+            border: $size solid;
+        }
+
+        //font-size
+        @include __generate-rules('fs', $alias) {
+            font-size: $size;
+        }
+
+        // directions
+        @each $a, $d in $__dirs {
+            @include __generate-rules(p#{$a}, $alias) {
+                padding-#{$d}: $size;
+            }
+
+            @include __generate-rules(m#{$a}, $alias) {
+                margin-#{$d}: $size;
+            }
+            @include __generate-rules(b#{$a}, $alias) {
+                border-#{$d}: $size solid;
+            }
+        }
+    }
+}
+
+@mixin generate-sizes($size-list: $size-list) {
+    @if type-of($size-list) != 'map' {
+        @error "Size List is not a map.";
+    }
+
+    @each $alias, $size in $size-list {
+        @include generate-size($size, $alias);
+    }
+}

@@ -1,0 +1,179 @@
+@use 'sass:math';
+@use 'store' as *;
+@use 'variables' as *;
+
+$reset-done: false !default;
+
+@mixin font-size($font-size, $font-weight: null, $line-height: null) {
+    @if $font-size {
+        font-size: $font-size;
+    }
+
+    @if $line-height {
+        line-height: $line-height;
+    }
+
+    @if $font-weight {
+        font-weight: $font-weight;
+    }
+}
+
+@mixin font-family(
+    $font-family,
+    $font-size: 16px,
+    $line-height: 1.2,
+    $font-weight: 400,
+    $font-style: normal,
+    $font-stretch: normal
+) {
+    @if $font-family {
+        font-family: $font-family, sans-serif;
+        @include font-size($font-size, $font-weight, $line-height);
+    }
+
+    font: {
+        style: $font-style;
+        stretch: $font-stretch;
+    }
+}
+
+@mixin visually-hidden {
+    position: absolute;
+    color: #00000000;
+    background: #00000000;
+    z-index: -1;
+    visibility: hidden;
+}
+
+@mixin margin-x($value) {
+    @if $value {
+        margin: {
+            left: $value;
+            right: $value;
+        }
+    }
+}
+
+@mixin margin-y($value) {
+    @if $value {
+        margin: {
+            top: $value;
+            bottom: $value;
+        }
+    }
+}
+
+@mixin padding-x($value) {
+    @if $value {
+        padding: {
+            left: $value;
+            right: $value;
+        }
+    }
+}
+
+@mixin padding-y($value) {
+    @if $value {
+        padding: {
+            top: $value;
+            bottom: $value;
+        }
+    }
+}
+
+@mixin overlay($top: 0, $left: 0, $width: 100%, $height: 100%, $position: absolute, $z-index: 1) {
+    position: $position;
+    top: $top;
+    left: $left;
+    width: $width;
+    height: $height;
+    z-index: $z-index;
+}
+
+%no-margin {
+    margin: 0;
+}
+
+%no-padding {
+    padding: 0;
+}
+
+%border-box {
+    box-sizing: border-box;
+}
+
+%no-overflow {
+    overflow: hidden;
+}
+
+@mixin simple-reset {
+    @if $reset-done != true {
+        $reset-done: true !global;
+        *,
+        *::after,
+        *::before {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        html {
+            font-size: 16px;
+            line-height: 1.2;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+
+            @if $font-family {
+                font-family: $font-family, sans-serif;
+            }
+
+            @content;
+        }
+    }
+}
+
+@mixin make-container($width: 100vw, $margin-x: auto, $padding-x: 0) {
+    width: $width;
+    @include padding-x($padding-x);
+    @include margin-x($margin-x);
+    @content;
+}
+
+@mixin sizer($width, $height: null) {
+    @if $height ==null {
+        $height: $width;
+    }
+
+    width: $width;
+    height: $height;
+}
+
+@mixin color-mode($mode: dark, $attr: 'theme') {
+    [#{$theme}='#{$mode}'] & {
+        @content;
+    }
+}
+
+@mixin bs-color-mode($mode: dark) {
+    @include color-mode($mode, 'data-bs-theme');
+}
+
+@mixin bs-dark-mode {
+    @include color-mode(dark, 'data-bs-theme');
+}
+
+@mixin webp($enabled: true) {
+    @if & {
+        [data-webp='#{$enabled}'] & {
+            @content;
+        }
+    } @else {
+        [data-webp='#{$enabled}'] {
+            @content;
+        }
+    }
+}
