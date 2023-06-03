@@ -1,5 +1,11 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+:root {
+  --cyberpunk-cyan-rgb: 2, 215, 242;
+  --cyberpunk-yellow-rgb: 242, 233, 0;
+  --cyberpunk-blue-rgb: 0, 122, 255;
+  --cyberpunk-red-rgb: 255, 17, 17;
+}
 @keyframes blink {
   from, 50% {
     opacity: 1;
@@ -34,6 +40,116 @@
     opacity: 1;
     visibility: visible;
   }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes roll {
+  from {
+    transform: translate(-100%) rotate(0turn);
+  }
+  to {
+    transform: translate(100%) rotate(10turn);
+  }
+}
+:root {
+  --progress: 0;
+}
+.loader-g {
+  --loader-g-size: 8rem;
+  --loader-g-inner-size: 10%;
+  --loader-g-inner-bg: #ddd;
+  --loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+  --loader-g-inner-text: #000;
+  position: relative;
+  width: 8rem;
+  width: var(--loader-g-size);
+  height: 8rem;
+  height: var(--loader-g-size);
+  font-size: calc(8rem * 0.375);
+  font-size: calc(var(--loader-g-size) * 0.375);
+  margin: calc(8rem / 6);
+  margin: calc(var(--loader-g-size) / 6);
+  animation: spin 0.5s linear infinite;
+  box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);
+}
+.loader-g, .loader-g span {
+  border-radius: 50%;
+  background: var(--loader-g-bg);
+}
+.loader-g span {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.loader-g span:nth-child(1) {
+  filter: blur(5px);
+}
+.loader-g span:nth-child(2) {
+  filter: blur(10px);
+}
+.loader-g span:nth-child(3) {
+  filter: blur(25px);
+}
+.loader-g span:nth-child(4) {
+  filter: blur(50px);
+}
+.loader-g::after {
+  content: "";
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  top: 10%;
+  top: var(--loader-g-inner-size, 10%);
+  left: 10%;
+  left: var(--loader-g-inner-size, 10%);
+  width: calc(100% - 2 * 10%);
+  width: calc(100% - 2 * var(--loader-g-inner-size, 10%));
+  height: calc(100% - 2 * 10%);
+  height: calc(100% - 2 * var(--loader-g-inner-size, 10%));
+  border-radius: 50%;
+  background: var(--loader-g-inner-bg);
+  box-shadow: inset 0 0 16px 16px rgba(0, 0, 0, 0.3);
+  text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+  animation: spin 0.5s linear infinite reverse;
+}
+.loader-g[data-percent]::after {
+  content: attr(data-percent) "%";
+  color: var(--loader-g-inner-text);
+}
+.loader-g[data-percent="100"] {
+  animation-duration: 5s;
+}
+.loader-g[data-percent="100"]::after {
+  animation-duration: 5s;
+}
+.loader-g.fast, .loader-g.fast::after {
+  animation-duration: 0.25s;
+}
+.loader-g.faster, .loader-g.faster::after {
+  animation-duration: 0.15s;
+}
+.loader-g.slow, .loader-g.slow::after {
+  animation-duration: 0.75s;
+}
+.loader-g.slower, .loader-g.slower::after {
+  animation-duration: 1s;
+}
+.loader-g.x2 {
+  --loader-g-size: 12rem;
+}
+.loader-g.x3 {
+  --loader-g-size: 16rem;
+}
+.loader-g.x4 {
+  --loader-g-size: 20rem;
 }
 /* http://meyerweb.com/eric/tools/css/reset/ 
 v2.0 | 20110126
@@ -124,7 +240,7 @@ body::after {
   --spinner-rotate-rgb: 10, 255, 237;
   --spinner-border-color: rgba(var(--spinner-border-rgb), var(--spinner-border-opacity));
   --spinner-border-radius: 50%;
-  --spinner-rotate-color: #db202c;
+  --spinner-rotate-color: rgba(var(--spinner-rotate-rgb), var(--spinner-rotate-opacity));
 }
 .spinner {
   animation: spin 3s linear infinite;
@@ -143,15 +259,15 @@ body::after {
   position: relative;
 }
 .spinner, .spinner.x1 {
-  border-top-color: #db202c;
+  border-top-color: rgba(10, 255, 237, 1);
   border-top-color: var(--spinner-rotate-color);
 }
 .spinner.x2, .spinner.x3 {
-  border-left-color: #db202c;
+  border-left-color: rgba(10, 255, 237, 1);
   border-left-color: var(--spinner-rotate-color);
 }
 .spinner.x3 {
-  border-bottom-color: #db202c;
+  border-bottom-color: rgba(10, 255, 237, 1);
   border-bottom-color: var(--spinner-rotate-color);
 }
 .spinner.fast {
@@ -3783,26 +3899,9 @@ body::after {
 .bb-auto {
   border-bottom: auto solid;
 }
-@keyframes spin {
-  from {
-    transform: rotate(0turn);
-  }
-  to {
-    transform: rotate(5turn);
-  }
-}
-@keyframes roll {
-  from {
-    transform: translate(-100%) rotate(0turn);
-  }
-  to {
-    transform: translate(100vw) rotate(10turn);
-  }
-}
 .progress {
-  --progress: 0;
   --progress-height: 2rem;
-  --progress-font-size: calc(var(--progress-height) * 0.75);
+  --progress-font-size: calc(var(2rem) * 0.75);
   --progress-bg: rgba(221, 221, 221, 0.867);
   --progress-color: #dddddd;
   --progress-bar-color: #dddddd;
@@ -3819,7 +3918,7 @@ body::after {
   height: 2rem;
   height: var(--progress-height);
   overflow: hidden;
-  font-size: calc(2rem * 0.75);
+  font-size: calc(var(2rem) * 0.75);
   font-size: var(--progress-font-size);
   background: rgba(221, 221, 221, 0.867);
   background: var(--progress-bg);
@@ -7581,6 +7680,22 @@ body::after {
   opacity: 0;
   visibility: hidden;
   z-index: -1;
+}
+.progress-line {
+  background: linear-gradient(-225deg, #02d7f2 0%, #f2e900 29%, #007aff 67%, #ff1111 100%);
+  top: 0;
+  left: 0;
+  right: 50%;
+  height: 3px;
+  width: calc(0 * 1%);
+  width: calc(var(--progress, 0) * 1%);
+  position: fixed;
+  transition: background 2s linear infinite both, width 0.25s ease both, transform 0.25s ease both;
+}
+.progress-line.grow-center {
+  transition: background 2s linear, transform 0.25s ease-out;
+  left: 50%;
+  transform: translateX(-50%);
 }
 @media (min-width: 576px){
   .w-sm-1px {

@@ -763,21 +763,33 @@ await checkWebpSupport().then(x =>
 });
 
 const
+    { body } = document,
     progress = createElement('<div class="progress w-512px mx-auto mt-5rem" data-complete="Yay!!!" ><div class="progress-bar"></div></div>'),
+    line = createElement('div', {
+        class: 'progress-line grow',
+    }),
+    g = document.querySelector('.loader-g'),
     loader = new Progress();
 
 
 loader
-    .one('start', e => document.body.appendChild(progress))
+    .one('start', e =>
+    {
+        document.body.appendChild(progress);
+
+        document.body.appendChild(line);
+    })
     .on('change', e =>
     {
         let { percentage } = e.data;
 
         // progress.dataset.percent = percentage;
 
-        progress.style = `--progress: ${percentage}`;
+        body.style = `--progress: ${percentage}`;
 
-        progress.firstElementChild.innerHTML = percentage;
+        g.dataset.percent =
+            progress.firstElementChild.innerHTML =
+            percentage;
 
 
         //progress.textContent = progress.style.width = percentage + '%';
@@ -800,7 +812,7 @@ loader
 let inter = setInterval(() =>
 {
     //console.debug(loader, loader.current);
-    loader.current += 2.6;
+    loader.current += Math.floor(Math.random() * 7);
 
 
 

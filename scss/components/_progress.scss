@@ -2,22 +2,41 @@
 @use 'animations';
 @use 'sizes' as *;
 
+// progress bar sass variables
+$progress-height: 2rem !default;
+$progress-font-size: calc(var($progress-height) * 0.75) !default;
+$progress-bg: rgba(221, 221, 221, 0.867) !default;
+$progress-color: #dddddd !default;
+$progress-bar-color: #dddddd !default;
+$progress-loading: #212529 !default;
+$progress-bar-bg: #0d6efd !default;
+$progress-bar-complete-bg: #198754 !default;
+$progress-bar-error-bg: #dc3545 !default;
+$progress-border-radius: 0 !default;
+$progress-bar-border-radius: 0 !default;
+$progress-border-size: 1px !default;
+$progress-border-color: rgba(0, 0, 0, 0.3) !default;
+
+:root {
+    --progress: 0;
+}
+
 @mixin progress {
     .progress {
-        --progress: 0;
-        --progress-height: 2rem;
-        --progress-font-size: calc(var(--progress-height) * 0.75);
-        --progress-bg: rgba(221, 221, 221, 0.867);
-        --progress-color: #dddddd;
-        --progress-bar-color: #dddddd;
-        --progress-loading: #212529;
-        --progress-bar-bg: #0d6efd;
-        --progress-bar-complete-bg: #198754;
-        --progress-bar-error-bg: #dc3545;
-        --progress-border-radius: 0;
-        --progress-bar-border-radius: 0;
-        --progress-border-size: 1px;
-        --progress-border-color: rgba(0, 0, 0, 0.3);
+        // --progress: 0;
+        --progress-height: #{$progress-height};
+        --progress-font-size: #{$progress-font-size};
+        --progress-bg: #{$progress-bg};
+        --progress-color: #{$progress-color};
+        --progress-bar-color: #{$progress-bar-color};
+        --progress-loading: #{$progress-loading};
+        --progress-bar-bg: #{$progress-bar-bg};
+        --progress-bar-complete-bg: #{$progress-bar-complete-bg};
+        --progress-bar-error-bg: #{$progress-bar-error-bg};
+        --progress-border-radius: #{$progress-border-radius};
+        --progress-bar-border-radius: #{$progress-bar-border-radius};
+        --progress-border-size: #{$progress-border-size};
+        --progress-border-color: #{$progress-border-color};
 
         position: relative;
         display: flex;
@@ -106,5 +125,158 @@
         @include generate-sizes;
 
         @content;
+    }
+}
+
+@mixin progress-line {
+    .progress-line {
+        // background: linear-gradient(
+        //         217deg,
+        //         rgba(var(--cyberpunk-red-rgb), 0.3),
+        //         rgba(var(--cyberpunk-red-rgb), 0) 70.71%
+        //     ),
+        //     linear-gradient(127deg, rgba(var(--cyberpunk-yellow-rgb), 0.3), rgba(var(--cyberpunk-yellow-rgb), 0) 70.71%),
+        //     linear-gradient(336deg, rgba(var(--cyberpunk-blue-rgb), 0.3), rgba(var(--cyberpunk-blue-rgb), 0) 70.71%);
+
+        background: $cyberpunk;
+        top: 0;
+        left: 0;
+        right: 50%;
+        height: 3px;
+
+        // width: 100%;
+
+        // width: 100%;
+        width: calc(var(--progress, 0) * 1%);
+        position: fixed;
+        transition: background 2s linear infinite both, width 0.25s ease both, transform 0.25s ease both;
+
+        &.grow-center {
+            transition: background 2s linear, transform 0.25s ease-out;
+            // width: auto;
+
+            left: 50%;
+            // right: calc(50% + var(--progress, 0) * 1%);
+
+            transform: translateX(-50%);
+        }
+
+        // animation: grow 3s ease-in-out infinite both;
+    }
+}
+
+$loader-g-size: 8rem !default;
+$loader-g-inner-size: 10% !default;
+$loader-g-inner-bg: #ddd !default;
+$loader-g-inner-text: #000;
+$loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
+
+.loader-g {
+    --loader-g-size: #{$loader-g-size};
+    --loader-g-inner-size: #{$loader-g-inner-size};
+    --loader-g-inner-bg: #{$loader-g-inner-bg};
+    --loader-g-bg: #{$loader-g-bg};
+    --loader-g-inner-text: #{$loader-g-inner-text};
+    position: relative;
+    @include sizer(var(--loader-g-size));
+    font-size: calc(var(--loader-g-size) * 0.375);
+    margin: calc(var(--loader-g-size) / 6);
+    animation: spin 0.5s linear infinite;
+
+    box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);
+    &,
+    & span {
+        border-radius: 50%;
+        background: var(--loader-g-bg);
+        // background: $cyberpunk;
+    }
+
+    span {
+        @include sizer(100%);
+        position: absolute;
+
+        &:nth-child(1) {
+            filter: blur(5px);
+        }
+        &:nth-child(2) {
+            filter: blur(10px);
+        }
+        &:nth-child(3) {
+            filter: blur(25px);
+        }
+        &:nth-child(4) {
+            filter: blur(50px);
+        }
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        top: var(--loader-g-inner-size, 10%);
+        left: var(--loader-g-inner-size, 10%);
+
+        @include sizer(calc(100% - (2 * var(--loader-g-inner-size, 10%))));
+        border-radius: 50%;
+        // background: #240229;
+        background: var(--loader-g-inner-bg);
+        box-shadow: inset 0 0 16px 16px rgba(0, 0, 0, 0.3);
+        text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+        animation: spin 0.5s linear infinite reverse;
+    }
+
+    &[data-percent]::after {
+        content: attr(data-percent) '%';
+        color: var(--loader-g-inner-text);
+    }
+
+    &[data-percent='100'] {
+        // animation-play-state: paused;
+        // animation-direction: alternate;
+        animation-duration: 5s;
+        // animation-duration: 5s;
+        &::after {
+            // animation-play-state: paused;
+
+            // animation-direction: alternate-reverse;
+            animation-duration: 5s;
+        }
+    }
+
+    &.fast,
+    &.fast::after {
+        animation-duration: 0.25s;
+    }
+
+    &.faster,
+    &.faster::after {
+        animation-duration: 0.15s;
+    }
+
+    &.slow,
+    &.slow::after {
+        animation-duration: 0.75s;
+    }
+
+    &.slower,
+    &.slower::after {
+        animation-duration: 1s;
+    }
+
+    &.x2 {
+        --loader-g-size: 12rem;
+    }
+
+    &.x3 {
+        --loader-g-size: 16rem;
+    }
+
+    &.x4 {
+        --loader-g-size: 20rem;
     }
 }

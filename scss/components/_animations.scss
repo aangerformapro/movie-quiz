@@ -38,7 +38,24 @@
         opacity: 1;
         visibility: visible;
     }
-    // 100% {
-    //     transform: scale3d(1, 1, 1);
-    // }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0turn);
+    }
+
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+@keyframes roll {
+    from {
+        transform: translate(-100%) rotate(0turn);
+    }
+
+    to {
+        transform: translate(100%) rotate(10turn);
+    }
 }

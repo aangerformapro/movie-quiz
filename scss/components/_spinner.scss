@@ -1,4 +1,5 @@
 @use '../helpers' as *;
+@use 'animations';
 @use './sizes' as *;
 
 $spinner-border-opacity: 0.867 !default;
@@ -89,25 +90,5 @@ $generate-spinner-sizes: true !default;
 
     @if $generate-spinner-sizes {
         @include generate-sizes;
-    }
-
-    @keyframes spin {
-        from {
-            transform: rotate(0turn);
-        }
-
-        to {
-            transform: rotate(5turn);
-        }
-    }
-
-    @keyframes roll {
-        from {
-            transform: translate(-100%) rotate(0turn);
-        }
-
-        to {
-            transform: translate(100vw) rotate(10turn);
-        }
     }
 }

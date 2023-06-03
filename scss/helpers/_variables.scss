@@ -9,6 +9,11 @@ $cyberpunk-yellow: #f2e900;
 $cyberpunk-blue: #007aff;
 $cyberpunk-red: #ff1111;
 
+$cyberpunk-cyan-rgb: 2, 215, 242;
+$cyberpunk-yellow-rgb: 242, 233, 0;
+$cyberpunk-blue-rgb: 0, 122, 255;
+$cyberpunk-red-rgb: 255, 17, 17;
+
 $cyberpunk: linear-gradient(
     -225deg,
     $cyberpunk-cyan 0%,
@@ -31,5 +36,12 @@ $fluorescent-cyan-rgb: 10, 255, 237;
 
 //overrides
 
-$spinner-rotate-color: #{$neflix-red};
-$progress-color: $cyberpunk-blue;
+// $spinner-rotate-color: #{$neflix-red};
+// $progress-color: $cyberpunk-blue;
+
+:root {
+    --cyberpunk-cyan-rgb: #{$cyberpunk-cyan-rgb};
+    --cyberpunk-yellow-rgb: #{$cyberpunk-yellow-rgb};
+    --cyberpunk-blue-rgb: #{$cyberpunk-blue-rgb};
+    --cyberpunk-red-rgb: #{$cyberpunk-red-rgb};
+}
