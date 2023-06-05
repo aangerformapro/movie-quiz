@@ -33,7 +33,7 @@ $generate-spinner-sizes: true !default;
 
     .spinner {
         animation: spin 3s linear infinite;
-        @include sizer(var(--spinner-size));
+        @include size(var(--spinner-size));
         border-radius: var(--spinner-border-radius);
         border: var(--spinner-border-size) solid var(--spinner-border-color);
 

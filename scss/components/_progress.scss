@@ -86,7 +86,7 @@ $progress-border-color: rgba(0, 0, 0, 0.3) !default;
             position: absolute;
             top: var(--progress-border-size);
             left: 0;
-            @include sizer(100%);
+            @include size(100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -168,7 +168,7 @@ $progress-border-color: rgba(0, 0, 0, 0.3) !default;
 $loader-g-size: 8rem !default;
 $loader-g-inner-size: 10% !default;
 $loader-g-inner-bg: #ddd !default;
-$loader-g-inner-text: #000;
+$loader-g-inner-text: #000 !default;
 $loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
 
 .loader-g {
@@ -178,7 +178,7 @@ $loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
     --loader-g-bg: #{$loader-g-bg};
     --loader-g-inner-text: #{$loader-g-inner-text};
     position: relative;
-    @include sizer(var(--loader-g-size));
+    @include size(var(--loader-g-size));
     font-size: calc(var(--loader-g-size) * 0.375);
     margin: calc(var(--loader-g-size) / 6);
     animation: spin 0.5s linear infinite;
@@ -192,7 +192,7 @@ $loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
     }
 
     span {
-        @include sizer(100%);
+        @include size(100%);
         position: absolute;
 
         &:nth-child(1) {
@@ -221,7 +221,7 @@ $loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
         top: var(--loader-g-inner-size, 10%);
         left: var(--loader-g-inner-size, 10%);
 
-        @include sizer(calc(100% - (2 * var(--loader-g-inner-size, 10%))));
+        @include size(calc(100% - (2 * var(--loader-g-inner-size, 10%))));
         border-radius: 50%;
         // background: #240229;
         background: var(--loader-g-inner-bg);
@@ -233,19 +233,6 @@ $loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
     &[data-percent]::after {
         content: attr(data-percent) '%';
         color: var(--loader-g-inner-text);
-    }
-
-    &[data-percent='100'] {
-        // animation-play-state: paused;
-        // animation-direction: alternate;
-        animation-duration: 5s;
-        // animation-duration: 5s;
-        &::after {
-            // animation-play-state: paused;
-
-            // animation-direction: alternate-reverse;
-            animation-duration: 5s;
-        }
     }
 
     &.fast,
@@ -278,5 +265,18 @@ $loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
 
     &.x4 {
         --loader-g-size: 20rem;
+    }
+
+    &[data-percent='100'] {
+        // animation-play-state: paused;
+        // animation-direction: alternate;
+        animation-duration: 5s;
+        // animation-duration: 5s;
+        &::after {
+            // animation-play-state: paused;
+
+            // animation-direction: alternate-reverse;
+            animation-duration: 5s;
+        }
     }
 }

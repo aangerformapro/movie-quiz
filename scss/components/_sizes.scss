@@ -110,7 +110,7 @@ $__dirs: (
         //squares
 
         @include __generate-rules(wh, $alias) {
-            @include sizer($size);
+            @include size($size);
         }
 
         //margins

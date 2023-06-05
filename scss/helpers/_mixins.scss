@@ -1,6 +1,7 @@
 @use 'sass:math';
-@use 'store' as *;
 @use 'variables' as *;
+
+// $font-family: null !default;
 
 $reset-done: false !default;
 
@@ -37,12 +38,26 @@ $reset-done: false !default;
     }
 }
 
-@mixin visually-hidden {
-    position: absolute;
-    color: #00000000;
-    background: #00000000;
-    z-index: -1;
-    visibility: hidden;
+@mixin visually-hidden() {
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important; // Fix for https://github.com/twbs/bootstrap/issues/25686
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+
+    // Fix for positioned table caption that could become anonymous cells
+    &:not(caption) {
+        position: absolute !important;
+    }
+}
+
+@mixin visually-hidden-focusable() {
+    &:not(:focus):not(:focus-within) {
+        @include visually-hidden();
+    }
 }
 
 @mixin margin-x($value) {
@@ -115,7 +130,6 @@ $reset-done: false !default;
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            outline: none;
         }
 
         html {
@@ -126,7 +140,6 @@ $reset-done: false !default;
 
         body {
             min-height: 100vh;
-
             @if $font-family {
                 font-family: $font-family, sans-serif;
             }
@@ -136,14 +149,21 @@ $reset-done: false !default;
     }
 }
 
-@mixin make-container($width: 100vw, $margin-x: auto, $padding-x: 0) {
-    width: $width;
-    @include padding-x($padding-x);
-    @include margin-x($margin-x);
+@mixin flex-center($direction: row) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: center;
+    align-items: center;
     @content;
 }
 
-@mixin sizer($width, $height: null) {
+@mixin make-container($padding-x: 0) {
+    width: 100%;
+    @include padding-x($padding-x);
+    @include margin-x(auto);
+}
+
+@mixin size($width, $height: null) {
     @if $height ==null {
         $height: $width;
     }

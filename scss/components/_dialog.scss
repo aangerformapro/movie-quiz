@@ -1,98 +1,153 @@
-@use 'sass:string';
 @use '../helpers' as *;
 @use 'animations';
 
-$overlay-bg: rgba(8, 25, 43, 0.85) !default;
-$overlay-close-bg: rgba(0, 0, 0, 0) !default;
-$overlay-close-bg-hover: rgba(255, 255, 255, 0.2) !default;
-$overlay-close-color: #fff !default;
-$overlay-close-color-hover: $overlay-close-color !default;
+//prefix for userscripts
+$overlay-prefix: '' !default;
 
-@mixin dialog($prefix: '') {
-    @if string.length($prefix) > 0 {
-        $prefix: string.insert($prefix, '__', 5000);
+// Overlay variables
+$_vars_overlay: (
+    overlay-background,
+    overlay-close-background,
+    overlay-close-background-hover,
+    overlay-close-color,
+    overlay-close-color-hover
+);
+
+$overlay-background: v-add(overlay-background, rgba(8, 25, 43, 0.85)) !default;
+$overlay-close-background: v-add(overlay-close-background, rgba(0, 0, 0, 0)) !default;
+$overlay-close-background-hover: v-add(overlay-close-background-hover, rgba(255, 255, 255, 0.2)) !default;
+$overlay-close-color: v-add(overlay-close-color, #fff) !default;
+$overlay-close-color-hover: v-add(overlay-close-color-hover, #fff) !default;
+
+// https://sparkbox.com/foundry/bem_by_example BEM Classes
+// [block]__[element]--[modifier]
+@mixin dialog-overlay($prefix: $overlay-prefix) {
+    @if str-length($prefix) > 0 {
+        $prefix: str-insert($prefix, '__', 5000);
     }
 
-    [hidden] {
-        display: none !important;
+    [hidden],
+    %hidden {
+        visibility: hidden !important;
+        position: fixed !important;
+        z-index: -1 !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
     }
 
     .#{$prefix}overlay {
-        --overlay-bg: #{$overlay-bg};
-        --overlay-close-bg: #{$overlay-close-bg};
-        --overlay-close-bg-hover: #{$overlay-close-bg-hover};
-        --overlay-close-color: #{$overlay-close-color};
-        --overlay-close-color-hover: #{$overlay-close-color-hover};
-
+        @include v-load($_vars_overlay);
+        position: fixed;
+        z-index: 2147483630;
+        inset: 0;
         margin: 0;
         padding: 0;
         outline: 0;
         box-sizing: border-box;
-        background: var(--overlay-bg);
-        box-shadow: inset 0 0 16px 16px var(--overlay-bg);
         backface-visibility: hidden;
-        z-index: 2147483630;
-        position: fixed;
-        top: 0;
-        left: 0;
+        background: $overlay-background;
+        box-shadow: inset 0 0 16px 16px $overlay-background;
         width: 100vw;
         min-height: 100vh;
-        line-height: 100vh;
-        overflow-y: auto;
-        transition: opacity 0.5s cubic-bezier(1, 0, 0, 1);
+        overflow-y: scroll;
+        transition: opacity 2.5s cubic-bezier(1, 0, 0, 1);
 
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: center;
-        align-items: center;
-
-        &__close {
-            animation: fade-in 0.25s linear 0.5s both;
-            z-index: 2147483632;
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 32px;
-            line-height: 32px;
-            @include sizer(40px);
-            transition: background 0.25s linear, color 0.25s linear;
-            cursor: pointer;
+        @include flex-center(column) {
             user-select: none;
-            background: var(--overlay-close-bg);
-            color: var(--overlay-close-color);
-            position: absolute;
+            flex-wrap: wrap;
+
+            &__top {
+                justify-content: flex-start;
+            }
+            &__bottom {
+                justify-content: flex-end;
+            }
+        }
+
+        &--close {
+            animation: fade-in 0.25s linear 0.5s both;
+            position: fixed;
             right: 1vw;
             top: 1vh;
+            z-index: 2147483632;
+            @include flex-center;
+            @include font-size(32px, 400, 32px);
+            @include size(40px);
+            cursor: pointer;
+            user-select: none;
+            background: $overlay-close-background;
+            color: $overlay-close-color;
             border-radius: 3px;
-            font-weight: 400;
+            transition: background 0.25s linear, color 0.25s linear;
 
             &:hover {
-                background: var(--overlay-close-bg-hover);
-                color: var(--overlay-close-color);
+                background: $overlay-close-background-hover;
+                color: $overlay-close-color-hover;
             }
             &:empty:before {
                 content: '×';
             }
         }
 
+        &:not([data-open='true']) {
+            @extend %hidden;
+            transform: scale(0);
+        }
+
+        @content;
+    }
+}
+
+//dialog variables
+$_vars_dialog: (
+    dialog-width,
+    dialog-height,
+    dialog-color,
+    dialog-background,
+    dialog-border,
+    dialog-border-radius,
+    dialog-margin-x,
+    dialog-margin-y
+);
+
+$dialog-width: v-add(dialog-width, 80vw) !default;
+$dialog-height: v-add(dialog-height, 60vh) !default;
+$dialog-color: v-add(dialog-color, #333) !default;
+$dialog-background: v-add(dialog-background, #fff) !default;
+$dialog-border: v-add(dialog-border, 3 px solid rgba(0, 0, 0, 0.3)) !default;
+$dialog-border-radius: v-add(dialog-border-radius, 8px) !default;
+$dialog-margin-x: v-add(dialog-margin-x, auto) !default;
+$dialog-margin-y: v-add(dialog-margin-y, 32px) !default;
+
+@mixin dialog($prefix: $overlay-prefix) {
+    @include dialog-overlay($prefix) {
+        @if str-length($prefix) > 0 {
+            $prefix: str-insert($prefix, '__', 5000);
+        }
+
         .#{$prefix}dialog {
-            z-index: 2147483631;
+            @include v-load($_vars_dialog);
+            //z-index: 2147483631;
             animation: zoom-in 0.25s ease-out 0.5s both;
+            color: $dialog-color;
+            background: $dialog-background;
+            width: $dialog-width;
+            min-height: $dialog-height;
+            border: $dialog-border;
+            border-radius: $dialog-border-radius;
+            margin: $dialog-margin-y $dialog-margin-x;
+            box-shadow: 4px 4px 16px 16px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            overflow-y: auto;
+
+            @content;
         }
 
         &:not([data-open='true']) {
-            pointer-events: none;
-            z-index: -1;
-            visibility: hidden;
-            transform: scale(0);
-            opacity: 0;
-
             .#{$prefix}dialog {
-                display: none;
-                opacity: 0;
-                visibility: hidden;
-                z-index: -1;
+                @extend %hidden;
             }
         }
     }

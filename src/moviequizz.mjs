@@ -6,11 +6,11 @@ import { dataset } from './helpers/dataset';
 
 const
     { body } = document,
-    progress = createElement('<div class="progress w-512px mx-auto mt-5rem" data-complete="Yay!!!" ><div class="progress-bar"></div></div>'),
+    progress = createElement('<div class="progress" data-complete="Yay!!!" ><div class="progress-bar"></div></div>'),
     line = createElement('div', {
         class: 'progress-line grow',
     }),
-    g = document.querySelector('.loader-g'),
+    g = document.querySelector('.fluo'),
     loader = new Progress(),
     style = createElement('style');
 
@@ -43,10 +43,10 @@ loader
     .on('complete', e =>
     {
         //progress.textContent = 'Chargement fini.';
-        // clearInterval(inter);
-        // progress.classList.add("complete");
+        clearInterval(inter);
+        progress.classList.add("complete");
 
-        loader.reset();
+        // loader.reset();
 
     });
 

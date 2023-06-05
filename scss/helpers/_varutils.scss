@@ -1,0 +1,118 @@
+@use 'sass:map';
+@use 'sass:list';
+// creates a Store
+$__variables: ();
+
+$css-var-uses-fallback: false !default;
+
+// https://github.com/sass/sass/issues/3091
+
+@function css-var($name) {
+    @if type-of($name) != string {
+        @error "$name is not a string";
+    }
+
+    @if $css-var-uses-fallback {
+        $fallback: v-get($name);
+
+        @if $fallback != null {
+            @return var(css-var-name($name), $fallback);
+        }
+    }
+
+    @return var(css-var-name($name));
+}
+
+@function css-var-name($name) {
+    @if type-of($name) != string {
+        @error "$name is not a string";
+    }
+
+    @return unquote('--#{$name}');
+}
+
+@function v-get($name, $fallback: null) {
+    @if type-of($name) != string {
+        @error "$name is not a string";
+    }
+
+    $value: map.get($__variables, $name);
+
+    @if $value == null {
+        @return $fallback;
+    }
+
+    @return $value;
+}
+
+@function v-add($name, $value) {
+    @if type-of($name) != string {
+        @error "$name is not a string";
+    }
+
+    $__variables: map.set($__variables, quote($name), $value) !global;
+
+    @return css-var($name);
+}
+
+@function v-add-map($map) {
+    @if type-of($map) != map {
+        @error "$map is not a map";
+    }
+
+    $result: ();
+
+    @each $name, $value in $map {
+        $result: map.set($result, $name, v-add($name, $value));
+    }
+
+    @return $result;
+}
+
+@function map-keys($map) {
+    //empty map is a list
+    @if type-of($map) != map and type-of($map) != list {
+        @error "$map is not a map";
+    }
+    $result: ();
+    @each $name, $_ in $map {
+        $result: list.append($result, $name, $separator: comma);
+    }
+    @return $result;
+}
+
+@function v-list() {
+    @return map-keys($__variables);
+}
+
+@mixin __load-variables($variables: ()) {
+    @each $name in $variables {
+        $value: v-get($name);
+
+        @if $value != null {
+            --#{$name}: #{$value};
+        }
+    }
+}
+
+@mixin v-load($variables: null, $root: auto) {
+    @if type-of($variables) != list {
+        $variables: v-list();
+    }
+
+    @if $root == auto {
+        $root: & == null;
+    }
+
+    @if $root {
+        @at-root {
+            :root {
+                @include __load-variables($variables);
+            }
+        }
+    } @else {
+        @include __load-variables($variables);
+    }
+
+    @content;
+}

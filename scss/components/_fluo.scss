@@ -1,0 +1,100 @@
+@use '../helpers' as *;
+@use 'animations';
+
+$_vars-fluo: (fluo-outer-size, fluo-wheel-size, fluo-inner-bg, fluo-text-color, fluo-wheel-gradient);
+
+$fluo-outer-size: 10rem !default;
+$fluo-wheel-size: 10% !default;
+$fluo-inner-bg: #ddd !default;
+$fluo-text-color: #000 !default;
+$fluo-wheel-gradient: linear-gradient(#14ffe9, #ffeb3b, #ff00e0) !default;
+
+$_fluo-outer-size: v-add(fluo-outer-size, $fluo-outer-size);
+$_fluo-wheel-size: v-add(fluo-wheel-size, $fluo-wheel-size);
+$_fluo-inner-bg: v-add(fluo-inner-bg, $fluo-inner-bg);
+$_fluo-text-color: v-add(fluo-text-color, $fluo-text-color);
+$_fluo-wheel-gradient: v-add(fluo-wheel-gradient, $fluo-wheel-gradient);
+
+@mixin fluo($prefix: '') {
+    @if str-length($prefix) > 0 {
+        $prefix: str-insert($prefix, '__', 5000);
+    }
+
+    .#{$prefix}fluo {
+        @include v-load($_vars-fluo);
+
+        position: relative;
+        @include size($_fluo-outer-size);
+        font-size: calc($_fluo-outer-size * 0.375);
+        margin: calc($_fluo-outer-size / 6);
+        animation: spin 0.5s linear infinite;
+        box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);
+
+        border-radius: 50%;
+        background: $_fluo-wheel-gradient;
+        color: $_fluo-text-color;
+
+        & > * {
+            border-radius: 50%;
+            background: $_fluo-wheel-gradient;
+            @include size(100%);
+            position: absolute;
+
+            &:nth-child(1) {
+                filter: blur(5px);
+            }
+            &:nth-child(2) {
+                filter: blur(10px);
+            }
+            &:nth-child(3) {
+                filter: blur(25px);
+            }
+            &:nth-child(4) {
+                filter: blur(50px);
+            }
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            @include flex-center(column);
+            inset: $_fluo-wheel-size;
+            @include size(calc(100% - (2 * $_fluo-wheel-size)));
+            border-radius: 50%;
+            background: $_fluo-inner-bg;
+            box-shadow: inset 0 0 16px 16px rgba(0, 0, 0, 0.3);
+            text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+            animation: spin 0.5s linear infinite reverse;
+        }
+
+        &,
+        &::after {
+            &.fast {
+                animation-duration: 0.25s;
+            }
+
+            &.faster {
+                animation-duration: 0.15s;
+            }
+            &.slow {
+                animation-duration: 0.75s;
+            }
+
+            &.slower {
+                animation-duration: 1s;
+            }
+        }
+
+        &[data-percent]::after {
+            content: attr(data-percent) '%';
+        }
+
+        &[data-percent='100'],
+        &.complete {
+            animation-duration: 5s;
+            &::after {
+                animation-duration: 5s;
+            }
+        }
+    }
+}

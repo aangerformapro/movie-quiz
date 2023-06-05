@@ -124,12 +124,6 @@
   content: attr(data-percent) "%";
   color: var(--loader-g-inner-text);
 }
-.loader-g[data-percent="100"] {
-  animation-duration: 5s;
-}
-.loader-g[data-percent="100"]::after {
-  animation-duration: 5s;
-}
 .loader-g.fast, .loader-g.fast::after {
   animation-duration: 0.25s;
 }
@@ -150,6 +144,12 @@
 }
 .loader-g.x4 {
   --loader-g-size: 20rem;
+}
+.loader-g[data-percent="100"] {
+  animation-duration: 5s;
+}
+.loader-g[data-percent="100"]::after {
+  animation-duration: 5s;
 }
 /* http://meyerweb.com/eric/tools/css/reset/ 
 v2.0 | 20110126
@@ -204,7 +204,6 @@ table {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  outline: none;
 }
 html {
   font-size: 16px;
@@ -214,21 +213,7 @@ html {
 body {
   min-height: 100vh;
   font-family: "Bebas Neue", sans-serif;
-}
-body::after {
-  content: "";
-  position: fixed;
-  width: 50%;
-  height: 50%;
-  top: 25vh;
-  left: 25vw;
-  margin: auto;
-  z-index: -5;
-  background: url("./pictures/moviequiz.webp") no-repeat center center;
-  background-size: auto;
-}
-[data-webp=false] body::after {
-  background: url("./pictures/moviequiz.png") no-repeat center center;
+  background: #010101;
 }
 :root {
   /* Spinner */
@@ -3906,7 +3891,7 @@ body::after {
   --progress-color: #dddddd;
   --progress-bar-color: #dddddd;
   --progress-loading: #212529;
-  --progress-bar-bg: #02d7f2;
+  --progress-bar-bg: #0d6efd;
   --progress-bar-complete-bg: #198754;
   --progress-bar-error-bg: #dc3545;
   --progress-border-radius: 24px;
@@ -7601,85 +7586,118 @@ body::after {
 .progress.bb-auto {
   border-bottom: auto solid;
 }
-[hidden] {
-  display: none !important;
+[hidden],
+.overlay:not([data-open=true]) .dialog,
+.overlay:not([data-open=true]) {
+  visibility: hidden !important;
+  position: fixed !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
 }
 .overlay {
-  --overlay-bg: rgba(8, 25, 43, 0.85);
-  --overlay-close-bg: rgba(0, 0, 0, 0);
-  --overlay-close-bg-hover: rgba(255, 255, 255, 0.2);
+  --overlay-background: rgba(8, 25, 43, 0.85);
+  --overlay-close-background: rgba(0, 0, 0, 0);
+  --overlay-close-background-hover: rgba(255, 255, 255, 0.2);
   --overlay-close-color: #fff;
   --overlay-close-color-hover: #fff;
+  position: fixed;
+  z-index: 2147483630;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   margin: 0;
   padding: 0;
   outline: 0;
   box-sizing: border-box;
-  background: rgba(8, 25, 43, 0.85);
-  background: var(--overlay-bg);
-  box-shadow: inset 0 0 16px 16px rgba(8, 25, 43, 0.85);
-  box-shadow: inset 0 0 16px 16px var(--overlay-bg);
   backface-visibility: hidden;
-  z-index: 2147483630;
-  position: fixed;
-  top: 0;
-  left: 0;
+  background: rgba(8, 25, 43, 0.85);
+  background: var(--overlay-background);
+  box-shadow: inset 0 0 16px 16px rgba(8, 25, 43, 0.85);
+  box-shadow: inset 0 0 16px 16px var(--overlay-background);
   width: 100vw;
   min-height: 100vh;
-  line-height: 100vh;
-  overflow-y: auto;
-  transition: opacity 0.5s cubic-bezier(1, 0, 0, 1);
+  overflow-y: scroll;
+  transition: opacity 2.5s cubic-bezier(1, 0, 0, 1);
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  flex-wrap: wrap;
 }
-.overlay__close {
+.overlay__top {
+  justify-content: flex-start;
+}
+.overlay__bottom {
+  justify-content: flex-end;
+}
+.overlay--close {
   animation: fade-in 0.25s linear 0.5s both;
+  position: fixed;
+  right: 1vw;
+  top: 1vh;
   z-index: 2147483632;
-  font-family: sans-serif;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   font-size: 32px;
   line-height: 32px;
+  font-weight: 400;
   width: 40px;
   height: 40px;
-  transition: background 0.25s linear, color 0.25s linear;
   cursor: pointer;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  background: var(--overlay-close-bg);
+  background: var(--overlay-close-background);
   color: var(--overlay-close-color);
-  position: absolute;
-  right: 1vw;
-  top: 1vh;
   border-radius: 3px;
-  font-weight: 400;
+  transition: background 0.25s linear, color 0.25s linear;
 }
-.overlay__close:hover {
-  background: var(--overlay-close-bg-hover);
-  color: var(--overlay-close-color);
+.overlay--close:hover {
+  background: var(--overlay-close-background-hover);
+  color: var(--overlay-close-color-hover);
 }
-.overlay__close:empty:before {
+.overlay--close:empty:before {
   content: "×";
 }
-.overlay .dialog {
-  z-index: 2147483631;
-  animation: zoom-in 0.25s ease-out 0.5s both;
-}
 .overlay:not([data-open=true]) {
-  pointer-events: none;
-  z-index: -1;
-  visibility: hidden;
   transform: scale(0);
-  opacity: 0;
 }
-.overlay:not([data-open=true]) .dialog {
-  display: none;
-  opacity: 0;
-  visibility: hidden;
-  z-index: -1;
+.overlay .dialog {
+  --dialog-width: 80vw;
+  --dialog-height: 60vh;
+  --dialog-color: #333;
+  --dialog-background: #fff;
+  --dialog-border: 3 px solid rgba(0, 0, 0, 0.3);
+  --dialog-border-radius: 8px;
+  --dialog-margin-x: auto;
+  --dialog-margin-y: 32px;
+  animation: zoom-in 0.25s ease-out 0.5s both;
+  color: #333;
+  color: var(--dialog-color);
+  background: #fff;
+  background: var(--dialog-background);
+  width: 80vw;
+  width: var(--dialog-width);
+  min-height: 60vh;
+  min-height: var(--dialog-height);
+  border: 3 px solid rgba(0, 0, 0, 0.3);
+  border: var(--dialog-border);
+  border-radius: 8px;
+  border-radius: var(--dialog-border-radius);
+  margin: 32px auto;
+  margin: var(--dialog-margin-y) var(--dialog-margin-x);
+  box-shadow: 4px 4px 16px 16px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  overflow-y: auto;
 }
 .progress-line {
   background: linear-gradient(-225deg, #02d7f2 0%, #f2e900 29%, #007aff 67%, #ff1111 100%);
@@ -7696,6 +7714,88 @@ body::after {
   transition: background 2s linear, transform 0.25s ease-out;
   left: 50%;
   transform: translateX(-50%);
+}
+.fluo {
+  --fluo-outer-size: 10rem;
+  --fluo-wheel-size: 10%;
+  --fluo-inner-bg: #000;
+  --fluo-text-color: #ddd;
+  --fluo-wheel-gradient: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+  position: relative;
+  width: 10rem;
+  width: var(--fluo-outer-size);
+  height: 10rem;
+  height: var(--fluo-outer-size);
+  font-size: calc(10rem * 0.375);
+  font-size: calc(var(--fluo-outer-size) * 0.375);
+  margin: calc(10rem / 6);
+  margin: calc(var(--fluo-outer-size) / 6);
+  animation: spin 0.5s linear infinite;
+  box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+  background: var(--fluo-wheel-gradient);
+  color: #ddd;
+  color: var(--fluo-text-color);
+}
+.fluo > * {
+  border-radius: 50%;
+  background: var(--fluo-wheel-gradient);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.fluo > *:nth-child(1) {
+  filter: blur(5px);
+}
+.fluo > *:nth-child(2) {
+  filter: blur(10px);
+}
+.fluo > *:nth-child(3) {
+  filter: blur(25px);
+}
+.fluo > *:nth-child(4) {
+  filter: blur(50px);
+}
+.fluo::after {
+  content: "";
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  top: var(--fluo-wheel-size);
+  right: var(--fluo-wheel-size);
+  bottom: var(--fluo-wheel-size);
+  left: var(--fluo-wheel-size);
+  width: calc(100% - 2 * var(--fluo-wheel-size));
+  height: calc(100% - 2 * var(--fluo-wheel-size));
+  border-radius: 50%;
+  background: var(--fluo-inner-bg);
+  box-shadow: inset 0 0 16px 16px rgba(0, 0, 0, 0.3);
+  text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+  animation: spin 0.5s linear infinite reverse;
+}
+.fluo.fast, .fluo::after.fast {
+  animation-duration: 0.25s;
+}
+.fluo.faster, .fluo::after.faster {
+  animation-duration: 0.15s;
+}
+.fluo.slow, .fluo::after.slow {
+  animation-duration: 0.75s;
+}
+.fluo.slower, .fluo::after.slower {
+  animation-duration: 1s;
+}
+.fluo[data-percent]::after {
+  content: attr(data-percent) "%";
+}
+.fluo[data-percent="100"], .fluo.complete {
+  animation-duration: 5s;
+}
+.fluo[data-percent="100"]::after, .fluo.complete::after {
+  animation-duration: 5s;
 }
 @media (min-width: 576px){
   .w-sm-1px {
