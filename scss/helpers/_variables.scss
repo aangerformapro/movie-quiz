@@ -1,6 +1,13 @@
-$font-family: 'Bebas Neue';
-$neflix-red: #db202c;
+$font-family: 'Poppins';
+// $font-family: 'Bebas Neue';
+
+$neflix-red: #e50914;
+$neflix-red-hover: #f40612;
 $netflix-black: #010101;
+
+$netflix-white: #fefcf8;
+$naetflix-gray: #a3a3a3;
+$netflix-background: #181818;
 $neflix-red-rgb: 219, 32, 44;
 
 // https://colorswall.com/palette/154112
@@ -39,12 +46,12 @@ $fluorescent-cyan-rgb: 10, 255, 237;
 // $spinner-rotate-color: #{$neflix-red};
 // $progress-color: $cyberpunk-blue;
 
-:root {
-    --cyberpunk-cyan-rgb: #{$cyberpunk-cyan-rgb};
-    --cyberpunk-yellow-rgb: #{$cyberpunk-yellow-rgb};
-    --cyberpunk-blue-rgb: #{$cyberpunk-blue-rgb};
-    --cyberpunk-red-rgb: #{$cyberpunk-red-rgb};
-}
+// :root {
+//     --cyberpunk-cyan-rgb: #{$cyberpunk-cyan-rgb};
+//     --cyberpunk-yellow-rgb: #{$cyberpunk-yellow-rgb};
+//     --cyberpunk-blue-rgb: #{$cyberpunk-blue-rgb};
+//     --cyberpunk-red-rgb: #{$cyberpunk-red-rgb};
+// }
 
 // $progress-bar-bg: $cyberpunk;
 
