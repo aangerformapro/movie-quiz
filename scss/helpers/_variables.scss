@@ -3,7 +3,8 @@ $font-family: 'Poppins';
 
 $neflix-red: #e50914;
 $neflix-red-hover: #f40612;
-$netflix-black: #010101;
+$netflix-black: #181818;
+// $netflix-black: #010101;
 
 $netflix-white: #fefcf8;
 $naetflix-gray: #a3a3a3;
@@ -59,3 +60,14 @@ $loader-g-size: 50vmin;
 
 $fluo-inner-bg: #000;
 $fluo-text-color: #ddd !default;
+
+// $burger-transition-duration: 0.5s;
+$burger-color: rgba(254, 252, 248, 0.8);
+$burger-color-h: rgba(24, 24, 24, 0.9);
+// $burger-bg: rgba(24, 24, 24, 0.9);
+$burger-bg: transparent;
+
+$burger-bg-h: rgba(254, 252, 248, 0.9);
+$burger-border-size: 3px;
+$burger-size: 25px;
+$burger-layer-gap: 8px;

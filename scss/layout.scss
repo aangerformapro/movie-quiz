@@ -1,5 +1,7 @@
 @use 'helpers' as *;
 
+@use './components/burger' as *;
+
 @include simple-reset {
     background: $netflix-background;
     color: $netflix-white;
@@ -74,106 +76,4 @@
     }
 }
 
-$dark: $netflix-white;
-$light: #efefef;
-$color: #b3e5fc;
-
-@mixin icon($height, $width) {
-    transition-duration: 0.5s;
-    position: absolute;
-    height: $height;
-    width: $width;
-    top: 30px;
-    background-color: $dark;
-}
-
-@mixin icon-before($height, $width, $top) {
-    transition-duration: 0.5s;
-    position: absolute;
-    width: $width;
-    height: $height;
-    background-color: $dark;
-    content: '';
-    top: $top;
-}
-
-@mixin icon-circle($height, $width) {
-    transition-duration: 0.5s;
-    position: absolute;
-    height: $height;
-    width: $width;
-    top: 2px;
-    border-radius: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    border: 4px solid $dark;
-    left: -15px;
-}
-
-@mixin icon-after($height, $width, $top) {
-    transition-duration: 0.5s;
-    position: absolute;
-    width: $width;
-    height: $height;
-    background-color: $dark;
-    content: '';
-    top: $top;
-}
-
-@mixin btn($left, $top) {
-    // position: absolute;
-
-    position: relative;
-    width: 60px;
-    height: 60px;
-    // top: $top;
-    // left: $left;
-    transition-duration: 0.5s;
-}
-
-.burger {
-    @include btn(15px, 400px);
-
-    .icon-circle {
-        @include icon-circle(60px, 60px);
-
-        &:hover {
-            // background: transparent;
-        }
-    }
-
-    .icon {
-        @include icon(4px, 30px);
-        border-radius: 4px;
-
-        &:before {
-            @include icon-before(4px, 30px, -10px);
-            border-radius: 4px;
-        }
-
-        &:after {
-            @include icon-after(4px, 30px, 10px);
-            border-radius: 4px;
-        }
-    }
-
-    &.open {
-        .icon-circle {
-            background: transparent;
-        }
-        .icon {
-            transition-duration: 0.5s;
-            background: transparent;
-
-            &:before {
-                transform: rotateZ(45deg) scaleX(1.25) translate(6.5px, 6.5px);
-            }
-
-            &:after {
-                transform: rotateZ(-45deg) scaleX(1.25) translate(6px, -6px);
-            }
-        }
-    }
-    &:hover {
-        cursor: pointer;
-    }
-}
+@include burger-btn;

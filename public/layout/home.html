@@ -34,6 +34,8 @@
             <a class="logo" href="./" title="Movie Quiz">
                 <img src="./../assets/pictures/moviequiz.webp" alt="Movie Quiz Logo">
             </a>
+
+            <input type="checkbox" id="burger-btn" name="burger-btn" title="Burger Button Checkbox">
             <nav class="nav flex-column flex-lg-row justify-content-center">
 
                 <a href="#" class="nav-link active">Accueil</a>
@@ -47,12 +49,13 @@
                 <span class="hide-on-mobile">Comment Jouer</span>
             </div>
 
-            <div class="only-display-this-on-mobile">
-                <div class="burger">
 
-                    <div class="icon"></div>
-                </div>
-            </div>
+            <label for="burger-btn" class="burger-btn ms-3 only-display-this-on-mobile">
+
+                <!-- <div class="burger-circle"></div> -->
+                <div class="burger"></div>
+            </label>
+
         </div>
         <!-- Charge l'image du jeu -->
         <img src="./../assets/pictures/heading.jpg" alt="affiche du film"

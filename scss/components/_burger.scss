@@ -1,0 +1,127 @@
+@use '../helpers' as *;
+
+$_burger_vars: (
+    burger-transition-duration,
+    burger-color,
+    burger-bg,
+    burger-color-h,
+    burger-bg-h,
+    burger-border-size,
+    burger-size,
+    burger-layer-gap
+);
+$burger-transition-duration: 0.5s !default;
+$burger-color: #333 !default;
+$burger-color-h: #222 !default;
+$burger-bg: #dddd !default;
+$burger-bg-h: #eeee !default;
+$burger-border-size: 4px !default;
+$burger-size: 30px !default;
+$burger-layer-gap: 10px !default;
+
+$_transition: v-add('burger-transition-duration', $burger-transition-duration);
+$_color: v-add('burger-color', $burger-color);
+$_bg: v-add('burger-bg', $burger-bg);
+$_color-h: v-add('burger-color-h', $burger-color-h);
+$_bg-h: v-add('burger-bg-h', $burger-bg-h);
+$_border: v-add('burger-border-size', $burger-border-size);
+$_size: v-add('burger-size', $burger-size);
+$_gap: v-add('burger-layer-gap', $burger-layer-gap);
+
+@mixin burger-btn {
+    .burger-btn {
+        @include v-load($_burger_vars);
+
+        @include size(calc($_size * 2));
+        position: relative;
+        transition-duration: $_transition;
+        cursor: pointer;
+
+        .burger-circle {
+            @include size(calc($_size * 2));
+
+            transition-duration: $_transition;
+            position: absolute;
+            top: calc($_border / 2);
+            border-radius: 50%;
+            background: $_bg;
+            border: $_border solid $_color;
+            right: 0;
+        }
+
+        .burger {
+            @include size($_size, $_border);
+            transition-duration: $_transition;
+            position: absolute;
+            top: $_size;
+            right: calc($_size / 2);
+            background-color: $_color;
+            border-radius: $_border;
+            &::before,
+            &::after {
+                border-radius: $_border;
+                transition-duration: $_transition;
+                position: absolute;
+                @include size($_size, $_border);
+                background-color: $_color;
+                content: '';
+                top: calc($_gap * -1);
+            }
+
+            &::after {
+                top: $_gap;
+            }
+        }
+
+        &:hover {
+            .burger-circle {
+                background: $_bg-h;
+            }
+
+            .burger {
+                &,
+                &::before,
+                &::after {
+                    background: $_bg-h;
+                }
+            }
+
+            .burger-circle ~ .burger {
+                &,
+                &::before,
+                &::after {
+                    background: $_color-h;
+                }
+            }
+        }
+    }
+
+    [type='checkbox']#burger-btn {
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        position: absolute;
+    }
+
+    #burger-btn:checked ~ .burger-btn,
+    .burger-btn.open {
+        .burger {
+            background: transparent;
+
+            &:before {
+                // transform-origin: center top;
+                transform: translateY($_gap) rotateZ(45deg) scaleX(1.25);
+            }
+
+            &:after {
+                // transform-origin: center bottom;
+                transform: translateY(calc($_gap * -1)) rotateZ(-45deg) scaleX(1.25);
+            }
+        }
+    }
+}
