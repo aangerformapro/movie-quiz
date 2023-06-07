@@ -1,0 +1,128 @@
+@use '../helpers' as *;
+
+@mixin posters {
+    .section {
+        overflow: hidden;
+
+        h3 {
+            @include font-size(25px, 900, 24px);
+            text-transform: capitalize;
+            @include lg {
+                font-size: 28px;
+            }
+        }
+        .swiper {
+            .swiper-wrapper {
+            }
+            // @include flex-center;
+            .swiper-slide {
+                //flex
+            }
+        }
+    }
+
+    .poster {
+        overflow: hidden;
+        position: relative;
+
+        user-select: none;
+
+        @include flex-center(column);
+        border-radius: 8px;
+        aspect-ratio: 2/3;
+
+        max-width: 96px;
+        height: 144px;
+
+        @include md {
+            max-width: 128px;
+            height: 192px;
+        }
+
+        @include lg {
+            // max-width: 256px;
+
+            max-width: 170px;
+            height: 256px;
+        }
+
+        box-shadow: 0 0 4px 4px rgba(24, 24, 24, 0.8);
+        img {
+            object-fit: cover;
+            object-position: center center;
+
+            @include size(100%);
+        }
+
+        .title {
+            color: $netflix-white;
+            text-align: center;
+            pointer-events: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-transform: uppercase;
+            height: 25%;
+            // visibility: hidden;
+            @include flex-center;
+            color: rgba(254, 252, 248, 0.8);
+            background: rgba(229, 9, 20, 0.2);
+            z-index: 2;
+
+            transition: height 0.5s ease, color 0.5s ease 0.25s, background 0.5s ease 0.5s, border 0.25s ease 0.25s;
+        }
+        &:hover {
+            box-shadow: 0 0 4px 4px rgba(226, 227, 229, 0.8);
+
+            .title {
+                // color: $netflix-white-hover;
+                @include font-size(14px, 600);
+                height: 100%;
+                color: rgba(254, 252, 248, 1);
+                background: rgba(229, 9, 20, 0.4);
+                border-radius: 8px;
+
+                overflow: hidden;
+
+                @include lg {
+                    font-size: 18px;
+                }
+            }
+            &::before {
+                background-color: rgba(254, 252, 248, 0.2);
+            }
+        }
+
+        &.not-found {
+            .title {
+                display: none;
+            }
+            &::before {
+                content: '';
+                position: absolute;
+                z-index: 3;
+                pointer-events: none;
+
+                top: 0;
+                left: 0;
+                @include size(100%);
+
+                background: rgba(226, 227, 229, 0.285);
+
+                transition: background 0.5s ease both;
+            }
+            &:hover {
+            }
+
+            img {
+                filter: grayscale(70%);
+            }
+        }
+
+        // min-width: 128px;
+
+        // max-width: 128px;
+        // max-height: 192px;
+    }
+}

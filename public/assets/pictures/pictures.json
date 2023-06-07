@@ -1,0 +1,22 @@
+{
+    "heading": {
+        "alt": "heading.jpg",
+        "src": "heading.webp"
+    },
+    "m": {
+        "alt": "m.png",
+        "src": "m.webp"
+    },
+    "moviequiz": {
+        "alt": "moviequiz.png",
+        "src": "moviequiz.webp"
+    },
+    "poster": {
+        "alt": "poster.jpg",
+        "src": "poster.webp"
+    },
+    "splash": {
+        "alt": "splash.png",
+        "src": "splash.webp"
+    }
+}

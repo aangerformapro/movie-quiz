@@ -2,6 +2,8 @@
 
 @use './components/burger' as *;
 
+@use 'components/posters' as *;
+
 @include simple-reset {
     background: $netflix-background;
     color: $netflix-white;
@@ -36,9 +38,9 @@
     @include padding-x(12px);
 }
 .heading-background-picture {
-    object-fit: contain;
+    object-fit: cover;
     object-position: top left;
-    // max-height: 768px;
+    max-height: 720px;
 
     // height: 50vh;
 
@@ -46,6 +48,13 @@
     user-select: none;
     position: relative;
     z-index: -1;
+}
+
+.app {
+    margin-top: 25vmin;
+    @include lg {
+        margin-top: 50vmin;
+    }
 }
 .current-item {
     margin-top: 25vh;
@@ -70,10 +79,12 @@
         display: none;
     }
 }
-.only-display-this-on-mobile {
+.mobile-only {
     @include lg {
         display: none;
     }
 }
 
 @include burger-btn;
+
+@include posters;

@@ -20,10 +20,16 @@
         crossorigin as="style">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css"
         crossorigin>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+
     <link rel="stylesheet" href="./../assets/layout.css">
 
 
-    <script defer src="./../assets/layout.js"></script>
+    <script defer src="./../assets/layout.js" type="module"></script>
 
 </head>
 
@@ -44,49 +50,46 @@
                 <a href="#" class="nav-link">Tous les films et séries</a>
 
             </nav>
-            <div class="info ms-auto">
+            <div class="info ms-auto my-2">
                 <i class="bi bi-question-circle"></i>
                 <span class="hide-on-mobile">Comment Jouer</span>
             </div>
 
 
-            <label for="burger-btn" class="burger-btn ms-3 only-display-this-on-mobile">
+            <label for="burger-btn" class="burger-btn ms-3 mobile-only">
 
                 <!-- <div class="burger-circle"></div> -->
                 <div class="burger"></div>
             </label>
 
         </div>
+
+    </header>
+
+    <main class="app container">
+
         <!-- Charge l'image du jeu -->
         <img src="./../assets/pictures/heading.jpg" alt="affiche du film"
-            class="position-absolute top-0 left-0 heading-background-picture">
-        <div class="current-item">
+            class="position-absolute top-0 start-0 heading-background-picture">
+        <div class="current-item mb-5">
             <!-- S'affiche apres que le résultat ait été trouvé -->
             <div class="heading-infos">
                 <h3 class="heading-title text-uppercase">
                     Le titre du film
                 </h3>
-                <div class="groupe-de-boutons">
-                    <div class="button-play">
+                <div class="groupe-de-boutons d-flex flex-column flex-lg-row alig-items-center">
+                    <div class="button-play btn btn-light btn-lg d-lg-block">
                         <i class="bi bi-play-fill"></i>
                         <span>Voir la bande annonce</span>
                     </div>
 
-                    <div class="button-infos">
+                    <div class="button-infos btn btn-secondary btn-lg ms-3 d-lg-block">
                         <i class="bi bi-info-circle"></i>
                         <span>Plus d'infos</span>
                     </div>
                 </div>
             </div>
-
-
-
-
         </div>
-
-    </header>
-
-    <main>
 
         <form action="" class="input-movie-title">
             <label for="user-input">
@@ -98,64 +101,194 @@
         </form>
 
 
-        <div class="section">
-            <h3>
+        <div class="section mx-auto my-3 py-5">
+            <h3 class="mb-3">
                 Les Films - A trouver
             </h3>
 
             <div class="swiper">
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
+                <div class="swiper-wrapper d-flex">
+                    <div class="swiper-slide poster m-2">
+
+                        <div class="title">Le titre du film</div>
+                        <a href="#line-vers-les-details-du-films">
+                            <img src="./../assets/pictures/poster.webp" alt="poster film">
+                        </a>
+
+                    </div>
+
+                    <div class="swiper-slide poster m-2 not-found">
+
+                        <div class="title">Le titre du film</div>
+                        <a href="#line-vers-les-details-du-films">
+                            <img src="./../assets/pictures/poster.webp" alt="poster film">
+                        </a>
+
+                    </div>
+
+
+
+                </div>
             </div>
         </div>
 
-        <div class="section">
+        <!-- <div class="section">
             <h3>
                 Les Séries - A trouver
             </h3>
 
             <div class="swiper">
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+
+
             </div>
-        </div>
+        </div> -->
 
 
         <!-- Ne sera pas affiché durant le jeu -->
 
-        <div class="section">
+        <!-- <div class="section d-flex flex-column">
             <h3>
                 Les Films - trouvés
             </h3>
 
-            <div class="swiper">
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-            </div>
-        </div>
 
-        <div class="section">
+            <div class="swiper d-flex justify-content-center">
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide d-flex justify-content-center">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+
+
+            </div>
+        </div> -->
+
+        <!-- <div class="section">
             <h3>
                 Les Séries - trouvées
             </h3>
 
+
             <div class="swiper">
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
-                <div class="poster"></div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a href="#line-vers-les-details-du-films" class="poster">
+                        <img src="./../assets/pictures/poster.webp" alt="poster film">
+                    </a>
+                </div>
+
+
             </div>
-        </div>
+        </div> -->
     </main>
 
 </body>
