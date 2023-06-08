@@ -4,6 +4,10 @@
     .section {
         overflow: hidden;
 
+        background: $netflix-black;
+
+        @include padding-y(2vh);
+
         h3 {
             @include font-size(25px, 900, 24px);
             text-transform: capitalize;
@@ -32,8 +36,6 @@
         }
 
         @include lg {
-            // max-width: 256px;
-
             max-width: 170px;
             height: 256px;
         }
@@ -104,12 +106,14 @@
 
                 transition: background 0.5s ease both;
             }
-            &:hover {
-            }
 
             img {
                 filter: grayscale(70%);
             }
         }
+
+        // .swiper-wrapper {
+        //     border-radius: 8px;
+        // }
     }
 }

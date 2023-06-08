@@ -13,7 +13,7 @@
                 &::after {
                     content: '';
                     position: absolute;
-                    bottom: 4px;
+                    bottom: 0;
                     height: 3px;
                     left: 50%;
                     right: 50%;
@@ -31,12 +31,7 @@
             &:hover {
                 font-weight: 600;
                 color: rgba(254, 252, 248, 1);
-                // pointer-events: none;
             }
-
-            // &:hover {
-            //     text-decoration: underline;
-            // }
         }
     }
 
@@ -67,25 +62,9 @@
             }
         }
 
-        .burger-btn {
-            z-index: 5;
-            // right: 0;
-            // transition: position 0.25s ease-out 0.75s;
-            // position: fixed;
-            // right: 12px;
-            // top: 0;
-        }
-
         #burger-btn:checked {
-            & ~ .burger-btn {
-                // position: fixed;
-                // right: calc(50vw - 2 * v-get('burger-size'));
-                // transition: right 0.75s ease-out;
-            }
             & ~ .nav {
                 right: 0;
-                .nav-link {
-                }
             }
         }
     }

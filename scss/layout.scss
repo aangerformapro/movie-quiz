@@ -2,10 +2,17 @@
 @use './components/burger' as *;
 @use './components/posters' as *;
 @use './components/nav' as *;
+@use './components/form' as *;
 
 @include simple-reset {
     background: $netflix-background;
     color: $netflix-white;
+}
+
+%blured-bg {
+    background: rgba(14, 14, 14, 0.2);
+    filter: blur(3px);
+    box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.2);
 }
 
 #top {
@@ -32,29 +39,45 @@
         left: 0;
         right: 0;
         height: 64px;
-        background: rgba(14, 14, 14, 0.2);
+
+        z-index: -2;
+
+        background: rgba(14, 14, 14, 0.4);
         filter: blur(3px);
-        box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.2);
-        z-index: -1;
+        box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.4);
     }
 
     @include nav;
 }
 
 header {
-    height: 40vmin;
+    height: 40vh;
     position: relative;
 }
 
-.app {
-    width: 98vw;
-    margin: 0 auto;
+footer {
+    @include font-size(12px, 400, 24px);
 }
 
+// .app {
+//     width: 98vw;
+//     margin: 0 auto;
+// }
+.app {
+    width: 100vw;
+    margin: 0 auto;
+    min-height: 60vh;
+
+    & > * {
+        @include padding-x(2.5vw);
+        @include margin-x(auto);
+    }
+}
 .background-picture {
-    z-index: -2;
+    z-index: -3;
     user-select: none;
     pointer-events: none;
+    padding: 0;
 
     img {
         object-fit: cover;
@@ -67,9 +90,19 @@ header {
     }
 }
 
-.app {
-    width: 90vw;
-    margin: 0 auto;
+.blured-background {
+    position: absolute;
+    top: 38vh;
+    left: 0;
+    right: 0;
+    height: calc(100% - 38vh);
+
+    z-index: -1;
+    pointer-events: none;
+
+    background: rgba(14, 14, 14, 0.5);
+    filter: blur(3px);
+    box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.5);
 }
 
 .heading {
@@ -113,3 +146,17 @@ header {
 @include burger-btn;
 
 @include posters;
+
+#input-movie-title {
+    @include form;
+
+    min-height: 78px;
+
+    .btn-submit {
+        width: 48px !important;
+    }
+
+    .input-text {
+        width: calc(100% - 48px) !important;
+    }
+}
