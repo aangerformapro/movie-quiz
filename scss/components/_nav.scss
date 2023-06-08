@@ -6,21 +6,38 @@
 
         .nav-link {
             color: $netflix-white;
+            position: relative;
+            color: rgba(254, 252, 248, 0.8);
 
-            &.active {
-                font-weight: 500;
+            @include lg {
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 4px;
+                    height: 3px;
+                    left: 50%;
+                    right: 50%;
+
+                    background: rgba(254, 252, 248, 1);
+                    transition-duration: 0.25s;
+                }
+                &:hover::after {
+                    left: 15%;
+                    right: 15%;
+                }
             }
 
+            &.active,
             &:hover {
-                text-decoration: underline;
+                font-weight: 600;
+                color: rgba(254, 252, 248, 1);
+                // pointer-events: none;
             }
-        }
-    }
 
-    .info-btn {
-        // position: absolute;
-        // top: 2px;
-        // right: 80px;
+            // &:hover {
+            //     text-decoration: underline;
+            // }
+        }
     }
 
     @include lg-down {

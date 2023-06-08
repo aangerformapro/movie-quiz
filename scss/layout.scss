@@ -12,7 +12,7 @@
     height: 64px;
     position: absolute;
     top: 0;
-    z-index: 2;
+    // z-index: 2;
     .logo {
         img {
             height: 32px;
@@ -32,10 +32,10 @@
         left: 0;
         right: 0;
         height: 64px;
-        background: rgba(14, 14, 14, 0.3);
+        background: rgba(14, 14, 14, 0.2);
         filter: blur(3px);
-        box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.3);
-        z-index: 1;
+        box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.2);
+        z-index: -1;
     }
 
     @include nav;
@@ -46,20 +46,13 @@ header {
     position: relative;
 }
 
-.nav-container {
-    // @include padding-x(12px);
-
-    // box-shadow: 0 0 4px 4px rgba(14, 14, 14, 0.5);
-    // position: fixed;
-}
-
 .app {
     width: 98vw;
     margin: 0 auto;
 }
 
 .background-picture {
-    z-index: -1;
+    z-index: -2;
     user-select: none;
     pointer-events: none;
 
