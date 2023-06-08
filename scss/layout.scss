@@ -1,8 +1,7 @@
 @use 'helpers' as *;
-
 @use './components/burger' as *;
-
-@use 'components/posters' as *;
+@use './components/posters' as *;
+@use './components/nav' as *;
 
 @include simple-reset {
     background: $netflix-background;
@@ -11,57 +10,76 @@
 
 #top {
     height: 64px;
-
+    position: absolute;
+    top: 0;
+    z-index: 2;
     .logo {
         img {
             height: 32px;
+            max-width: 32px;
             object-fit: cover;
-        }
-    }
-    nav {
-        .nav-link {
-            color: $netflix-white;
-
-            &.active {
-                font-weight: 500;
-            }
-
-            &:hover {
-                text-decoration: underline;
+            @include md {
+                max-width: unset;
             }
         }
     }
+    @include font-size(18px);
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: rgba(14, 14, 14, 0.3);
+        filter: blur(3px);
+        box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.3);
+        z-index: 1;
+    }
+
+    @include nav;
+}
+
+header {
+    height: 40vmin;
+    position: relative;
 }
 
 .nav-container {
-    // z-index: 3;
-    @include padding-x(12px);
-}
-.heading-background-picture {
-    object-fit: cover;
-    object-position: top left;
-    max-height: 720px;
+    // @include padding-x(12px);
 
-    // height: 50vh;
-
-    width: 100vw;
-    user-select: none;
-    position: relative;
-    z-index: -1;
+    // box-shadow: 0 0 4px 4px rgba(14, 14, 14, 0.5);
+    // position: fixed;
 }
 
 .app {
-    margin-top: 25vmin;
-    @include lg {
-        margin-top: 50vmin;
+    width: 98vw;
+    margin: 0 auto;
+}
+
+.background-picture {
+    z-index: -1;
+    user-select: none;
+    pointer-events: none;
+
+    img {
+        object-fit: cover;
+        object-position: top left;
+
+        height: 720px;
+        @include lg {
+            width: 100vw;
+        }
     }
 }
-.current-item {
-    margin-top: 25vh;
-    position: relative;
-    margin-left: 5vw;
-    // z-index: 2;
 
+.app {
+    width: 90vw;
+    margin: 0 auto;
+}
+
+.heading {
     .heading-title {
         @include font-size(45px, 900, 48px);
 
@@ -69,8 +87,22 @@
         width: 80vw;
 
         @include lg {
+            width: 50vw;
             @include font-size(78px, 900, 78px);
         }
+    }
+
+    .btn {
+        display: flex;
+        align-items: center;
+        @include font-size(23px, 500, 35px);
+        .bi {
+            font-size: 32px;
+            margin-right: 8px;
+        }
+    }
+    @include lg {
+        max-width: 50vw;
     }
 }
 

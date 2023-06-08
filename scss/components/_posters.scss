@@ -11,14 +11,6 @@
                 font-size: 28px;
             }
         }
-        .swiper {
-            .swiper-wrapper {
-            }
-            // @include flex-center;
-            .swiper-slide {
-                //flex
-            }
-        }
     }
 
     .poster {
@@ -119,10 +111,5 @@
                 filter: grayscale(70%);
             }
         }
-
-        // min-width: 128px;
-
-        // max-width: 128px;
-        // max-height: 192px;
     }
 }
