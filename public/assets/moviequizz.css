@@ -1,5 +1,18 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+:root {
+  --netflix-red: rgb(229, 9, 20);
+  --netflix-red-hover: rgb(244, 6, 18);
+  --netflix-black: rgb(24, 24, 24);
+  --netflix-white: rgb(254, 252, 248);
+  --netflix-gray: rgb(163, 163, 163);
+  --netflix-background: rgb(24, 24, 24);
+  --netflix-red-rgb: 229, 9, 20;
+  --netflix-red-hover-rgb: 244, 6, 18;
+  --netflix-black-rgb: 24, 24, 24;
+  --netflix-white-rgb: 254, 252, 248;
+  --netflix-gray-rgb: 163, 163, 163;
+}
 @keyframes blink {
   from, 50% {
     opacity: 1;
@@ -55,19 +68,19 @@
   --progress: 0;
 }
 .loader-g {
-  --loader-g-size: 50vmin;
+  --loader-g-size: 8rem;
   --loader-g-inner-size: 10%;
   --loader-g-inner-bg: #ddd;
   --loader-g-bg: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   --loader-g-inner-text: #000;
   position: relative;
-  width: 50vmin;
+  width: 8rem;
   width: var(--loader-g-size);
-  height: 50vmin;
+  height: 8rem;
   height: var(--loader-g-size);
-  font-size: calc(50vmin * 0.375);
+  font-size: calc(8rem * 0.375);
   font-size: calc(var(--loader-g-size) * 0.375);
-  margin: calc(50vmin / 6);
+  margin: calc(8rem / 6);
   margin: calc(var(--loader-g-size) / 6);
   animation: spin 0.5s linear infinite;
   box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);
@@ -207,7 +220,8 @@ html {
 body {
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
-  background: #181818;
+  background: rgb(24, 24, 24);
+  background: var(--netflix-black);
 }
 :root {
   /* Spinner */
@@ -7712,8 +7726,8 @@ body {
 .fluo {
   --fluo-outer-size: 10rem;
   --fluo-wheel-size: 10%;
-  --fluo-inner-bg: #000;
-  --fluo-text-color: #ddd;
+  --fluo-inner-bg: #ddd;
+  --fluo-text-color: #000;
   --fluo-wheel-gradient: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   position: relative;
   width: 10rem;
@@ -7729,7 +7743,7 @@ body {
   border-radius: 50%;
   background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   background: var(--fluo-wheel-gradient);
-  color: #ddd;
+  color: #000;
   color: var(--fluo-text-color);
 }
 .fluo > * {

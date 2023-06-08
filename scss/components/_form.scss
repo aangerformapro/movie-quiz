@@ -1,12 +1,11 @@
 @use '../helpers' as *;
 
 @mixin form {
-    // https://codepen.io/lewisvrobinson/pen/EyZwjR
-
     $bg-color: $netflix-black;
-    // $bg-color: #424242;
     $hl-color: #2196f3;
-    // $muted-color: mix(white, $bg-color, 70%);
+
+    $invalid-color: $netflix-red-hover;
+    $hov-color: #fffd;
 
     $muted-color: $netflix-white;
     $trans-time: 300ms;
@@ -59,9 +58,6 @@
             display: block;
 
             width: 100%;
-
-            // width: calc(100% + 15px);
-            // transform: translateX(-100%);
             pointer-events: none;
             &:before {
                 content: '';
@@ -88,6 +84,14 @@
             overflow: hidden;
             white-space: nowrap;
             max-width: 100%;
+        }
+
+        [required] ~ .input--placeholder::after {
+            content: '✱';
+        }
+
+        [required]:valid ~ .input--placeholder::after {
+            content: '';
         }
 
         input,
@@ -118,11 +122,31 @@
                 color: $hl-color;
             }
 
-            &:focus ~ .input--bar:before,
-            &:hover ~ .input--bar:before {
+            &:not(:empty):invalid ~ .input--placeholder,
+            &.invalid ~ .input--placeholder {
+                color: $invalid-color;
+            }
+
+            &:focus ~ .input--bar:before {
                 width: 100%;
             }
+
+            &:not(:empty):invalid ~ .input--bar:before,
+            &.invalid ~ .input--bar:before {
+                background-color: $invalid-color;
+            }
         }
+
+        // &:hover {
+        //     .input--bar:before {
+        //         background: $hov-color !important;
+        //         width: 100%;
+        //     }
+
+        //     .input--placeholder {
+        //         color: $hov-color !important;
+        //     }
+        // }
 
         textarea {
             resize: none;
@@ -133,15 +157,30 @@
 
     .input--mix {
         display: flex;
-
         max-width: 100%;
-
         min-width: 320px;
         .input--group {
             width: 66%;
 
             & + .input--group {
                 width: 33%;
+            }
+        }
+
+        &:focus-within {
+            .input--bar::before {
+                width: 100%;
+            }
+        }
+
+        &:hover {
+            .input--bar:before {
+                background: $hl-color !important;
+                width: 100%;
+            }
+
+            .input--placeholder {
+                color: $hl-color !important;
             }
         }
     }

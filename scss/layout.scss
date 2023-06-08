@@ -3,16 +3,12 @@
 @use './components/posters' as *;
 @use './components/nav' as *;
 @use './components/form' as *;
+@use './components/modal' as *;
 
 @include simple-reset {
     background: $netflix-background;
     color: $netflix-white;
-}
-
-%blured-bg {
-    background: rgba(14, 14, 14, 0.2);
-    filter: blur(3px);
-    box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.2);
+    overflow-x: hidden;
 }
 
 #top {
@@ -59,10 +55,6 @@ footer {
     @include font-size(12px, 400, 24px);
 }
 
-// .app {
-//     width: 98vw;
-//     margin: 0 auto;
-// }
 .app {
     width: 100vw;
     margin: 0 auto;
@@ -70,9 +62,9 @@ footer {
 
     & > * {
         @include padding-x(2.5vw);
-        @include margin-x(auto);
     }
 }
+
 .background-picture {
     z-index: -3;
     user-select: none;
@@ -160,3 +152,6 @@ footer {
         width: calc(100% - 48px) !important;
     }
 }
+
+@include modal;
+// @debug v-add-map($netflix-colors);
