@@ -76,7 +76,7 @@ function getHook( /** @type {DataStore} */  store, /** @type {string} */  name)
                     const obj = [listener, updater];
 
                     listeners.add(obj);
-
+                    listener(this.getItem());
                     return () =>
                     {
                         listeners.delete(obj);
