@@ -50,6 +50,7 @@ function createDialogBox({ title, content, id } = {})
 
 
 
+
     }, [
 
         createElement('form', {
@@ -80,6 +81,7 @@ export default class Dialog
 {
 
     element;
+    #emitter;
 
     attachTo(elem)
     {
@@ -117,7 +119,7 @@ export default class Dialog
     constructor(elem)
     {
         this.element = elem ??= document.createElement('dialog');
-        #emitter = emitter(elem);
+        this.#emitter = emitter(elem);
 
         if (!isElement(elem))
         {

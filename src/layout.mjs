@@ -40,6 +40,9 @@ const swiper = new Swiper('.swiper', {
 let d = document.querySelector('dialog');
 
 
+d.show();
+
+
 // dialogPolyfill.forceRegisterDialog(d);
 
 // d.showModal();

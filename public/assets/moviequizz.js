@@ -1,35 +1,34 @@
 /* global unsafeWindow, globalThis */
 
 
-const global = typeof unsafeWindow !== 'undefined' ? unsafeWindow : (typeof globalThis !== 'undefined' ? globalThis : window);
-const { document: document$1, JSON } = global;
-const RE_NUMERIC = /^-?(?:[\d]+\.)?\d+$/;
 
-const isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
+const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
+    global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
+    { JSON, document: document$1 } = global,
+    isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
     isUndef = (param) => typeof param === 'undefined',
     isString = (param) => typeof param === 'string',
     isNumber = (param) => typeof param === 'number',
     isInt = (param) => Number.isInteger(param),
     isFloat = (param) => isNumber(param) && parseFloat(param) === param,
     isUnsignedInt = (param) => param >= 0 && isInt(param),
-    isNumeric = (param) => isInt(param) || isFloat(param) || RE_NUMERIC.test(param),
+    isNumeric = (param) => isInt(param) || isFloat(param) || /^-?(?:[\d]+\.)?\d+$/.test(param),
     isBool = (param) => typeof param === 'boolean',
     isArray = (param) => Array.isArray(param),
     isNull = (param) => param === null,
     isCallable = (param) => typeof param === 'function',
-    isFunction = isCallable,
-    capitalize = (param) => isString(param) && param.split(/\s+/).map(param => param.charAt(0).toUpperCase() + param.slice(1).toLowerCase()).join(' ');
+    isFunction = isCallable;
 
 function runAsync(callback, ...args)
 {
     if (isFunction(callback))
     {
-        setTimeout(() =>
-        {
-            callback(...args);
-        }, 0);
+        setTimeout(callback, 0, ...args);
     }
 }
+
+
+
 function isValidSelector(selector)
 {
 
@@ -44,6 +43,13 @@ function isValidSelector(selector)
 
 }
 
+
+function isElement(elem)
+{
+    return elem instanceof Object && isFunction(elem.querySelector);
+}
+
+
 function toCamel(name = '')
 {
 
@@ -55,7 +61,7 @@ function toCamel(name = '')
     let index;
     while (-1 < (index = name.indexOf("-")))
     {
-        name = name.slice(0, index) + capitalize(name.slice(index + 1));
+        name = name.slice(0, index) + name.slice(index + 1, 1).toUpperCase() + name.slice(index + 2);
     }
     return name;
 }
@@ -66,18 +72,33 @@ function isHTML(param)
 }
 
 
+
+function isJSON(param)
+{
+
+    if (!isString(param))
+    {
+        return false;
+    }
+
+    return (
+        isNumeric(param) ||
+        ['true', 'false', 'null'].includes(param) ||
+        ['{', '[', '"'].includes(param.slice(0, 1)) ||
+        ['}', ']', '"'].includes(param.slice(-1))
+    );
+
+}
+
+
 function decode(value)
 {
 
-    if (isUndef(value) || isNull(value) || value === '')
+    if (isUndef(value) || isNull(value))
     {
         return null;
     }
-    if (
-        (value.startsWith('{') && value.endsWith('}')) ||
-        (value.startsWith('[') && value.endsWith(']')) ||
-        isNumeric(value) || value === 'true' || value === 'false'
-    )
+    if (isJSON(value))
     {
         return JSON.parse(value);
     }
@@ -89,16 +110,14 @@ function decode(value)
 function encode(value)
 {
 
-    if (!isString(value))
+    if (isFunction(value) || isUndef(value))
     {
-        return JSON.stringify(value);
+        return value;
     }
-    return value;
+
+
+    return isString(value) ? value : JSON.stringify(value);
 }
-
-
-
-
 
 
 function parseDataElement(data, root = true)
@@ -127,93 +146,143 @@ function parseDataElement(data, root = true)
 
 
 
-/**
- * Creates an Element
- *
- * @param {string} tagName
- * @param {Object} [params]
- * @param {string|HTMLElement|string[]|HTMLElement[]} [html]
- * @returns {HTMLElement}
- */
-function createElement(tag, params = null, html = '')
+
+function validateHtml(html)
 {
+    return isString(html) || isElement(html) || isArray(html);
+}
+
+const RESERVED_KEYS = [
+    'data', 'dataset',
+    'html', 'tag',
+    'callback'
+];
+
+
+/**
+ * Shorthand to create element effortlessly
+ * if no params are given a <div></div> will be generated
+ * 
+ * @param {String} [tag] tag name / html / emmet
+ * @param {Object} [params] params to inject into element
+ * @param {String|HTMLElement|String[]|HTMLElement[]} [html] 
+ * @returns 
+ */
+function createElement(
+    tag = 'div',
+    params = {},
+    html = null
+)
+{
+
+    if (isPlainObject(tag))
+    {
+        params = tag;
+        tag = params.tag ?? 'div';
+    }
 
     if (typeof tag !== 'string')
     {
         throw new TypeError('tag must be a String');
     }
 
-    if (
-        typeof params === 'string' ||
-        params instanceof Element ||
-        isArray(params)
-    )
+    if (validateHtml(params))
     {
         html = params;
         params = {};
     }
 
-    params ??= {};
-    html ??= '';
-
-
     const elem = isHTML(tag) ? html2element(tag) : document$1.createElement(tag);
 
-    for (let attr in params)
+    let callback;
+
+    if (!isElement(elem))
     {
-        let value = params[attr];
-        if (attr === 'html')
+        throw new TypeError("Invalid tag supplied " + tag);
+    }
+
+    if (isPlainObject(params))
+    {
+        const data = [];
+
+        callback = params.callback;
+
+        if (!validateHtml(html))
         {
-            html = value;
-            continue;
+            html = params.html;
         }
-        if (attr === 'data')
+
+        if (isPlainObject(params.data))
         {
-            if (isPlainObject(value))
+            data.push(...parseDataElement(params.data));
+        }
+
+        if (isPlainObject(params.dataset))
+        {
+            data.push(...parseDataElement(params.dataset));
+        }
+
+        if (isArray(params.class))
+        {
+            params.class = params.class.join(" ");
+        }
+
+        for (let attr in params)
+        {
+            if (RESERVED_KEYS.includes(attr))
             {
-                parseDataElement(value).forEach(item =>
+                continue;
+            }
+
+            let value = params[attr];
+
+            if (isString(value))
+            {
+                let current = elem.getAttribute(attr) ?? '';
+                if (current.length > 0)
                 {
-                    const [key, val] = item;
-                    elem.setAttribute(key, val);
-                });
+                    value = current + ' ' + value;
+                }
+
+                elem.setAttribute(attr, value);
             }
-            continue;
-        }
-
-        if (typeof value === 'string')
-        {
-            elem.setAttribute(attr, value);
-        }
-        else
-        {
-            elem[attr] = value;
-        }
-    }
-
-    if (html instanceof Element || isString(html))
-    {
-        html = [html];
-    }
-
-    if (Array.isArray(html))
-    {
-
-        html.forEach(item =>
-        {
-            if (item instanceof Element)
+            else
             {
-                elem.appendChild(item);
-            } else if (typeof item === 'string')
-            {
-                elem.innerHTML += item;
+                elem[attr] = value;
             }
-        });
+        }
+
+        data.forEach(item => elem.setAttribute(...item));
     }
+
+    if (validateHtml(html))
+    {
+        if (!isArray(html))
+        {
+            html = [html];
+        }
+
+        for (let child of html)
+        {
+            if (isElement(child))
+            {
+                elem.appendChild(child);
+            }
+            else
+            {
+                elem.innerHTML += child;
+            }
+        }
+    }
+
+    if (isFunction(callback))
+    {
+        callback(elem);
+    }
+
     return elem;
+
 }
-
-
-
 
 /**
  * Creates an HTMLElement from html code
@@ -238,52 +307,50 @@ function html2element(html)
     }
 }
 
-/**
- * A small Event manager that does not uses DOM
- */
+function getListenersForEvent(listeners, type)
+{
+    return listeners.filter(item => item.type === type);
+}
 
 
 
+class EventManager
+{
 
+    #listeners;
+    #useasync;
 
-class EventManager {
+    get length()
+    {
+        return this.#listeners.length;
+    }
 
-    #listeners
-    #useasync
-
-    static #events
-
-    constructor(useasync = true) {
+    constructor(useasync = true)
+    {
         this.#listeners = [];
-        this.#useasync = useasync;
+        this.#useasync = useasync === true;
     }
 
 
-    getListenersForEvent(type) {
+    on(type, listener, once = false)
+    {
 
-        if (!isString(type) || type.includes(' ')) {
-            throw new TypeError('Invalid event type, not a String or contains spaces.');
-        }
-
-        return this.#listeners.filter(item => item.type === type).map(item => item.listener);
-    }
-
-
-    on(type, listener, once = false) {
-
-        if (!isString(type)) {
+        if (!isString(type))
+        {
             throw new TypeError('Invalid event type, not a String.');
         }
 
-        if (!isFunction(listener)) {
+        if (!isFunction(listener))
+        {
             throw new TypeError('Invalid listener, not a function');
         }
 
 
 
-        type.split(/\s+/).forEach(type => {
+        type.split(/\s+/).forEach(type =>
+        {
             this.#listeners.push({
-                type, listener, once: once === true
+                type, listener, once: once === true,
             });
         });
 
@@ -291,71 +358,88 @@ class EventManager {
     }
 
 
-    one(type, listener) {
+    one(type, listener)
+    {
         return this.on(type, listener, true);
     }
 
 
-    off(type, listener) {
+    off(type, listener)
+    {
 
-        if (!isString(type)) {
+        if (!isString(type))
+        {
             throw new TypeError('Invalid event type, not a String.');
         }
 
-        type.split(/\s+/).forEach(type => {
+        type.split(/\s+/).forEach(type =>
+        {
 
-            this.#listeners = this.#listeners.filter(item => {
-                if (type === item.type) {
-                    if (listener === item.listener || !listener) {
+            this.#listeners = this.#listeners.filter(item =>
+            {
+                if (type === item.type)
+                {
+                    if (listener === item.listener || !listener)
+                    {
                         return false;
                     }
                 }
                 return true;
             });
         });
-
-
         return this;
     }
 
 
-    trigger(type, data = null) {
+    trigger(type, data = null, async = null)
+    {
 
         let event;
 
-        if (type instanceof Event) {
+        async ??= this.#useasync;
+
+        if (type instanceof Event)
+        {
             event = type;
             event.data ??= data;
             type = event.type;
         }
 
-        if (!isString(type) && type instanceof Event === false) {
+        if (!isString(type) && type instanceof Event === false)
+        {
             throw new TypeError('Invalid event type, not a String|Event.');
         }
 
 
-        const listeners = Array.from(this.#listeners), types = [];
+        const types = [];
 
-        type.split(/\s+/).forEach(type => {
+        type.split(/\s+/).forEach(type =>
+        {
 
-            if (types.includes(type)) {
+            if (types.includes(type))
+            {
                 return;
             }
 
             types.push(type);
 
-            for (let item of listeners) {
+            for (let item of getListenersForEvent(this.#listeners, type))
+            {
 
-                if (item.type === type) {
+                if (item.type === type)
+                {
 
-                    if (this.#useasync) {
+                    if (async)
+                    {
                         runAsync(item.listener, event ?? { type, data });
 
-                    } else {
+                    } else
+                    {
                         item.listener(event ?? { type, data });
                     }
 
-                    if (item.once) {
+                    if (item.once)
+                    {
                         this.off(type, item.listener);
                     }
                 }
@@ -370,13 +454,17 @@ class EventManager {
     }
 
 
-    mixin(binding) {
+    mixin(binding)
+    {
 
-        if (binding instanceof Object) {
-            ['on', 'off', 'one', 'trigger'].forEach(method => {
+        if (binding instanceof Object)
+        {
+            ['on', 'off', 'one', 'trigger'].forEach(method =>
+            {
                 Object.defineProperty(binding, method, {
                     enumerable: false, configurable: true,
-                    value: (...args) => {
+                    value: (...args) =>
+                    {
                         this[method](...args);
                         return binding;
                     }
@@ -389,32 +477,40 @@ class EventManager {
     }
 
 
-    static mixin(binding, useasync = true) {
+    static mixin(binding, useasync = true)
+    {
         return (new EventManager(useasync)).mixin(binding);
     }
 
+    static on(type, listener, once = false)
+    {
 
-    static on(type, listener, once = false) {
-        this.#events ??= new EventManager();
-        return this.#events.on(type, listener, once);
+        return instance.on(type, listener, once);
     }
 
-    static one(type, listener) {
-        this.#events ??= new EventManager();
-        return this.#events.one(type, listener);
+    static one(type, listener)
+    {
+
+        return instance.one(type, listener);
     }
 
-    static off(type, listener) {
-        this.#events ??= new EventManager();
-        return this.#events.off(type, listener);
+    static off(type, listener)
+    {
+
+        return instance.off(type, listener);
     }
 
-    static trigger(type, data = null) {
-        this.#events ??= new EventManager();
-        return this.#events.trigger(type, data);
+    static trigger(type, data = null, async = null)
+    {
+
+        return instance.trigger(type, data, async);
     }
 
 }
+
+
+
+const instance = new EventManager();
 
 class Progress
 {

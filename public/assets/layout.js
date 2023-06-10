@@ -25,21 +25,25 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = "@charset \"UTF-8\";\n/* \n    Dialog Reset and management\n    @link https://www.amp-what.com/unicode/search/close \n    🗙 ☐ 🗹  ✔ \n*/\ndialog,\n.ng-dialog {\n  /*\n      Dialog Reset\n  */\n}";
+var css_248z = "@charset \"UTF-8\";\n/* \n    Dialog Reset and management\n    @link https://www.amp-what.com/unicode/search/close \n    🗙 ☐ 🗹  ✔ \n*/\n.ng-dialog {\n  /*\n      Dialog Reset\n  */\n  border: 0;\n  outline: 0;\n  background: transparent;\n  position: static;\n  position: initial;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  width: auto;\n  height: auto;\n}\n.ng-dialog .card {\n  border-radius: 3px;\n  border: 0;\n  margin: auto;\n}\n.ng-dialog > form {\n  max-width: 75vmin;\n  max-height: 75vmin;\n  transition-duration: 0.4s;\n  transition-delay: 0.1s;\n  transform-origin: center center;\n}\n.ng-dialog > form input,\n.ng-dialog > form textarea {\n  -webkit-user-select: text;\n  -ms-user-select: text;\n  user-select: text;\n}\n.ng-dialog > form [type=submit],\n.ng-dialog > form [type=button],\n.ng-dialog > form [type=reset],\n.ng-dialog > form [role=button],\n.ng-dialog > form button {\n  padding: 0.25em 1em;\n  text-transform: capitalize;\n  border: 0;\n  outline: 0;\n  appearance: none;\n  border-radius: 0.25em;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.ng-dialog > form button + button {\n  margin-left: 2vmin;\n}\n.ng-dialog:not([open]), .ng-dialog.closing {\n  position: relative;\n  display: flex;\n  visibility: hidden;\n  opacity: 0;\n  z-index: -5;\n}\n.ng-dialog:not([open]) > form, .ng-dialog.closing > form {\n  transform: scale(0.3);\n  opacity: 0;\n}\n.ng-dialog:modal {\n  width: 100vw;\n  height: 100vh;\n  overflow-y: scroll;\n  overflow-x: hidden;\n  max-width: none;\n  max-width: initial;\n  max-height: none;\n  max-height: initial;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ng-dialog:modal > form {\n  transform: scale(1.2);\n}\n.ng-dialog::backdrop {\n  background: rgba(14, 14, 14, 0.5);\n  filter: blur(3px);\n  box-shadow: 0 0 3px 3px rgba(14, 14, 14, 0.5);\n}";
 styleInject(css_248z);
 
 /* global unsafeWindow, globalThis */
 
 
-const global = typeof unsafeWindow !== 'undefined' ? unsafeWindow : (typeof globalThis !== 'undefined' ? globalThis : window);
-const { document: document$1, JSON } = global;
 
-const isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
+const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
+    global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
+    { JSON, document: document$1 } = global,
+    isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
     isString = (param) => typeof param === 'string',
     isBool = (param) => typeof param === 'boolean',
     isArray = (param) => Array.isArray(param),
     isCallable = (param) => typeof param === 'function',
     isFunction = isCallable;
+
+
+
 function isValidSelector(selector)
 {
 
@@ -619,7 +623,10 @@ new Swiper('.swiper', {
 
 
 
-document.querySelector('dialog');
+let d = document.querySelector('dialog');
+
+
+d.show();
 
 
 // dialogPolyfill.forceRegisterDialog(d);
