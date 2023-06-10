@@ -1,6 +1,4 @@
 @charset "UTF-8";
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
-@import url("https://code.getmdl.io/1.3.0/material.blue_grey-indigo.min.css");
 :root {
   --netflix-red: rgb(229, 9, 20);
   --netflix-red-hover: rgb(244, 6, 18);
@@ -460,23 +458,6 @@ footer {
 }
 #input-movie-title .input-text {
   width: calc(100% - 48px) !important;
-}
-.modal {
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.25);
-}
-.modal-content {
-  margin: 10% auto;
-  border-radius: 5px;
-}
-.mdl-card__actions {
-  background-color: rgba(222, 222, 222, 0.25);
 }
 @media (min-width: 768px){
   #top .logo img {

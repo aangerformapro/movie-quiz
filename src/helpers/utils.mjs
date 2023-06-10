@@ -1,11 +1,16 @@
 /* global unsafeWindow, globalThis */
 
 
-const global = typeof unsafeWindow !== 'undefined' ? unsafeWindow : (typeof globalThis !== 'undefined' ? globalThis : window);
-const { document, JSON } = global;
-const RE_NUMERIC = /^-?(?:[\d]+\.)?\d+$/;
 
 export const
+
+    IS_UNSAFE = typeof unsafeWindow !== 'undefined',
+    IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined',
+    IS_TOUCH = typeof 'ontouchstart' !== 'undefined',
+    noop = () => { },
+    identity = x => x,
+    global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
+    { JSON, document } = global,
     isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
     isUndef = (param) => typeof param === 'undefined',
     isString = (param) => typeof param === 'string',
@@ -14,7 +19,7 @@ export const
     isFloat = (param) => isNumber(param) && parseFloat(param) === param,
     isUnsigned = (param) => param >= 0 && isNumber(param),
     isUnsignedInt = (param) => param >= 0 && isInt(param),
-    isNumeric = (param) => isInt(param) || isFloat(param) || RE_NUMERIC.test(param),
+    isNumeric = (param) => isInt(param) || isFloat(param) || /^-?(?:[\d]+\.)?\d+$/.test(param),
     intVal = (param) => isNumeric(param) && parseInt(param),
     floatVal = (param) => isNumeric(param) && parseFloat(param),
     isBool = (param) => typeof param === 'boolean',
@@ -26,6 +31,8 @@ export const
     isScalar = (param) => isNumeric(param) || isString(param) || isBool(param),
     capitalize = (param) => isString(param) && param.split(/\s+/).map(param => param.charAt(0).toUpperCase() + param.slice(1).toLowerCase()).join(' ');
 
+
+
 const
     VALID_REFERERRPOLICY = [
         'no-referrer', 'no-referrer-when-downgrade',
@@ -34,6 +41,23 @@ const
         'strict-origin-when-cross-origin', 'unsafe-url'
     ],
     VALID_CROSSORIGIN = ['', 'use-credentials', 'anonymous'];
+
+
+
+export function getClass(param)
+{
+
+    if (isFunction(param))
+    {
+        return param.name;
+    }
+    else if (param instanceof Object)
+    {
+        return Object.getPrototypeOf(param).constructor.name;
+    }
+
+}
+
 export function isEmpty(param)
 {
 
@@ -61,12 +85,41 @@ export function runAsync(callback, ...args)
 {
     if (isFunction(callback))
     {
-        setTimeout(() =>
-        {
-            callback(...args);
-        }, 0);
+        setTimeout(callback, 0, ...args);
     }
 }
+
+
+/**
+ * Creates a promise that resolves a value
+ * 
+ * @param {any} value 
+ * @param {Function} onResolve A transformation function
+ * @param {Function} onReject 
+ */
+export function promisify(value, onResolve = identity, onReject = (val, err) => err)
+{
+
+    if (value instanceof Promise)
+    {
+
+        return value.then(val =>
+        {
+            let newval = onResolve(val);
+            if (isUndef(newval))
+            {
+                return val;
+            }
+            return newval;
+
+        }).catch(err => onReject(value, err));
+    }
+
+    return promisify(Promise.resolve(value), onResolve, onReject);
+}
+
+
+
 export function isValidSelector(selector)
 {
 
@@ -103,6 +156,7 @@ export function isElement(elem)
     return elem instanceof Object && isFunction(elem.querySelector);
 }
 
+
 export function toCamel(name = '')
 {
 
@@ -114,18 +168,13 @@ export function toCamel(name = '')
     let index;
     while (-1 < (index = name.indexOf("-")))
     {
-        name = name.slice(0, index) + capitalize(name.slice(index + 1));
+        name = name.slice(0, index) + name.slice(index + 1, 1).toUpperCase() + name.slice(index + 2);
     }
     return name;
 }
 
-
-export function toDashed(name = '')
+export function toDashed(name)
 {
-    if (!isString(name))
-    {
-        throw new TypeError('name must be a String');
-    }
     return name.replace(/([A-Z])/g, function (u)
     {
         return "-" + u.toLowerCase();
@@ -138,18 +187,33 @@ export function isHTML(param)
 }
 
 
+
+export function isJSON(param)
+{
+
+    if (!isString(param))
+    {
+        return false;
+    }
+
+    return (
+        isNumeric(param) ||
+        ['true', 'false', 'null'].includes(param) ||
+        ['{', '[', '"'].includes(param.slice(0, 1)) ||
+        ['}', ']', '"'].includes(param.slice(-1))
+    );
+
+}
+
+
 export function decode(value)
 {
 
-    if (isUndef(value) || isNull(value) || value === '')
+    if (isUndef(value) || isNull(value))
     {
         return null;
     }
-    if (
-        (value.startsWith('{') && value.endsWith('}')) ||
-        (value.startsWith('[') && value.endsWith(']')) ||
-        isNumeric(value) || value === 'true' || value === 'false'
-    )
+    if (isJSON(value))
     {
         return JSON.parse(value);
     }
@@ -161,16 +225,14 @@ export function decode(value)
 export function encode(value)
 {
 
-    if (!isString(value))
+    if (isFunction(value) || isUndef(value))
     {
-        return JSON.stringify(value);
+        return value;
     }
-    return value;
+
+
+    return isString(value) ? value : JSON.stringify(value);
 }
-
-
-
-
 
 
 function parseDataElement(data, root = true)
@@ -199,90 +261,144 @@ function parseDataElement(data, root = true)
 
 
 
-/**
- * Creates an Element
- *
- * @param {string} tagName
- * @param {Object} [params]
- * @param {string|HTMLElement|string[]|HTMLElement[]} [html]
- * @returns {HTMLElement}
- */
-export function createElement(tag, params = null, html = '')
+
+function validateHtml(html)
 {
+    return isString(html) || isElement(html) || isArray(html);
+}
+
+const RESERVED_KEYS = [
+    'data', 'dataset',
+    'html', 'tag',
+    'callback'
+];
+
+
+/**
+ * Shorthand to create element effortlessly
+ * if no params are given a <div></div> will be generated
+ * 
+ * @param {String} [tag] tag name / html / emmet
+ * @param {Object} [params] params to inject into element
+ * @param {String|HTMLElement|String[]|HTMLElement[]} [html] 
+ * @returns 
+ */
+export function createElement(
+    tag = 'div',
+    params = {},
+    html = null
+)
+{
+
+    if (isPlainObject(tag))
+    {
+        params = tag;
+        tag = params.tag ?? 'div';
+    }
 
     if (typeof tag !== 'string')
     {
         throw new TypeError('tag must be a String');
     }
 
-    if (
-        typeof params === 'string' ||
-        params instanceof Element ||
-        isArray(params)
-    )
+    if (validateHtml(params))
     {
         html = params;
         params = {};
     }
 
-    params ??= {};
-    html ??= '';
-
-
     const elem = isHTML(tag) ? html2element(tag) : document.createElement(tag);
 
-    for (let attr in params)
+    let callback;
+
+    if (!isElement(elem))
     {
-        let value = params[attr];
-        if (attr === 'html')
+        throw new TypeError("Invalid tag supplied " + tag);
+    }
+
+    if (isPlainObject(params))
+    {
+        const data = [];
+
+        callback = params.callback;
+
+        if (!validateHtml(html))
         {
-            html = value;
-            continue;
+            html = params.html;
         }
-        if (attr === 'data')
+
+        if (isPlainObject(params.data))
         {
-            if (isPlainObject(value))
+            data.push(...parseDataElement(params.data));
+        }
+
+        if (isPlainObject(params.dataset))
+        {
+            data.push(...parseDataElement(params.dataset));
+        }
+
+        if (isArray(params.class))
+        {
+            params.class = params.class.join(" ");
+        }
+
+        for (let attr in params)
+        {
+            if (RESERVED_KEYS.includes(attr))
             {
-                parseDataElement(value).forEach(item =>
+                continue;
+            }
+
+            let value = params[attr];
+
+            if (isString(value))
+            {
+                let current = elem.getAttribute(attr) ?? '';
+                if (current.length > 0)
                 {
-                    const [key, val] = item;
-                    elem.setAttribute(key, val);
-                });
+                    value = current + ' ' + value;
+                }
+
+                elem.setAttribute(attr, value);
             }
-            continue;
-        }
-
-        if (typeof value === 'string')
-        {
-            elem.setAttribute(attr, value);
-        }
-        else
-        {
-            elem[attr] = value;
-        }
-    }
-
-    if (html instanceof Element || isString(html))
-    {
-        html = [html];
-    }
-
-    if (Array.isArray(html))
-    {
-
-        html.forEach(item =>
-        {
-            if (item instanceof Element)
+            else
             {
-                elem.appendChild(item);
-            } else if (typeof item === 'string')
-            {
-                elem.innerHTML += item;
+                elem[attr] = value;
             }
-        });
+        }
+
+        data.forEach(item => elem.setAttribute(...item));
     }
+
+    if (validateHtml(html))
+    {
+        if (!isArray(html))
+        {
+            html = [html];
+        }
+
+        for (let child of html)
+        {
+            if (isElement(child))
+            {
+                elem.appendChild(child);
+            }
+            else
+            {
+                elem.innerHTML += child;
+            }
+        }
+    }
+
+    if (isFunction(callback))
+    {
+        callback(elem);
+    }
+
     return elem;
+
 }
+
 
 
 /**
@@ -292,24 +408,34 @@ export function createElement(tag, params = null, html = '')
 export function uniqid()
 {
 
-    let value;
-    uniqid.values ??= [];
-
-    while (!value || uniqid.values.includes(value))
+    let value = '';
+    uniqid.values ??= new Set();
+    do
     {
         value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
-    uniqid.values.push(value);
+    while (uniqid.values.has(value));
+    uniqid.values.add(value);
     return value;
 }
 
+
+
+
 /**
- * Clones an Object
+ * Clones an Object/Array
  * @param {Object} obj
  * @returns {Object|undefined}
  */
 export function clone(obj)
 {
+
+    if (isArray(obj))
+    {
+        return Array.from(obj);
+    }
+
+
     if (obj instanceof Object)
     {
         return Object.assign({}, obj);
@@ -361,9 +487,15 @@ export function cloneRecursive(obj)
     return obj;
 }
 
-
+/**
+ * Convert an element to its outer html
+ * 
+ * @param {HTMLElement|NodeList|HTMLElement[]} elem 
+ * @returns {String|undefined}
+ */
 export function element2html(elem)
 {
+
     if (isElement(elem))
     {
         elem = [elem];
@@ -380,6 +512,9 @@ export function element2html(elem)
 }
 
 
+
+
+
 /**
  * Creates a Document from html code
  * @param {string} html
@@ -394,9 +529,6 @@ export function html2doc(html)
     }
     return node;
 }
-
-
-
 
 /**
  * Creates an HTMLElement from html code
@@ -420,19 +552,32 @@ export function html2element(html)
         return content.childNodes[0];
     }
 }
+
+
+/**
+ * Resolves an URL
+ * 
+ * @param {URL|String} url 
+ * @returns {String|undefined}
+ */
 export function getUrl(url)
 {
 
+    getUrl.a = createElement("a");
+
     if (url instanceof URL || isString(url))
     {
-        let a = createElement('a', { href: url });
+        getUrl.a.href = url;
         return a.href;
     }
 }
 
+
+
+
 export function loadScript(url, options)
 {
-    return new Promise(resolve =>
+    return new Promise((resolve, reject) =>
     {
         const params = Object.assign({
             async: null,
@@ -470,7 +615,12 @@ export function loadScript(url, options)
         if (url = getUrl(url))
         {
 
-            const script = createElement('script', { src: url, onload: () => resolve(script), id: uniqid() });
+            const script = createElement('script', {
+                src: url,
+                onload: () => resolve(script),
+                onerror: () => reject(new Error("Cannot load " + url)),
+                id: uniqid()
+            });
 
             for (let param in params)
             {
@@ -487,14 +637,39 @@ export function loadScript(url, options)
     });
 }
 
-
+/**
+ * PHP Enum like Api
+ */
 export class BackedEnum
 {
 
 
+    static get default()
+    {
+        return this.cases()[0];
+    }
+
+    static tryFrom(value)
+    {
+
+        if (getClass(value) === getClass(this) && !isFunction(value))
+        {
+            return value;
+        }
+
+        return this.cases().find(x => x.value === value);
+    }
+
     static from(value)
     {
-        return this.cases().find(x => x.value === value);
+
+        const result = this.tryFrom(value);
+
+        if (isUndef(result))
+        {
+            throw new TypeError("Cannot find matching enum to: " + encode(value));
+        }
+        return result;
     }
 
 
@@ -503,8 +678,11 @@ export class BackedEnum
      */
     static cases()
     {
-        return Object.keys(this).filter(name => name === name.toUpperCase() && this[name] instanceof BackedEnum).map(x => this[x]);
+        return Object.keys(this)
+            .filter(name => name === name.toUpperCase() && this[name] instanceof BackedEnum)
+            .map(x => this[x]);
     }
+
 
     get value()
     {
@@ -524,13 +702,20 @@ export class BackedEnum
             throw new TypeError('value is undefined');
         }
         this.#value = value;
+
     }
 }
 
 
-export
+export function isAbstract(
+    /** @type object */ obj,
+    /** @type string */ className,
+    /** @type string */ method
+)
 {
-    JSON,
-    global,
-    document,
-};
+    if (getClass(obj) === className)
+    {
+        throw new Error(`${className}.${method}() is not implemented`);
+    }
+}
+

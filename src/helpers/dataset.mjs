@@ -1,5 +1,5 @@
 
-import { decode, encode, isArray, isElement, isNull, isPlainObject, isString, isUndef, isValidSelector, toCamel } from "./utils.mjs";
+import { decode, encode, isArray, isPlainObject, isString, isValidSelector, toCamel } from "./utils.mjs";
 
 
 let api = {

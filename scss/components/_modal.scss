@@ -5,6 +5,7 @@
 // google's material design lite
 
 // https://getmdl.io/components/index.html
+// https://codepen.io/howbizarre/pen/qZmrPe
 
 // @use '@material/dialog';
 
@@ -14,45 +15,45 @@
 
 // @import 'material-design-lite/dist/material.min.css';
 
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import url('https://code.getmdl.io/1.3.0/material.blue_grey-indigo.min.css');
+// @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+// @import url('https://code.getmdl.io/1.3.0/material.blue_grey-indigo.min.css');
 
-@mixin modal {
-    // @include dialog.core-styles;
+// @mixin modal {
+//     // @include dialog.core-styles;
 
-    // .mdc-dialog {
-    //     --mdc-theme-surface: #{$netflix-background};
-    //     &,
-    //     * {
-    //         @include font-family($font-family);
-    //     }
+//     // .mdc-dialog {
+//     //     --mdc-theme-surface: #{$netflix-background};
+//     //     &,
+//     //     * {
+//     //         @include font-family($font-family);
+//     //     }
 
-    //     .mdc-dialog__content {
-    //         color: rgba(#{$netflix-white-rgb}, 0.6);
-    //     }
-    //     .mdc-dialog__title {
-    //         color: rgba(#{$netflix-white-rgb}, 0.87);
-    //     }
-    // }
+//     //     .mdc-dialog__content {
+//     //         color: rgba(#{$netflix-white-rgb}, 0.6);
+//     //     }
+//     //     .mdc-dialog__title {
+//     //         color: rgba(#{$netflix-white-rgb}, 0.87);
+//     //     }
+//     // }
 
-    .modal {
-        // display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.25);
-    }
+//     .modal {
+//         // display: none;
+//         position: fixed;
+//         z-index: 1;
+//         left: 0;
+//         top: 0;
+//         width: 100%;
+//         height: 100%;
+//         overflow: auto;
+//         background-color: rgba(0, 0, 0, 0.25);
+//     }
 
-    .modal-content {
-        margin: 10% auto;
-        border-radius: 5px;
-    }
+//     .modal-content {
+//         margin: 10% auto;
+//         border-radius: 5px;
+//     }
 
-    .mdl-card__actions {
-        background-color: rgba(222, 222, 222, 0.25);
-    }
-}
+//     .mdl-card__actions {
+//         background-color: rgba(222, 222, 222, 0.25);
+//     }
+// }
