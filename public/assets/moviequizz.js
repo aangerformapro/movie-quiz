@@ -120,28 +120,27 @@ function encode(value)
 }
 
 
-function parseDataElement(data, root = true)
+
+function parseAttributes(obj, /** @type {string|undefined} */ name)
 {
 
     let result = [];
 
-    data ??= {};
-
-    for (let key in data)
+    for (let key in obj)
     {
-
-        let value = data[key];
+        const value = obj[key];
 
         if (isPlainObject(value))
         {
-            result = result.concat(parseDataElement(value, false).map(
-                item => [key + '-' + item[0], item[1]]
-            ));
+            result = result.concat(parseAttributes(value)).map(
+                item => [[key, item[0]].join('-'), item[1]]
+            );
+
             continue;
         }
         result.push([key, encode(value)]);
     }
-    return result.map(item => root ? ['data-' + item[0], item[1]] : item);
+    return result.map(item => name ? [[name, item[0]].join('-'), item[1]] : item);
 }
 
 
@@ -214,13 +213,17 @@ function createElement(
 
         if (isPlainObject(params.data))
         {
-            data.push(...parseDataElement(params.data));
+            data.push(...parseAttributes(params.data, 'data'));
         }
 
         if (isPlainObject(params.dataset))
         {
-            data.push(...parseDataElement(params.dataset));
+            data.push(...parseAttributes(params.dataset, 'data'));
         }
+
+
+        data.forEach(item => elem.setAttribute(...item));
+
 
         if (isArray(params.class))
         {
@@ -246,13 +249,17 @@ function createElement(
 
                 elem.setAttribute(attr, value);
             }
+            else if (isPlainObject(value))
+            {
+                parseAttributes(value, attr).forEach(item => elem.setAttribute(...item));
+            }
             else
             {
                 elem[attr] = value;
             }
         }
 
-        data.forEach(item => elem.setAttribute(...item));
+
     }
 
     if (validateHtml(html))

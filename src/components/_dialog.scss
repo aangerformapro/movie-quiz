@@ -1,25 +1,9 @@
 /* 
     Dialog Reset and management
     @link https://www.amp-what.com/unicode/search/close 
+    @ling https://wiki.selfhtml.org/wiki/Default-Stylesheet/Firefox
     🗙 ☐ 🗹  ✔ 
 */
-
-@mixin _pseudo_attributes($attribute, $prefix: 'ng-', $tag: 'dialog', $at-root: false) {
-    @if & != null and $at-root == false {
-        &::#{$attribute},
-        &[#{$attribute}],
-        &[data-#{$attribute}] {
-            @content;
-        }
-    } @else {
-        #{$tag},
-        .#{$prefix}#{$tag} {
-            @include _pseudo_attributes($attribute, $prefix, $tag, $at-root) {
-                @content;
-            }
-        }
-    }
-}
 
 .ng-dialog {
     /*
@@ -30,30 +14,20 @@
     outline: 0;
     background: transparent;
     position: unset;
-
     display: flex;
     justify-content: center;
     align-items: center;
     width: auto;
     height: auto;
+    position: relative;
 
-    .card {
-        // min-height: 50vh;
-        border-radius: 3px;
-        border: 0;
-        margin: auto;
+    &--form {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
-        // width: auto;
-        // justify-content: space-between;
-    }
-
-    & > form {
-        max-width: 75vmin;
-        max-height: 75vmin;
-
-        transition-duration: 0.4s;
-        transition-delay: 0.1s;
-        transform-origin: center center;
+        background: #ddd;
+        padding: 0.5em;
 
         input,
         textarea {
@@ -69,7 +43,6 @@
         [role='button'],
         button {
             padding: 0.25em 1em;
-            // margin: 0.5em;
             text-transform: capitalize;
             border: 0;
             outline: 0;
@@ -81,32 +54,80 @@
             justify-content: center;
             align-items: center;
 
-            // box-shadow:none;
+            @media (min-width: 480px) {
+                &[title]:not([type='button'])::after {
+                    display: inline-block;
+                    content: attr(title);
+                }
+            }
         }
 
         button + button {
-            margin-left: 2vmin;
+            margin-left: 1vmin;
         }
+    }
+
+    &--heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        button[value='close'] {
+            // padding: 0.25em;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            margin: 0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h4 {
+            font-size: 18px;
+            font-weight: 600;
+            padding: 0;
+            margin: 0;
+        }
+    }
+    &--contents {
+        padding: 1vmin;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 15vmin;
+    }
+
+    &--footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    &:not([open]) {
+        visibility: hidden;
+        opacity: 0;
+        clip: rect(0, 0, 0, 0);
+        width: 0;
+        height: 0;
+        white-space: nowrap;
+        overflow: hidden;
     }
 
     &:not([open]),
     &.closing {
-        position: relative;
-        display: flex;
-        visibility: hidden;
-        opacity: 0;
-        z-index: -5;
-        & > form {
-            transform: scale(0.3);
+        .ng-dialog--form {
+            transform: scale(0);
             opacity: 0;
         }
     }
 
     &:modal {
-        // inset: auto;
-
+        position: fixed;
         width: 100vw;
-        height: 100vh;
+        min-height: 100vh;
         overflow-y: scroll;
         overflow-x: hidden;
         max-width: unset;
@@ -115,9 +136,47 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        .ng-dialog--form {
+            min-height: 20vmin;
+            max-width: 100vw;
+            max-height: 100vh;
+            transition-duration: 0.5s;
+            transition-timing-function: ease;
+            transform-origin: center center;
 
-        & > form {
-            transform: scale(1.2);
+            @media (min-width: 480px) {
+                transform: scale(1.2);
+            }
+        }
+    }
+
+    &.pos- {
+        &top {
+            align-items: flex-start;
+            .ng-dialog--form {
+                margin-top: 10vmax;
+            }
+        }
+
+        &bottom {
+            align-items: flex-end;
+            .ng-dialog--form {
+                margin-bottom: 10vmax;
+            }
+        }
+
+        &left {
+            justify-content: flex-start;
+            .ng-dialog--form {
+                margin-left: 10vmax;
+            }
+        }
+
+        &right {
+            justify-content: flex-end;
+            .ng-dialog--form {
+                margin-right: 10vmax;
+            }
         }
     }
 
@@ -127,171 +186,12 @@
         filter: blur(3px);
         box-shadow: 0 0 3px 3px rgba(14, 14, 14, 0.5);
     }
-}
 
-// firefox defaults
-
-@mixin moz-dialog {
-    dialog:modal {
-        -moz-top-layer: top !important;
-        position: fixed;
-        overflow: auto;
-        visibility: visible;
-        inset-block-start: 0;
-        inset-block-end: 0;
-        max-width: calc(100% - 6px - 2em);
-        max-height: calc(100% - 6px - 2em);
+    [hidden] {
+        display: none !important;
     }
-
-    dialog::-webkit-backdrop {
-        background: rgba(0, 0, 0, 0.1);
-    }
-
-    dialog::backdrop {
-        background: rgba(0, 0, 0, 0.1);
-    }
-
-    ::-webkit-backdrop {
-        -moz-top-layer: top !important;
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        -webkit-user-select: none;
-        user-select: none;
-    }
-
-    ::backdrop {
-        -moz-top-layer: top !important;
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    :-moz-topmost-modal:not(html|*[inert]) {
-        -moz-inert: none;
-        -moz-user-select: text;
-        user-select: text;
-    }
-
-    dialog {
-        position: absolute;
-        display: block;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        margin: auto;
-        border-width: initial;
-        border-style: solid;
-        border-color: initial;
-        -o-border-image: initial;
-        border-image: initial;
-        padding: 1em;
-        background-color: Canvas;
-        color: CanvasText;
-        width: -moz-fit-content;
-        height: -moz-fit-content;
-    }
-}
-
-@mixin edge-dialog {
-    dialog[open] {
-        display: block;
-    }
-
-    dialog {
-        display: none;
-        position: absolute;
-        inset-inline-start: 0px;
-        inset-inline-end: 0px;
-        width: -webkit-fit-content;
-        width: -moz-fit-content;
-        width: fit-content;
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
-        height: fit-content;
-        background-color: canvas;
-        color: canvastext;
-        margin: auto;
-        border-width: initial;
-        border-style: solid;
-        border-color: initial;
-        -o-border-image: initial;
-        border-image: initial;
-        padding: 1em;
-    }
-
-    dialog:modal {
-        position: fixed;
-        inset-block-start: 0px;
-        inset-block-end: 0px;
-        max-width: calc((100% - 6px) - 2em);
-        max-height: calc((100% - 6px) - 2em);
-        -webkit-user-select: text;
-        -moz-user-select: text;
-        -ms-user-select: text;
-        user-select: text;
-        visibility: visible;
-        overflow: auto;
-    }
-    dialog::-webkit-backdrop {
-        position: fixed;
-        inset: 0px;
-        background: rgba(0, 0, 0, 0.1);
-    }
-    dialog::backdrop {
-        position: fixed;
-        inset: 0px;
-        background: rgba(0, 0, 0, 0.1);
-    }
-}
-
-@mixin chromium-dialog {
-    dialog:not([open]) {
-        display: none;
-    }
-
-    dialog {
-        display: block;
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        width: -webkit-fit-content;
-        height: -webkit-fit-content;
-        color: black;
-        margin: auto;
-        border-width: initial;
-        border-style: solid;
-        border-color: initial;
-        -o-border-image: initial;
-        border-image: initial;
-        padding: 1em;
-        background: white;
-    }
-
-    dialog::-webkit-backdrop {
-        position: fixed;
-        top: 0px;
-        right: 0px;
-        bottom: 0px;
-        left: 0px;
-        background: rgba(0, 0, 0, 0.1);
-    }
-
-    dialog::backdrop {
-        position: fixed;
-        top: 0px;
-        right: 0px;
-        bottom: 0px;
-        left: 0px;
-        background: rgba(0, 0, 0, 0.1);
+    [disabled] {
+        pointer-events: none;
+        opacity: 0.9;
     }
 }
