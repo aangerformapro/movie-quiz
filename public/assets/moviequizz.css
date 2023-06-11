@@ -7736,8 +7736,8 @@ body {
   width: var(--fluo-outer-size);
   height: 10rem;
   height: var(--fluo-outer-size);
-  font-size: calc(10rem * 0.375);
-  font-size: calc(var(--fluo-outer-size) * 0.375);
+  font-size: calc(10rem * 0.275);
+  font-size: calc(var(--fluo-outer-size) * 0.275);
   margin: calc(10rem / 6);
   margin: calc(var(--fluo-outer-size) / 6);
   animation: spin 0.5s linear infinite;

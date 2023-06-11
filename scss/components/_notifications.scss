@@ -4,8 +4,12 @@
     .notify-area:not(:empty) {
         pointer-events: none;
         z-index: 2;
-        height: 720px;
+        height: 550px;
         @include flex-center(column);
+
+        @include lg {
+            height: 620px;
+        }
 
         .notification {
             user-select: none;
@@ -30,8 +34,8 @@
             }
         }
 
-        & + .heading {
-            display: none;
-        }
+        // & + .heading {
+        //     display: none;
+        // }
     }
 }

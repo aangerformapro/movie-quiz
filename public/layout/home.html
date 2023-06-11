@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
-
+    <base href="./../">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,8 +38,8 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" crossorigin>
 
-    <link rel="stylesheet" href="./../assets/layout.css">
-    <link rel="stylesheet" href="./../assets/style.css">
+    <link rel="stylesheet" href="./assets/layout.css">
+    <link rel="stylesheet" href="./assets/style.css">
 
     <!-- Scripts -->
 
@@ -48,7 +48,7 @@
         crossorigin="anonymous"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" defer></script>
-    <script defer src="./../assets/layout.js" type="module"></script>
+    <script defer src="./assets/layout.js" type="module"></script>
 
 </head>
 
@@ -57,9 +57,8 @@
     <header class="user-select-none">
         <div class="nav-container w-100 d-flex align-items-center px-2 px-md-5" id="top">
             <a class="logo" href="./" title="Movie Quiz">
-                <img src="./../assets/pictures/m.webp" width="32" height="32" alt="Movie Quiz Logo Mini"
-                    class="d-md-none">
-                <img src="./../assets/pictures/moviequiz.webp" height="32" width="126" alt="Movie Quiz Logo"
+                <img src="./assets/pictures/m.webp" width="32" height="32" alt="Movie Quiz Logo Mini" class="d-md-none">
+                <img src="./assets/pictures/moviequiz.webp" height="32" width="126" alt="Movie Quiz Logo"
                     class="d-none d-md-inline-block">
             </a>
 
@@ -92,18 +91,18 @@
     <main class="app user-select-none">
         <!-- Charge l'image du jeu -->
         <div class="background-picture position-absolute top-0 start-0 end-0">
-            <img src="./../assets/pictures/heading.jpg" alt="affiche du film" class="">
+            <img src="./assets/pictures/heading.jpg" alt="affiche du film" class="">
             <div class="blured position-absolute start-0 end-0 bottom-0"></div>
         </div>
 
-        <div class="notify-area position-absolute top-0 start-0 end-0"><!--
+        <div class="notify-area position-absolute top-0 start-0 end-0">
             <div class="notification">
                 bonne réponse
             </div>
-            <div class="notification">
+            <!-- <div class="notification">
                 mauvaise réponse
-            </div>
-        --></div>
+            </div> -->
+        </div>
 
         <!-- S'affiche apres que le résultat ait été trouvé -->
         <div class="heading p-lg-3">
@@ -112,15 +111,15 @@
             </h3>
 
             <div class="d-flex flex-column flex-lg-row align-items-center">
-                <div class="button-play btn btn-light btn-lg col-12 col-lg-auto">
+                <a href="#" target="_blank" class="button-play btn btn-light btn-lg col-12 col-lg-auto">
                     <i class="bi bi-play-fill"></i>
                     <span>Voir la bande annonce</span>
-                </div>
+                </a>
 
-                <div class="button-infos btn btn-secondary btn-lg col-12 col-lg-auto ms-lg-3 my-3 my-lg-0">
+                <a href="#" class="button-infos btn btn-secondary btn-lg col-12 col-lg-auto ms-lg-3 my-3 my-lg-0">
                     <i class="bi bi-info-circle"></i>
                     <span>Plus d'infos</span>
-                </div>
+                </a>
             </div>
 
         </div>
@@ -129,65 +128,6 @@
 
         <div class="content">
 
-            <div class="media-info">
-
-                <h4>Synopsis</h4>
-
-                <p class="overview">
-                    Renouant avec l'action et le grand spectacle qui ont fait des premiers Transformers un phénomène
-                    mondial il y a 14 ans, Transformers : Rise of The Beasts transportera le public dans une aventure
-                    aux quatre coins du monde au coeur des années 1990. On y découvrira pour la première fois les
-                    Maximals, Predacons et Terrorcons rejoignant l'éternel combat entre les Autobots et les Decepticons.
-                </p>
-            </div>
-
-            <div class="section mx-auto mb-3">
-                <h3 class="my-3">Les acteurs</h3>
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="swiper overflow-x-scroll">
-
-
-
-
-                        <div class="swiper-wrapper d-flex">
-
-                            <div class="swiper-slide m-2">
-                                <div class="poster flat">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
-                                </div>
-                                <div class="actor d-flex flex-column">
-                                    <strong class="actor-name">Keanu Reeves</strong>
-                                    <small class="role">John Wick</small>
-                                </div>
-
-
-
-
-                            </div>
-
-
-
-
-
-
-
-
-
-
-                        </div>
-
-
-                    </div>
-
-                    <div class="chevron-next">
-                        <svg fill="currentColor" class="ng-svg-icon" width="32" height="32">
-                            <use xlink:href="#ng-chevron-right"></use>
-                        </svg>
-                    </div>
-
-
-                </div>
-            </div>
 
 
             <form method="post" id="input-movie-title" name="input-movie-title" class="" novalidate>
@@ -221,6 +161,174 @@
 
             </form>
 
+            <div class="media-info d-flex flex-column">
+
+                <h4 class="my-3">Synopsis</h4>
+
+                <p class="overview">
+                    Renouant avec l'action et le grand spectacle qui ont fait des premiers Transformers un phénomène
+                    mondial il y a 14 ans, Transformers : Rise of The Beasts transportera le public dans une aventure
+                    aux quatre coins du monde au coeur des années 1990. On y découvrira pour la première fois les
+                    Maximals, Predacons et Terrorcons rejoignant l'éternel combat entre les Autobots et les Decepticons.
+                </p>
+            </div>
+
+            <div class="section mx-auto mb-3">
+                <h3 class="my-3">Les acteurs</h3>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="swiper overflow-x-scroll">
+
+
+
+
+                        <div class="swiper-wrapper d-flex">
+
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+                            <div class="swiper-slide m-2">
+                                <div class="poster flat">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
+                                </div>
+                                <div class="actor d-flex flex-column">
+                                    <strong class="actor-name">Keanu Reeves</strong>
+                                    <small class="role">John Wick</small>
+                                </div>
+
+
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="chevron-next">
+                        <svg fill="currentColor" class="ng-svg-icon" width="32" height="32">
+                            <use xlink:href="#ng-chevron-right"></use>
+                        </svg>
+                    </div>
+
+
+                </div>
+            </div>
+
 
             <div class="section mx-auto mb-3">
                 <h3 class="my-3">
@@ -239,7 +347,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -247,7 +355,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -255,7 +363,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -263,7 +371,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -271,7 +379,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -279,7 +387,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -287,7 +395,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -295,7 +403,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -303,7 +411,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -311,7 +419,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -319,7 +427,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -327,7 +435,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -335,7 +443,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -343,7 +451,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -376,7 +484,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -384,7 +492,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -392,7 +500,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -400,7 +508,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -408,7 +516,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -416,7 +524,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -424,7 +532,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -432,7 +540,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -440,7 +548,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -448,7 +556,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -456,7 +564,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -464,7 +572,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -472,7 +580,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -480,7 +588,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>
@@ -488,7 +596,7 @@
 
                                 <div class="title">Le titre du film</div>
                                 <a href="#line-vers-les-details-du-films">
-                                    <img src="./../assets/pictures/poster.webp" alt="poster film">
+                                    <img src="./assets/pictures/poster.webp" alt="poster film">
                                 </a>
 
                             </div>

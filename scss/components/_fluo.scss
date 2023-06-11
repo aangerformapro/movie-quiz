@@ -25,7 +25,7 @@ $_fluo-wheel-gradient: v-add(fluo-wheel-gradient, $fluo-wheel-gradient);
 
         position: relative;
         @include size($_fluo-outer-size);
-        font-size: calc($_fluo-outer-size * 0.375);
+        font-size: calc($_fluo-outer-size * 0.275);
         margin: calc($_fluo-outer-size / 6);
         animation: spin 0.5s linear infinite;
         box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);

@@ -5,6 +5,7 @@
 @use './components/form' as *;
 @use './components/modal' as *;
 @use './components/notifications' as *;
+@use './components/details' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -63,14 +64,8 @@ footer {
 .app {
     width: 100vw;
     margin: 0 auto;
-    // min-height: calc(100vh - 650px);
-
     .content {
         padding: 1rem 2.5vw;
-
-        // @include padding-x(2.5vw);
-        // background-color: $netflix-background;
-        // background-image: $netflix-black-lg;
     }
 }
 
@@ -79,8 +74,6 @@ footer {
     user-select: none;
     pointer-events: none;
     padding: 0;
-
-    // aspect-ratio: 16/10;
 
     img {
         position: relative;
@@ -92,18 +85,8 @@ footer {
 
         @include lg {
             aspect-ratio: 16/10;
-
-            // object-fit: contain;
-            // @include margin-x(auto);
-            // height: 650px;
             height: 720px;
-            // max-height: 80vh;
-            // height: 650px;
         }
-
-        // @include xl {
-        //     object-fit: fill;
-        // }
     }
 
     .blured {
@@ -144,7 +127,19 @@ footer {
     // top: 25vh;
     left: 10vw;
 
-    bottom: calc(100vh - 550px);
+    top: 300px;
+
+    @include sm {
+        top: 350px;
+    }
+
+    @include lg {
+        // top: 40vh;
+        // bottom: calc(100vh - 600px);
+        // top: 350px;
+        left: 0;
+        max-width: 50vw;
+    }
 
     .heading-title {
         @include font-size(45px, 900, 48px);
@@ -166,12 +161,6 @@ footer {
             font-size: 32px;
             margin-right: 8px;
         }
-    }
-    @include lg {
-        // top: 40vh;
-        bottom: calc(100vh - 600px);
-        left: 0;
-        max-width: 50vw;
     }
 }
 
@@ -237,3 +226,4 @@ footer {
 }
 
 @include notifications;
+@include details;
