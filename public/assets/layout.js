@@ -1,33 +1,3 @@
-function styleInject(css, ref) {
-  if ( ref === void 0 ) ref = {};
-  var insertAt = ref.insertAt;
-
-  if (!css || typeof document === 'undefined') { return; }
-
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-  style.type = 'text/css';
-
-  if (insertAt === 'top') {
-    if (head.firstChild) {
-      head.insertBefore(style, head.firstChild);
-    } else {
-      head.appendChild(style);
-    }
-  } else {
-    head.appendChild(style);
-  }
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
-var css_248z$1 = "@charset \"UTF-8\";\n/* \n    Dialog Reset and management\n    @link https://www.amp-what.com/unicode/search/close \n    @ling https://wiki.selfhtml.org/wiki/Default-Stylesheet/Firefox\n    🗙 ☐ 🗹  ✔ \n*/\n.ng-dialog {\n  /*\n      Dialog Reset\n  */\n  border: 0;\n  outline: 0;\n  background: transparent;\n  position: initial;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  width: auto;\n  height: auto;\n  position: relative;\n}\n.ng-dialog--form {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  background: #ddd;\n  padding: 0.5em;\n}\n.ng-dialog--form input,\n.ng-dialog--form textarea {\n  -webkit-user-select: text;\n  -ms-user-select: text;\n  user-select: text;\n}\n.ng-dialog--form [type=submit],\n.ng-dialog--form [type=button],\n.ng-dialog--form [type=reset],\n.ng-dialog--form [role=button],\n.ng-dialog--form button {\n  padding: 0.25em 1em;\n  text-transform: capitalize;\n  border: 0;\n  outline: 0;\n  appearance: none;\n  border-radius: 0.25em;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.ng-dialog--form button + button {\n  margin-left: 1vmin;\n}\n.ng-dialog--heading {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.ng-dialog--heading button[value=close] {\n  width: 24px;\n  height: 24px;\n  padding: 0;\n  margin: 0;\n  border-radius: 50%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.ng-dialog--heading h4 {\n  font-size: 18px;\n  font-weight: 600;\n  padding: 0;\n  margin: 0;\n}\n.ng-dialog--contents {\n  padding: 1vmin;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  min-height: 15vmin;\n}\n.ng-dialog--footer {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n}\n.ng-dialog:not([open]) {\n  visibility: hidden;\n  opacity: 0;\n  clip: rect(0, 0, 0, 0);\n  width: 0;\n  height: 0;\n  white-space: nowrap;\n  overflow: hidden;\n}\n.ng-dialog:not([open]) .ng-dialog--form, .ng-dialog.closing .ng-dialog--form {\n  transform: scale(0);\n  opacity: 0;\n}\n.ng-dialog:modal {\n  position: fixed;\n  width: 100vw;\n  min-height: 100vh;\n  overflow-y: scroll;\n  overflow-x: hidden;\n  max-width: none;\n  max-width: initial;\n  max-height: none;\n  max-height: initial;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ng-dialog:modal .ng-dialog--form {\n  min-height: 20vmin;\n  max-width: 100vw;\n  max-height: 100vh;\n  transition-duration: 0.5s;\n  transition-timing-function: ease;\n  transform-origin: center center;\n}\n.ng-dialog.pos-top {\n  align-items: flex-start;\n}\n.ng-dialog.pos-top .ng-dialog--form {\n  margin-top: 10vmax;\n}\n.ng-dialog.pos-bottom {\n  align-items: flex-end;\n}\n.ng-dialog.pos-bottom .ng-dialog--form {\n  margin-bottom: 10vmax;\n}\n.ng-dialog.pos-left {\n  justify-content: flex-start;\n}\n.ng-dialog.pos-left .ng-dialog--form {\n  margin-left: 10vmax;\n}\n.ng-dialog.pos-right {\n  justify-content: flex-end;\n}\n.ng-dialog.pos-right .ng-dialog--form {\n  margin-right: 10vmax;\n}\n.ng-dialog::backdrop {\n  background: rgba(14, 14, 14, 0.5);\n  filter: blur(3px);\n  box-shadow: 0 0 3px 3px rgba(14, 14, 14, 0.5);\n}\n.ng-dialog [hidden] {\n  display: none !important;\n}\n.ng-dialog [disabled] {\n  pointer-events: none;\n  opacity: 0.9;\n}\n@media (min-width: 480px){\n  .ng-dialog--form [type=submit][title]:not([type=button])::after,\n  .ng-dialog--form [type=button][title]:not([type=button])::after,\n  .ng-dialog--form [type=reset][title]:not([type=button])::after,\n  .ng-dialog--form [role=button][title]:not([type=button])::after,\n  .ng-dialog--form button[title]:not([type=button])::after {\n    display: inline-block;\n    content: attr(title);\n  }\n  .ng-dialog:modal .ng-dialog--form {\n    transform: scale(1.2);\n  }\n}";
-styleInject(css_248z$1);
-
 /* global unsafeWindow, globalThis */
 
 
@@ -1587,9 +1557,6 @@ class EventManager
 
 const instance$1 = new EventManager();
 
-var css_248z = ".noscroll\n{\n    position: fixed !important;\n    overflow: hidden !important;\n    width: 100% !important;\n}\n\n.noscroll\n{\n    /* z-index: -1 !important; */\n}\n\n.scrollback\n{\n    scroll-behavior: auto !important;\n}";
-styleInject(css_248z);
-
 const { documentElement } = document;
 
 class NoScroll {
@@ -2090,7 +2057,7 @@ function createDialogBox({
             labelledby: idTitle,
             describedby: idDesc,
         },
-        class: 'ng-dialog',
+        class: 'ng-dialog'
 
     }, [
 
@@ -2118,7 +2085,7 @@ function createDialogBox({
                 ]),
 
 
-                ok = createElement('<button value="ok" title="Ok" type="submit"/>', [
+                ok = createElement('<button value="ok" title="Ok" type="submit" />', [
                     validIcon.element,
                 ]),
 
@@ -2157,6 +2124,72 @@ class Dialog extends HtmlComponent
 {
 
 
+
+    // ------------------ Variants ------------------
+
+    static async prompt(message, defaultValue = null)
+    {
+
+        // .ng-dialog--form-input
+        const dialog = new Dialog(
+            createElement('div', {
+                class: "ng-dialog--form-input",
+            }, [
+                createElement('label', { for: 'value' }, message ?? ''),
+                createElement("input", {
+                    type: 'text',
+                    name: 'value',
+                    value: '',
+                    placeholder: ""
+                })
+            ])
+        );
+
+        return await dialog.showModal(false).then(value =>
+        {
+
+            if (false === value)
+            {
+                return defaultValue;
+            }
+
+            if (isEmpty(value.value))
+            {
+                return defaultValue;
+            }
+
+            return decode(value.value);
+
+        });
+
+    }
+
+
+    static async alert(message = '')
+    {
+
+        const dialog = new Dialog(encode(message));
+
+        dialog.canClose = dialog.canCancel = dialog.backdropCloses = false;
+
+        return await dialog.showModal();
+    }
+
+    static async confirm(message = '')
+    {
+
+        const dialog = new Dialog(encode(message));
+
+        dialog.canClose = dialog.backdropCloses = false;
+
+        return await dialog.showModal();
+    }
+
+
+
+
+
+    // ------------------ Implementation ------------------
     #backdrop;
 
 
@@ -2283,11 +2316,14 @@ class Dialog extends HtmlComponent
         return this.element.open;
     }
 
-
+    get formdata()
+    {
+        return new FormData(this.elements.form);
+    }
 
     elements;
 
-    formdata;
+
 
 
     show()
@@ -2354,6 +2390,12 @@ class Dialog extends HtmlComponent
                 NoScroll.enable().then(() =>
                 {
                     this.element.showModal();
+                    // focus into the first form element or the confirm button
+                    setTimeout(() =>
+                    {
+                        (this.elements.form.querySelector("input") ?? this.elements.ok).focus();
+
+                    }, 650);
                 });
             }
         });
@@ -2399,8 +2441,6 @@ class Dialog extends HtmlComponent
         super(elements.dialog);
 
         this.elements = elements;
-
-        this.formdata = new FormData(elements.form);
         dialogs.add(this);
 
         this.#position = [Position.CENTER];
@@ -2419,7 +2459,7 @@ class Dialog extends HtmlComponent
         }).on('submit', e =>
         {
             e.preventDefault();
-            const data = { ...this.formdata };
+            const data = Object.fromEntries(this.formdata.entries());
             this.close(isEmpty(data) ? true : data);
         }).on('reset', e =>
         {
@@ -2430,7 +2470,7 @@ class Dialog extends HtmlComponent
         }).on('close', e =>
         {
             NoScroll.disable();
-        });
+        }).on('open', console.dir);
 
 
     }
@@ -2440,18 +2480,25 @@ class Dialog extends HtmlComponent
 
 
 
-let d = new Dialog('Voici les règles du jeu.', document.title);
+// let d = new Dialog('Voici les règles du jeu.', document.title);
 
-d.position = [
-    Position.TOP,
-    Position.RIGHT,
-];
-d.canCancel = d.canClose = d.backdropCloses = false;
-d.showModal();
+// d.position = [
+//     Position.TOP,
+//     Position.RIGHT,
+// ];
+// d.canCancel = d.canClose = d.backdropCloses = false;
+// d.showModal();
 
-console.dir(d);
+// console.dir(d);
 
-d.title = 'New Title';
+// d.title = 'New Title';
+
+
+Dialog.prompt('Question').then(v =>
+
+
+    Dialog.alert(v)
+).then(x => Dialog.confirm('Etes vous sur ? ')).then(console.dir);
 
 const burger = document.querySelector(".burger-btn");
 

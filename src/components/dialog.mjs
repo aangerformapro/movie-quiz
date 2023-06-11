@@ -63,7 +63,7 @@ function createDialogBox({
             labelledby: idTitle,
             describedby: idDesc,
         },
-        class: 'ng-dialog',
+        class: 'ng-dialog'
 
     }, [
 
@@ -91,7 +91,7 @@ function createDialogBox({
                 ]),
 
 
-                ok = createElement('<button value="ok" title="Ok" type="submit"/>', [
+                ok = createElement('<button value="ok" title="Ok" type="submit" />', [
                     validIcon.element,
                 ]),
 
@@ -130,6 +130,72 @@ export default class Dialog extends HtmlComponent
 {
 
 
+
+    // ------------------ Variants ------------------
+
+    static async prompt(message, defaultValue = null)
+    {
+
+        // .ng-dialog--form-input
+        const dialog = new Dialog(
+            createElement('div', {
+                class: "ng-dialog--form-input",
+            }, [
+                createElement('label', { for: 'value' }, message ?? ''),
+                createElement("input", {
+                    type: 'text',
+                    name: 'value',
+                    value: '',
+                    placeholder: ""
+                })
+            ])
+        );
+
+        return await dialog.showModal(false).then(value =>
+        {
+
+            if (false === value)
+            {
+                return defaultValue;
+            }
+
+            if (isEmpty(value.value))
+            {
+                return defaultValue;
+            }
+
+            return decode(value.value);
+
+        });
+
+    }
+
+
+    static async alert(message = '')
+    {
+
+        const dialog = new Dialog(encode(message));
+
+        dialog.canClose = dialog.canCancel = dialog.backdropCloses = false;
+
+        return await dialog.showModal();
+    }
+
+    static async confirm(message = '')
+    {
+
+        const dialog = new Dialog(encode(message));
+
+        dialog.canClose = dialog.backdropCloses = false;
+
+        return await dialog.showModal();
+    }
+
+
+
+
+
+    // ------------------ Implementation ------------------
     #backdrop;
 
 
@@ -256,11 +322,14 @@ export default class Dialog extends HtmlComponent
         return this.element.open;
     }
 
-
+    get formdata()
+    {
+        return new FormData(this.elements.form);
+    }
 
     elements;
 
-    formdata;
+
 
 
     show()
@@ -327,6 +396,12 @@ export default class Dialog extends HtmlComponent
                 NoScroll.enable().then(() =>
                 {
                     this.element.showModal();
+                    // focus into the first form element or the confirm button
+                    setTimeout(() =>
+                    {
+                        (this.elements.form.querySelector("input") ?? this.elements.ok).focus();
+
+                    }, 650);
                 });
             }
         });
@@ -372,8 +447,6 @@ export default class Dialog extends HtmlComponent
         super(elements.dialog);
 
         this.elements = elements;
-
-        this.formdata = new FormData(elements.form);
         dialogs.add(this);
 
         this.#position = [Position.CENTER];
@@ -392,7 +465,7 @@ export default class Dialog extends HtmlComponent
         }).on('submit', e =>
         {
             e.preventDefault();
-            const data = { ...this.formdata };
+            const data = Object.fromEntries(this.formdata.entries());
             this.close(isEmpty(data) ? true : data);
         }).on('reset', e =>
         {
@@ -403,7 +476,7 @@ export default class Dialog extends HtmlComponent
         }).on('close', e =>
         {
             NoScroll.disable();
-        });
+        }).on('open', console.dir);
 
 
     }
@@ -413,15 +486,22 @@ export default class Dialog extends HtmlComponent
 
 
 
-let d = new Dialog('Voici les règles du jeu.', document.title);
+// let d = new Dialog('Voici les règles du jeu.', document.title);
 
-d.position = [
-    Position.TOP,
-    Position.RIGHT,
-];
-d.canCancel = d.canClose = d.backdropCloses = false;
-d.showModal();
+// d.position = [
+//     Position.TOP,
+//     Position.RIGHT,
+// ];
+// d.canCancel = d.canClose = d.backdropCloses = false;
+// d.showModal();
 
-console.dir(d);
+// console.dir(d);
 
-d.title = 'New Title';
+// d.title = 'New Title';
+
+
+Dialog.prompt('Question').then(v =>
+
+
+    Dialog.alert(v)
+).then(x => Dialog.confirm('Etes vous sur ? ')).then(console.dir);

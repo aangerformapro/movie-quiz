@@ -4,12 +4,12 @@
     @ling https://wiki.selfhtml.org/wiki/Default-Stylesheet/Firefox
     🗙 ☐ 🗹  ✔ 
 */
-
+// @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 .ng-dialog {
     /*
         Dialog Reset
     */
-
+    font-family: 'Poppins', 'Roboto', sans-serif;
     border: 0;
     outline: 0;
     background: transparent;
@@ -37,6 +37,12 @@
             user-select: text;
         }
 
+        label {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        //   Default firefox buttons without borders
         [type='submit'],
         [type='button'],
         [type='reset'],
@@ -53,6 +59,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
+
+            color: #0c0c0d;
+            background-color: rgba(12, 12, 13, 0.1);
+
+            cursor: pointer;
+
+            &:hover:not(:disabled),
+            &:focus:not(:disabled) {
+                background-color: rgba(12, 12, 13, 0.2);
+            }
+
+            &:active:not(:disabled) {
+                background-color: rgba(12, 12, 13, 0.3);
+            }
+
+            &:disabled {
+                color: #b1b1b3;
+                cursor: default;
+            }
 
             @media (min-width: 480px) {
                 &[title]:not([type='button'])::after {
@@ -138,6 +163,7 @@
         user-select: none;
         .ng-dialog--form {
             min-height: 20vmin;
+            min-width: 30vmin;
             max-width: 100vw;
             max-height: 100vh;
             transition-duration: 0.5s;
@@ -185,6 +211,24 @@
         -webkit-filter: blur(3px);
         filter: blur(3px);
         box-shadow: 0 0 3px 3px rgba(14, 14, 14, 0.5);
+    }
+
+    .ng-dialog--form-input {
+        display: flex;
+        flex-direction: column;
+        label + input {
+            margin: 0.25em 0;
+        }
+
+        &-inline {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            align-items: center;
+            label + input {
+                margin: 0 0.5em 0 0;
+            }
+        }
     }
 
     [hidden] {

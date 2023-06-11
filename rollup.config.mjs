@@ -14,7 +14,7 @@ const
     prod = !process.env.ROLLUP_WATCH,
     inputdir = 'src', outputdir = 'public/assets',
     plugins = [
-        postcss(),
+        postcss({ extract: true }),
         resolve({
             moduleDirectories: ['node_modules'],
             extensions: ['.js', '.mjs', '.cjs'],
