@@ -119,4 +119,22 @@
         //     border-radius: 8px;
         // }
     }
+
+    // display: flex;
+    // justify-content: space-between;
+    // align-items: center;
+
+    .chevron-next {
+        display: none;
+
+        &.swiper-button-disabled {
+            color: $netflix-gray;
+            pointer-events: none;
+        }
+
+        @include lg {
+            @include flex-center;
+            margin-left: 16px;
+        }
+    }
 }

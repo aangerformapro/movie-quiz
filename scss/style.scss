@@ -83,13 +83,18 @@ footer {
     // aspect-ratio: 16/10;
 
     img {
+        position: relative;
+        z-index: -3;
         object-fit: cover;
         object-position: center;
         width: 100vw;
         height: 550px;
-        @include lg {
-            aspect-ratio: 16/9;
 
+        @include lg {
+            aspect-ratio: 16/10;
+
+            // object-fit: contain;
+            // @include margin-x(auto);
             // height: 650px;
             height: 720px;
             // max-height: 80vh;
@@ -100,9 +105,23 @@ footer {
         //     object-fit: fill;
         // }
     }
+
+    .blured {
+        z-index: -2;
+        height: 30px;
+        @include lg {
+            height: 100px;
+        }
+    }
 }
 
+.blured {
+    background: rgba(14, 14, 14, 0.5);
+    filter: blur(3px);
+    box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.5);
+}
 .blured-background {
+    @extend .blured;
     position: absolute;
 
     left: 0;
@@ -111,9 +130,6 @@ footer {
     z-index: -1;
     pointer-events: none;
 
-    background: rgba(14, 14, 14, 0.5);
-    filter: blur(3px);
-    box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.5);
     top: 520px;
     height: 30px;
     @include lg {

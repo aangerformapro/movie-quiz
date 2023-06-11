@@ -1,6 +1,6 @@
 .noscroll
 {
-    position: fixed !important;
+    /* position: fixed !important; */
     overflow: hidden !important;
     width: 100% !important;
     padding-right: 8px !important;

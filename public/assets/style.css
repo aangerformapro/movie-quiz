@@ -108,10 +108,21 @@ footer {
   padding: 0;
 }
 .background-picture img {
+  position: relative;
+  z-index: -3;
   object-fit: cover;
   object-position: center;
   width: 100vw;
   height: 550px;
+}
+.background-picture .blured, .background-picture .blured-background {
+  z-index: -2;
+  height: 30px;
+}
+.blured, .blured-background {
+  background: rgba(14, 14, 14, 0.5);
+  filter: blur(3px);
+  box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.5);
 }
 .blured-background {
   position: absolute;
@@ -119,9 +130,6 @@ footer {
   right: 0;
   z-index: -1;
   pointer-events: none;
-  background: rgba(14, 14, 14, 0.5);
-  filter: blur(3px);
-  box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.5);
   top: 520px;
   height: 30px;
 }
@@ -318,6 +326,14 @@ footer {
 }
 .poster.not-found img {
   filter: grayscale(70%);
+}
+.chevron-next {
+  display: none;
+}
+.chevron-next.swiper-button-disabled {
+  color: rgb(163, 163, 163);
+  color: var(--netflix-gray);
+  pointer-events: none;
 }
 #input-movie-title {
   min-height: 78px;
@@ -601,8 +617,11 @@ footer {
     height: 620px;
   }
   .background-picture img {
-    aspect-ratio: 16/9;
+    aspect-ratio: 16/10;
     height: 720px;
+  }
+  .background-picture .blured, .background-picture .blured-background {
+    height: 100px;
   }
   .blured-background {
     top: 620px;
@@ -632,6 +651,13 @@ footer {
   }
   .poster:hover .title {
     font-size: 18px;
+  }
+  .chevron-next {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-left: 16px;
   }
   #input-movie-title .form--input {
     flex-direction: row;
