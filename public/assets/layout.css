@@ -207,7 +207,7 @@
   pointer-events: none;
   opacity: 0.9;
 }
-@media (min-width: 992px){
+@media (min-width: 768px){
   .ng-dialog--form [type=submit][title]:not([type=button])::after,
   .ng-dialog--form [type=button][title]:not([type=button])::after,
   .ng-dialog--form [type=reset][title]:not([type=button])::after,
@@ -216,6 +216,8 @@
     display: inline-block;
     content: attr(title);
   }
+}
+@media (min-width: 992px){
   .ng-dialog:modal .ng-dialog--form {
     transform: scale(1.2);
   }

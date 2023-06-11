@@ -32,6 +32,7 @@
 
         max-width: 96px;
         height: 144px;
+        box-shadow: 0 0 4px 4px rgba(24, 24, 24, 0.8);
 
         @include md {
             max-width: 128px;
@@ -43,12 +44,15 @@
             height: 256px;
         }
 
-        box-shadow: 0 0 4px 4px rgba(24, 24, 24, 0.8);
         img {
             object-fit: cover;
             object-position: center center;
 
             @include size(100%);
+        }
+
+        &.flat {
+            border-radius: 0;
         }
 
         .title {
@@ -64,20 +68,25 @@
             // visibility: hidden;
             @include flex-center;
             color: rgba(254, 252, 248, 0.8);
-            background: rgba(229, 9, 20, 0.2);
+            background: rgba(54, 54, 54, 0.3);
+            // background: rgba(229, 9, 20, 0.2);
             z-index: 2;
+            opacity: 0;
 
             transition: height 0.5s ease, color 0.5s ease 0.25s, background 0.5s ease 0.5s, border 0.25s ease 0.25s;
         }
-        &:hover {
-            box-shadow: 0 0 4px 4px rgba(226, 227, 229, 0.8);
+        &.swiper-slide:hover {
+            // box-shadow: 0 0 4px 4px rgba(226, 227, 229, 0.8);
+            box-shadow: 0 0 4px 4px rgba($netflix-red-hover-rgb, 0.3);
 
             .title {
                 // color: $netflix-white-hover;
+                opacity: 1;
                 @include font-size(14px, 600);
                 height: 100%;
                 color: rgba(254, 252, 248, 1);
-                background: rgba(229, 9, 20, 0.4);
+                // background: rgba(229, 9, 20, 0.4);
+                background: rgba(54, 54, 54, 0.4);
                 border-radius: 8px;
 
                 overflow: hidden;
@@ -88,6 +97,12 @@
             }
             &::before {
                 background-color: rgba(254, 252, 248, 0.2);
+            }
+        }
+
+        &.swiper-slide:active {
+            .title {
+                background: rgba(24, 24, 24, 0.5);
             }
         }
 
@@ -114,15 +129,7 @@
                 filter: grayscale(70%);
             }
         }
-
-        // .swiper-wrapper {
-        //     border-radius: 8px;
-        // }
     }
-
-    // display: flex;
-    // justify-content: space-between;
-    // align-items: center;
 
     .chevron-next {
         display: none;

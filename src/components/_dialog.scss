@@ -79,7 +79,7 @@
                 cursor: default;
             }
 
-            @media (min-width: 992px) {
+            @media (min-width: 768px) {
                 &[title]:not([type='button'])::after {
                     display: inline-block;
                     content: attr(title);
