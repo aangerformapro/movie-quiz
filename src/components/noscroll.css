@@ -3,6 +3,7 @@
     position: fixed !important;
     overflow: hidden !important;
     width: 100% !important;
+    padding-right: 8px !important;
     /* z-index: -1 !important; */
 }
 

@@ -483,25 +483,3 @@ export default class Dialog extends HtmlComponent
 
 
 }
-
-
-
-// let d = new Dialog('Voici les règles du jeu.', document.title);
-
-// d.position = [
-//     Position.TOP,
-//     Position.RIGHT,
-// ];
-// d.canCancel = d.canClose = d.backdropCloses = false;
-// d.showModal();
-
-// console.dir(d);
-
-// d.title = 'New Title';
-
-
-Dialog.prompt('Question').then(v =>
-
-
-    Dialog.alert(v)
-).then(x => Dialog.confirm('Etes vous sur ? ')).then(console.dir);

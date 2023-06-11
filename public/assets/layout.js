@@ -2478,41 +2478,6 @@ class Dialog extends HtmlComponent
 
 }
 
-
-
-// let d = new Dialog('Voici les règles du jeu.', document.title);
-
-// d.position = [
-//     Position.TOP,
-//     Position.RIGHT,
-// ];
-// d.canCancel = d.canClose = d.backdropCloses = false;
-// d.showModal();
-
-// console.dir(d);
-
-// d.title = 'New Title';
-
-
-Dialog.prompt('Question').then(v =>
-
-
-    Dialog.alert(v)
-).then(x => Dialog.confirm('Etes vous sur ? ')).then(console.dir);
-
-const burger = document.querySelector(".burger-btn");
-
-
-
-burger.addEventListener("click", () =>
-{
-
-    //  burger.classList.toggle('open');
-});
-
-
-
-
 new Swiper('.swiper', {
 
     grabCursor: true,
@@ -2528,28 +2493,20 @@ new Swiper('.swiper', {
 
 
 
-// close.attachTo(document.querySelector('dialog'));
+let regles;
 
-// close.setAttributes({
-//     style: 'height: 90vh;'
-// });
+document.querySelector('.info-btn').addEventListener("click", e =>
+{
+    e.preventDefault();
 
-
-
-// let d = document.querySelector('dialog');
-
-
-// d.showModal();
+    regles ??= new Dialog(
+        `Le joueur doit deviner les noms de films et de séries à partir d'images grisées<br>en tappant le nom dans la zone dédiée.`,
+        `Comment Jouer`
+    );
 
 
-// dialogPolyfill.forceRegisterDialog(d);
-
-// d.showModal();
-
-// console.dir(d);
-
-// d.onclick = e => console.dir(e);
-
-// d.showModal();
-// d.show();
+    regles.canCancel = false;
+    regles.position = Position.TOP;
+    regles.showModal();
+});
 //# sourceMappingURL=layout.js.map

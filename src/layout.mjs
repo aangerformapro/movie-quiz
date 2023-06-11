@@ -1,15 +1,6 @@
 
-import "./components/dialog.mjs";
-import { close } from './components/sprite.mjs';
-const burger = document.querySelector(".burger-btn");
+import Dialog, { Position } from "./components/dialog.mjs";
 
-
-
-burger.addEventListener("click", () =>
-{
-
-    //  burger.classList.toggle('open');
-});
 
 
 
@@ -29,27 +20,24 @@ const swiper = new Swiper('.swiper', {
 
 
 
-// close.attachTo(document.querySelector('dialog'));
+let regles;
 
-// close.setAttributes({
-//     style: 'height: 90vh;'
-// });
+document.querySelector('.info-btn').addEventListener("click", e =>
+{
+    e.preventDefault();
 
-
-
-// let d = document.querySelector('dialog');
-
-
-// d.showModal();
+    regles ??= new Dialog(
+        `Le joueur doit deviner les noms de films et de séries à partir d'images grisées<br>en tappant le nom dans la zone dédiée.`,
+        `Comment Jouer`
+    );
 
 
-// dialogPolyfill.forceRegisterDialog(d);
+    regles.canCancel = false;
+    regles.position = Position.TOP;
+    regles.showModal();
+});
 
-// d.showModal();
 
-// console.dir(d);
 
-// d.onclick = e => console.dir(e);
 
-// d.showModal();
-// d.show();
+

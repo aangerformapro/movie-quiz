@@ -15,19 +15,23 @@ $_netflix-red-hover-rgb: 244, 6, 18;
 $_netflix-black-rgb: 24, 24, 24;
 $_netflix-white-rgb: 254, 252, 248;
 $_netflix-gray-rgb: 163, 163, 163;
+$_netflix-black-lg: linear-gradient(90deg, rgba(51, 51, 51, 1) 5%, rgba(24, 24, 24, 1) 95%);
+$_netflix-red-lg: linear-gradient(180deg, rgba(229, 9, 20, 1), rgba(219, 5, 16, 1));
 
 $netflix-colors: (
-    netflix-red: rgb(229, 9, 20),
-    netflix-red-hover: rgb(244, 6, 18),
+    netflix-red: $_netflix-red,
+    netflix-red-hover: $_netflix-red-hover,
     netflix-black: rgb(24, 24, 24),
-    netflix-white: rgb(254, 252, 248),
-    netflix-gray: rgb(163, 163, 163),
-    netflix-background: rgb(24, 24, 24),
+    netflix-white: $_netflix-black,
+    netflix-gray: $_netflix-gray,
+    netflix-background: $_netflix-background,
     netflix-red-rgb: $_netflix-red-rgb,
     netflix-red-hover-rgb: $_netflix-red-hover-rgb,
     netflix-black-rgb: $_netflix-black-rgb,
     netflix-white-rgb: $_netflix-white-rgb,
     netflix-gray-rgb: $_netflix-gray-rgb,
+    netflix-black-lg: $_netflix-black-lg,
+    netflix-red-lg: $_netflix-red-lg,
 );
 
 $netflix-red: v-add('netflix-red', $_netflix-red);
@@ -41,6 +45,9 @@ $netflix-red-hover-rgb: v-add('netflix-red-hover-rgb', $_netflix-red-hover-rgb);
 $netflix-black-rgb: v-add('netflix-black-rgb', $_netflix-black-rgb);
 $netflix-white-rgb: v-add('netflix-white-rgb', $_netflix-white-rgb);
 $netflix-gray-rgb: v-add('netflix-gray-rgb', $_netflix-gray-rgb);
+$netflix-black-lg: v-add('netflix-black-lg', $_netflix-black-lg);
+$netflix-red-lg: v-add('netflix-red-lg', $_netflix-red-lg);
+// 182, 6 , 14
 
 // https://colorswall.com/palette/154112
 $cyberpunk-cyan: #02d7f2;

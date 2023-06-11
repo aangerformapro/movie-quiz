@@ -12,6 +12,8 @@
   --netflix-black-rgb: 24, 24, 24;
   --netflix-white-rgb: 254, 252, 248;
   --netflix-gray-rgb: 163, 163, 163;
+  --netflix-black-lg: linear-gradient(90deg, rgb(51, 51, 51) 5%, rgb(24, 24, 24) 95%);
+  --netflix-red-lg: linear-gradient(180deg, rgb(229, 9, 20), rgb(219, 5, 16));
 }
 @keyframes blink {
   from, 50% {

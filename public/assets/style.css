@@ -11,6 +11,8 @@
   --netflix-black-rgb: 24, 24, 24;
   --netflix-white-rgb: 254, 252, 248;
   --netflix-gray-rgb: 163, 163, 163;
+  --netflix-black-lg: linear-gradient(90deg, rgb(51, 51, 51) 5%, rgb(24, 24, 24) 95%);
+  --netflix-red-lg: linear-gradient(180deg, rgb(229, 9, 20), rgb(219, 5, 16));
 }
 *,
 *::after,
@@ -27,8 +29,10 @@ html {
 body {
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
-  background: rgb(24, 24, 24);
-  background: var(--netflix-background);
+  background-color: rgb(24, 24, 24);
+  background-color: var(--netflix-background);
+  background-image: linear-gradient(90deg, rgb(51, 51, 51) 5%, rgb(24, 24, 24) 95%);
+  background-image: var(--netflix-black-lg);
   color: rgb(254, 252, 248);
   color: var(--netflix-white);
   overflow-x: hidden;
@@ -37,6 +41,7 @@ body {
   height: 64px;
   position: absolute;
   top: 0;
+  z-index: 3;
   font-size: 18px;
 }
 #top .logo img {
@@ -69,8 +74,17 @@ body {
   font-weight: 600;
   color: rgb(254, 252, 248);
 }
+#top .info-btn {
+  color: rgb(254, 252, 248);
+  color: var(--netflix-white);
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+#top .info-btn.active, #top .info-btn:hover {
+  color: rgb(254, 252, 248);
+}
 header {
-  height: 40vh;
+  height: 550px;
   position: relative;
 }
 footer {
@@ -81,11 +95,9 @@ footer {
 .app {
   width: 100vw;
   margin: 0 auto;
-  min-height: 60vh;
 }
-.app > * {
-  padding-left: 2.5vw;
-  padding-right: 2.5vw;
+.app .content {
+  padding: 1rem 2.5vw;
 }
 .background-picture {
   z-index: -3;
@@ -97,20 +109,26 @@ footer {
 }
 .background-picture img {
   object-fit: cover;
-  object-position: top left;
-  height: 720px;
+  object-position: center;
+  width: 100vw;
+  height: 550px;
 }
 .blured-background {
   position: absolute;
-  top: 38vh;
   left: 0;
   right: 0;
-  height: calc(100% - 38vh);
   z-index: -1;
   pointer-events: none;
   background: rgba(14, 14, 14, 0.5);
   filter: blur(3px);
   box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.5);
+  top: 520px;
+  height: 30px;
+}
+.heading {
+  position: absolute;
+  left: 10vw;
+  bottom: calc(100vh - 550px);
 }
 .heading .heading-title {
   font-size: 45px;
@@ -216,8 +234,6 @@ footer {
 }
 .section {
   overflow: hidden;
-  background: rgb(24, 24, 24);
-  background: var(--netflix-black);
   padding-top: 2vh;
   padding-bottom: 2vh;
 }
@@ -427,6 +443,12 @@ footer {
   background-color: rgb(244, 6, 18);
   background-color: var(--netflix-red-hover);
 }
+#input-movie-title .input--group input[disabled],
+#input-movie-title .input--group textarea[disabled],
+#input-movie-title .input--group button[disabled] {
+  color: rgb(163, 163, 163);
+  color: var(--netflix-gray);
+}
 #input-movie-title .input--group textarea {
   resize: none;
 }
@@ -436,7 +458,7 @@ footer {
   min-width: 320px;
 }
 #input-movie-title .input--mix .input--group {
-  width: 66%;
+  width: calc(66% - 1px);
 }
 #input-movie-title .input--mix .input--group + .input--group {
   width: 33%;
@@ -450,14 +472,105 @@ footer {
 #input-movie-title .input--mix:hover .input--bar:before {
   width: 100%;
 }
-#input-movie-title .input--mix:hover .input--placeholder {
-  color: #2196f3 !important;
-}
 #input-movie-title .btn-submit {
   width: 48px !important;
 }
 #input-movie-title .input-text {
   width: calc(100% - 48px) !important;
+}
+.ng-dialog--form {
+  color: rgb(254, 252, 248);
+  color: var(--netflix-white);
+  background-color: rgba(24, 24, 24, 0.8);
+  background-color: rgba(var(--netflix-black-rgb), 0.8);
+  background-image: linear-gradient(90deg, rgba(51, 51, 51, 0.8) 5%, rgba(24, 24, 24, 0.8) 95%);
+}
+.ng-dialog--form [type=submit],
+.ng-dialog--form [type=button],
+.ng-dialog--form [type=reset],
+.ng-dialog--form [role=button],
+.ng-dialog--form button {
+  background: rgba(24, 24, 24, 1) !important;
+  background: rgba(var(--netflix-black-rgb), 1) !important;
+  color: rgb(254, 252, 248) !important;
+  color: var(--netflix-white) !important;
+}
+.ng-dialog--form [type=submit]:hover, .ng-dialog--form [type=submit]:focus,
+.ng-dialog--form [type=button]:hover,
+.ng-dialog--form [type=button]:focus,
+.ng-dialog--form [type=reset]:hover,
+.ng-dialog--form [type=reset]:focus,
+.ng-dialog--form [role=button]:hover,
+.ng-dialog--form [role=button]:focus,
+.ng-dialog--form button:hover,
+.ng-dialog--form button:focus {
+  background: rgba(244, 6, 18, 0.7) !important;
+  background: rgba(var(--netflix-red-hover-rgb), 0.7) !important;
+}
+.ng-dialog--form [type=submit]:hover, .ng-dialog--form [type=submit]:focus,
+.ng-dialog--form [type=button]:hover,
+.ng-dialog--form [type=button]:focus,
+.ng-dialog--form [type=reset]:hover,
+.ng-dialog--form [type=reset]:focus,
+.ng-dialog--form [role=button]:hover,
+.ng-dialog--form [role=button]:focus,
+.ng-dialog--form button:hover,
+.ng-dialog--form button:focus {
+  box-shadow: 1px 0 rgba(0, 0, 0, 0.45);
+}
+.ng-dialog--form [type=submit]:focus,
+.ng-dialog--form [type=button]:focus,
+.ng-dialog--form [type=reset]:focus,
+.ng-dialog--form [role=button]:focus,
+.ng-dialog--form button:focus {
+  box-shadow: 0 0 0 0.085em rgb(133, 5, 11);
+}
+.ng-dialog--form [type=submit]:active,
+.ng-dialog--form [type=button]:active,
+.ng-dialog--form [type=reset]:active,
+.ng-dialog--form [role=button]:active,
+.ng-dialog--form button:active {
+  background: rgba(244, 6, 18, 0.8) !important;
+  background: rgba(var(--netflix-red-hover-rgb), 0.8) !important;
+}
+.ng-dialog--form [type=submit]:active,
+.ng-dialog--form [type=button]:active,
+.ng-dialog--form [type=reset]:active,
+.ng-dialog--form [role=button]:active,
+.ng-dialog--form button:active {
+  box-shadow: 1px 0 rgba(0, 0, 0, 0.45);
+}
+.notify-area:not(:empty) {
+  pointer-events: none;
+  z-index: 2;
+  height: 720px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.notify-area:not(:empty) .notification {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #fff;
+  text-transform: uppercase;
+  min-width: 90vw;
+  padding: 1vmin;
+  font-size: 35px;
+  line-height: 48px;
+  font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(182, 6, 14);
+}
+.notify-area:not(:empty) .notification + .notification {
+  margin-top: 1rem;
+}
+.notify-area:not(:empty) + .heading {
+  display: none;
 }
 @media (min-width: 768px){
   #top .logo img {
@@ -484,8 +597,16 @@ footer {
     left: 15%;
     right: 15%;
   }
+  header {
+    height: 620px;
+  }
   .background-picture img {
-    width: 100vw;
+    aspect-ratio: 16/9;
+    height: 720px;
+  }
+  .blured-background {
+    top: 620px;
+    height: 100px;
   }
   .heading .heading-title {
     width: 50vw;
@@ -494,6 +615,8 @@ footer {
     font-weight: 900;
   }
   .heading {
+    bottom: calc(100vh - 600px);
+    left: 0;
     max-width: 50vw;
   }
   .mobile-only {
@@ -521,15 +644,21 @@ footer {
     margin-left: 16px;
     margin-top: 0;
   }
+  .notify-area:not(:empty) .notification {
+    min-width: 50vw;
+    font-size: 45px;
+    line-height: 78px;
+    font-weight: 900;
+  }
 }
 @media (max-width: 992px){
   #top .nav {
     position: fixed;
     bottom: 0;
     z-index: 4;
-    width: 50vw;
-    right: -100vw;
-    height: calc(100vh - 128px);
+    width: 100vw;
+    right: -105vw;
+    height: calc(100vh - 70px);
     background: rgb(24, 24, 24);
     background: var(--netflix-black);
     box-shadow: 0 0 4px 4px rgba(14, 14, 14, 0.5);

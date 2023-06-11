@@ -45,3 +45,35 @@ $gradient-bottom-right: linear-gradient(135deg, #c33c54ff, #933749ff, #62313dff,
 $gradient-top-left: linear-gradient(225deg, #c33c54ff, #933749ff, #62313dff, #312c32ff, #002626ff);
 $gradient-bottom-left: linear-gradient(315deg, #c33c54ff, #933749ff, #62313dff, #312c32ff, #002626ff);
 $gradient-radial: radial-gradient(#c33c54ff, #933749ff, #62313dff, #312c32ff, #002626ff);
+
+// btn Netfix style
+
+%btn-red,
+.btn-red {
+    background-color: rgba(230, 10, 21, 1);
+    background-image: linear-gradient(180deg, rgba(229, 9, 20, 1), rgba(219, 5, 16, 1));
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+    color: #fff;
+
+    &:hover,
+    &:focus {
+        background-color: rgba(244, 6, 18, 1);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 0.085em rgba(133, 5, 11, 1);
+    }
+
+    &.active,
+    &:active {
+        background: rgba(187, 10, 18, 1);
+    }
+
+    &.disabled,
+    &[disabled] {
+        background-color: #e50914;
+        background-image: linear-gradient(180deg, rgba(229, 9, 20, 1), rgba(219, 5, 16, 1));
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+    }
+}

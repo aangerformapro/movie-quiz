@@ -135,18 +135,12 @@
             &.invalid ~ .input--bar:before {
                 background-color: $invalid-color;
             }
+
+            &[disabled] {
+                color: $netflix-gray;
+                // border-bottom-color: transparent;
+            }
         }
-
-        // &:hover {
-        //     .input--bar:before {
-        //         background: $hov-color !important;
-        //         width: 100%;
-        //     }
-
-        //     .input--placeholder {
-        //         color: $hov-color !important;
-        //     }
-        // }
 
         textarea {
             resize: none;
@@ -160,9 +154,10 @@
         max-width: 100%;
         min-width: 320px;
         .input--group {
-            width: 66%;
+            width: calc(66% - 1px);
 
             & + .input--group {
+                // border-right: 2px solid $muted-color;
                 width: 33%;
             }
         }
@@ -179,9 +174,9 @@
                 width: 100%;
             }
 
-            .input--placeholder {
-                color: $hl-color !important;
-            }
+            // .input--placeholder {
+            //     color: $hl-color !important;
+            // }
         }
     }
 }

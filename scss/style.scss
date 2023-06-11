@@ -4,9 +4,11 @@
 @use './components/nav' as *;
 @use './components/form' as *;
 @use './components/modal' as *;
+@use './components/notifications' as *;
 
 @include simple-reset {
-    background: $netflix-background;
+    background-color: $netflix-background;
+    background-image: $netflix-black-lg;
     color: $netflix-white;
     overflow-x: hidden;
 }
@@ -15,7 +17,7 @@
     height: 64px;
     position: absolute;
     top: 0;
-    // z-index: 2;
+    z-index: 3;
     .logo {
         img {
             height: 32px;
@@ -47,8 +49,11 @@
 }
 
 header {
-    height: 40vh;
+    height: 550px;
     position: relative;
+    @include lg {
+        height: 620px;
+    }
 }
 
 footer {
@@ -58,10 +63,14 @@ footer {
 .app {
     width: 100vw;
     margin: 0 auto;
-    min-height: 60vh;
+    // min-height: calc(100vh - 650px);
 
-    & > * {
-        @include padding-x(2.5vw);
+    .content {
+        padding: 1rem 2.5vw;
+
+        // @include padding-x(2.5vw);
+        // background-color: $netflix-background;
+        // background-image: $netflix-black-lg;
     }
 }
 
@@ -71,23 +80,33 @@ footer {
     pointer-events: none;
     padding: 0;
 
+    // aspect-ratio: 16/10;
+
     img {
         object-fit: cover;
-        object-position: top left;
-
-        height: 720px;
+        object-position: center;
+        width: 100vw;
+        height: 550px;
         @include lg {
-            width: 100vw;
+            aspect-ratio: 16/9;
+
+            // height: 650px;
+            height: 720px;
+            // max-height: 80vh;
+            // height: 650px;
         }
+
+        // @include xl {
+        //     object-fit: fill;
+        // }
     }
 }
 
 .blured-background {
     position: absolute;
-    top: 38vh;
+
     left: 0;
     right: 0;
-    height: calc(100% - 38vh);
 
     z-index: -1;
     pointer-events: none;
@@ -95,9 +114,22 @@ footer {
     background: rgba(14, 14, 14, 0.5);
     filter: blur(3px);
     box-shadow: 0 0 2px 2px rgba(14, 14, 14, 0.5);
+    top: 520px;
+    height: 30px;
+    @include lg {
+        top: 620px;
+        height: 100px;
+    }
 }
 
 .heading {
+    position: absolute;
+
+    // top: 25vh;
+    left: 10vw;
+
+    bottom: calc(100vh - 550px);
+
     .heading-title {
         @include font-size(45px, 900, 48px);
 
@@ -120,6 +152,9 @@ footer {
         }
     }
     @include lg {
+        // top: 40vh;
+        bottom: calc(100vh - 600px);
+        left: 0;
         max-width: 50vw;
     }
 }
@@ -153,5 +188,36 @@ footer {
     }
 }
 
-// @include modal;
-// @debug v-add-map($netflix-colors);
+// dialog overrides
+.ng-dialog {
+    &--form {
+        color: $netflix-white;
+        background-color: rgba($netflix-black-rgb, 0.8);
+        background-image: linear-gradient(90deg, rgba(51, 51, 51, 0.8) 5%, rgba(24, 24, 24, 0.8) 95%);
+
+        [type='submit'],
+        [type='button'],
+        [type='reset'],
+        [role='button'],
+        button {
+            background: rgba($netflix-black-rgb, 1) !important;
+            color: $netflix-white !important;
+            &:hover,
+            &:focus {
+                box-shadow: 1px 0 rgba(0, 0, 0, 0.45);
+                background: rgba($netflix-red-hover-rgb, 0.7) !important;
+            }
+
+            &:focus {
+                box-shadow: 0 0 0 0.085em rgba(133, 5, 11, 1);
+            }
+
+            &:active {
+                box-shadow: 1px 0 rgba(0, 0, 0, 0.45);
+                background: rgba($netflix-red-hover-rgb, 0.8) !important;
+            }
+        }
+    }
+}
+
+@include notifications;

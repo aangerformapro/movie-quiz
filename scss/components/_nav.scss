@@ -35,16 +35,26 @@
         }
     }
 
+    .info-btn {
+        color: $netflix-white;
+        text-decoration: none;
+        &.active,
+        &:hover {
+            // font-weight: 600;
+            color: rgba(254, 252, 248, 1);
+        }
+    }
+
     @include lg-down {
         .nav {
             position: fixed;
             bottom: 0;
 
             z-index: 4;
-            width: 50vw;
-            right: -100vw;
+            width: 100vw;
+            right: -105vw;
 
-            height: calc(100vh - 128px);
+            height: calc(100vh - 70px);
             background: $netflix-black;
             box-shadow: 0 0 4px 4px rgba(14, 14, 14, 0.5);
             border-radius: 4px;
