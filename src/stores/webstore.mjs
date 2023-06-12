@@ -1,4 +1,4 @@
-import { uuidv4, encode, decode, isString } from "../utils/utils.mjs";
+import { uuidv4, encode, decode, isString } from "../helpers/utils.mjs";
 import { DataStore } from "./datastore.mjs";
 
 
@@ -66,7 +66,7 @@ export class WebStore extends DataStore
     getItem(/** @type {string} */name, defaultValue = null)
     {
 
-        let value = store.getItem(this.key(name));
+        let value = this.store.getItem(this.key(name));
 
         if (!isString(value))
         {
@@ -78,14 +78,13 @@ export class WebStore extends DataStore
 
     setItem(/** @type {string} */name, value)
     {
-
         if (value === null)
         {
-            store.removeItem(this.key(name));
+            this.store.removeItem(this.key(name));
         }
         else
         {
-            store.setItem(this.key(name), encode(value));
+            this.store.setItem(this.key(name), encode(value));
         }
 
         return super.setItem(name, value);

@@ -6,14 +6,20 @@ import commonjs from '@rollup/plugin-commonjs';
 import postcss from 'rollup-plugin-postcss';
 import { babel } from '@rollup/plugin-babel';
 import terser from "@rollup/plugin-terser";
-
-
+import svelte from 'rollup-plugin-svelte';
+import json from '@rollup/plugin-json';
 
 
 const
     prod = !process.env.ROLLUP_WATCH,
     inputdir = 'src', outputdir = 'public/assets',
     plugins = [
+        json(),
+        svelte({
+            compilerOptions: {
+                dev: !prod
+            }
+        }),
         postcss({ extract: true }),
         resolve({
             moduleDirectories: ['node_modules'],
@@ -62,7 +68,7 @@ if (prod)
 export default inputFiles.map(item => ({
     watch: {
         exclude: 'node_modules/**',
-        include: inputdir + '/**'
+        include: [inputdir + '/**', 'app/**']
     },
     context: 'globalThis',
     input: item.input,

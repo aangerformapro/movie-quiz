@@ -1,0 +1,1537 @@
+{
+    "movies": [
+        {
+            "adult": false,
+            "backdrop_path": "/2e7fc8eNwLXZ5Uvehvl3xj8wVyv.jpg",
+            "belongs_to_collection": {
+                "id": 9485,
+                "name": "Fast & Furious - Saga",
+                "poster_path": "/pbaRxkvGXtC0GFTYxMgEyFGw9RP.jpg",
+                "backdrop_path": "/z5A5W3WYJc3UVEWljSGwdjDgQ0j.jpg"
+            },
+            "budget": 340000000,
+            "genres": [
+                {
+                    "id": 28,
+                    "name": "Action"
+                },
+                {
+                    "id": 80,
+                    "name": "Crime"
+                },
+                {
+                    "id": 53,
+                    "name": "Thriller"
+                }
+            ],
+            "homepage": "",
+            "id": 385687,
+            "imdb_id": "tt5433140",
+            "original_language": "en",
+            "original_title": "Fast X",
+            "overview": "Après bien des missions et contre toute attente, Dom Toretto et sa famille ont su déjouer, devancer, surpasser et distancer tous les adversaires qui ont croisé leur route. Ils sont aujourd’hui face à leur ennemi le plus terrifiant et le plus intime : émergeant des brumes du passé, ce revenant assoiffé de vengeance est bien déterminé à décimer la famille en réduisant à néant tout ce à quoi, et surtout à qui Dom ait jamais tenu.",
+            "popularity": 5973.909,
+            "poster_path": "/7Br9F8EHrtNT2hFgD5oTfDMRgud.jpg",
+            "production_companies": [
+                {
+                    "id": 33,
+                    "logo_path": "/8lvHyhjr8oUKOOy2dKXoALWKdp0.png",
+                    "name": "Universal Pictures",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 333,
+                    "logo_path": "/5xUJfzPZ8jWJUDzYtIeuPO4qPIa.png",
+                    "name": "Original Film",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 1225,
+                    "logo_path": "/rIxhJMR7oK8b2fMakmTfRLY2TZv.png",
+                    "name": "One Race",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 34530,
+                    "logo_path": null,
+                    "name": "Perfect Storm Entertainment",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "release_date": "2023-05-17",
+            "revenue": 652000000,
+            "runtime": 142,
+            "spoken_languages": [
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                },
+                {
+                    "english_name": "Italian",
+                    "iso_639_1": "it",
+                    "name": "Italiano"
+                },
+                {
+                    "english_name": "Portuguese",
+                    "iso_639_1": "pt",
+                    "name": "Português"
+                },
+                {
+                    "english_name": "Spanish",
+                    "iso_639_1": "es",
+                    "name": "Español"
+                }
+            ],
+            "status": "Released",
+            "tagline": "Le début de la dernière course.",
+            "title": "Fast & Furious X",
+            "video": false,
+            "vote_average": 7.371,
+            "vote_count": 1291
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/2I5eBh98Q4aPq8WdQrHdTC8ARhY.jpg",
+            "belongs_to_collection": {
+                "id": 573436,
+                "name": "Spider-Man : New Generation - Saga",
+                "poster_path": "/eD4bGQNfmqExIAzKdvX5gDHhI2.jpg",
+                "backdrop_path": "/14F6gMaRjzgsN6EEpiwH87R1I00.jpg"
+            },
+            "budget": 100000000,
+            "genres": [
+                {
+                    "id": 28,
+                    "name": "Action"
+                },
+                {
+                    "id": 12,
+                    "name": "Aventure"
+                },
+                {
+                    "id": 16,
+                    "name": "Animation"
+                },
+                {
+                    "id": 878,
+                    "name": "Science-Fiction"
+                }
+            ],
+            "homepage": "https://www.sonypictures.fr/film/spider-man-across-the-spider-verse",
+            "id": 569094,
+            "imdb_id": "tt9362722",
+            "original_language": "en",
+            "original_title": "Spider-Man: Across the Spider-Verse",
+            "overview": "Miles Morales revient dans un nouveau chapitre de la franchise oscarisée Spider-Man : New Generation, pour une aventure épique qui entraînera notre héros sympa originaire de Brooklyn, à travers le Multivers pour unir ses forces à celles de Gwen Stacy et une nouvelle équipe de Spider-héros pour faire face au méchant le plus puissant qu'ils n'aient jamais affronté.",
+            "popularity": 3309.344,
+            "poster_path": "/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg",
+            "production_companies": [
+                {
+                    "id": 5,
+                    "logo_path": "/71BqEFAF4V3qjjMPCpLuyJFB9A.png",
+                    "name": "Columbia Pictures",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 2251,
+                    "logo_path": "/5ilV5mH3gxTEU7p5wjxptHvXkyr.png",
+                    "name": "Sony Pictures Animation",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 7505,
+                    "logo_path": "/837VMM4wOkODc1idNxGT0KQJlej.png",
+                    "name": "Marvel Entertainment",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 77973,
+                    "logo_path": "/9y5lW86HnxKUZOFencYk3TIIRCM.png",
+                    "name": "Lord Miller",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 84041,
+                    "logo_path": "/nw4kyc29QRpNtFbdsBHkRSFavvt.png",
+                    "name": "Pascal Pictures",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 14439,
+                    "logo_path": null,
+                    "name": "Arad Productions",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "release_date": "2023-05-31",
+            "revenue": 313522201,
+            "runtime": 140,
+            "spoken_languages": [
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                },
+                {
+                    "english_name": "Hindi",
+                    "iso_639_1": "hi",
+                    "name": "हिन्दी"
+                },
+                {
+                    "english_name": "Italian",
+                    "iso_639_1": "it",
+                    "name": "Italiano"
+                },
+                {
+                    "english_name": "Spanish",
+                    "iso_639_1": "es",
+                    "name": "Español"
+                }
+            ],
+            "status": "Released",
+            "tagline": "Pendant ce temps-là dans un autre autre univers...",
+            "title": "Spider-Man : Across the Spider-Verse",
+            "video": false,
+            "vote_average": 8.794,
+            "vote_count": 1127
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/rH3jY9JN9krUyE0Q3WLNtujMs8.jpg",
+            "belongs_to_collection": {
+                "id": 939352,
+                "name": "Transformers: Rise of the Beasts Collection",
+                "poster_path": null,
+                "backdrop_path": null
+            },
+            "budget": 200000000,
+            "genres": [
+                {
+                    "id": 28,
+                    "name": "Action"
+                },
+                {
+                    "id": 12,
+                    "name": "Aventure"
+                },
+                {
+                    "id": 878,
+                    "name": "Science-Fiction"
+                }
+            ],
+            "homepage": "https://www.paramountpictures.fr/film/transformers-rise-of-the-beasts",
+            "id": 667538,
+            "imdb_id": "tt5090568",
+            "original_language": "en",
+            "original_title": "Transformers: Rise of the Beasts",
+            "overview": "Renouant avec l'action et le grand spectacle qui ont fait des premiers Transformers un phénomène mondial il y a 14 ans, Transformers : Rise of The Beasts transportera le public dans une aventure aux quatre coins du monde au coeur des années 1990. On y découvrira pour la première fois les Maximals, Predacons et Terrorcons rejoignant l'éternel combat entre les Autobots et les Decepticons.",
+            "popularity": 3119.896,
+            "poster_path": "/kq6AYN96FjWSZQVRYpAPmBAVq2s.jpg",
+            "production_companies": [
+                {
+                    "id": 82819,
+                    "logo_path": "/gXfFl9pRPaoaq14jybEn1pHeldr.png",
+                    "name": "Skydance",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 4,
+                    "logo_path": "/gz66EfNoYPqHTYI4q9UEN4CbHRc.png",
+                    "name": "Paramount",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 435,
+                    "logo_path": "/AjzK0s2w1GtLfR4hqCjVSYi0Sr8.png",
+                    "name": "di Bonaventura Pictures",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 6734,
+                    "logo_path": null,
+                    "name": "Bay Films",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 114732,
+                    "logo_path": "/tNCbisMxO5mX2X2bOQxHHQZVYnT.png",
+                    "name": "New Republic Pictures",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 38831,
+                    "logo_path": null,
+                    "name": "Tom DeSanto/Don Murphy Production",
+                    "origin_country": ""
+                },
+                {
+                    "id": 2598,
+                    "logo_path": "/i42C5gRq7XqlG4S9vkchuJZfrBn.png",
+                    "name": "Hasbro",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "release_date": "2023-06-06",
+            "revenue": 79409120,
+            "runtime": 127,
+            "spoken_languages": [
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                },
+                {
+                    "english_name": "Spanish",
+                    "iso_639_1": "es",
+                    "name": "Español"
+                }
+            ],
+            "status": "Released",
+            "tagline": "S'unir ou périr",
+            "title": "Transformers : Rise of the Beasts",
+            "video": false,
+            "vote_average": 7.553,
+            "vote_count": 169
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/lntyt4OVDbcxA1l7LtwITbrD3FI.jpg",
+            "belongs_to_collection": null,
+            "budget": 0,
+            "genres": [
+                {
+                    "id": 10749,
+                    "name": "Romance"
+                },
+                {
+                    "id": 18,
+                    "name": "Drame"
+                }
+            ],
+            "homepage": "",
+            "id": 1010581,
+            "imdb_id": "tt21909764",
+            "original_language": "es",
+            "original_title": "Culpa mía",
+            "overview": "Noah doit quitter sa ville, son petit copain et ses amis pour emménager dans la villa du nouveau mari de sa mère. Elle y rencontre son frère par alliance, Nick, avec qui elle va entrer en conflit dès le début. Mais l'attirance qu'ils ressentent l’un pour l’autre va les conduire à vivre une relation interdite, qui va attiser leurs tempéraments rebelles et tourmentés, les faisant tomber amoureux.",
+            "popularity": 836.193,
+            "poster_path": "/3ZCfSSxZ2e4Kiwu3Y9dvfT5n1m6.jpg",
+            "production_companies": [
+                {
+                    "id": 32485,
+                    "logo_path": "/fVXreZkiJTOq1cCi6htSQlPSy7R.png",
+                    "name": "Pokeepsie Films",
+                    "origin_country": "ES"
+                },
+                {
+                    "id": 20580,
+                    "logo_path": "/oRR9EXVoKP9szDkVKlze5HVJS7g.png",
+                    "name": "Amazon Studios",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "ES",
+                    "name": "Spain"
+                }
+            ],
+            "release_date": "2023-06-08",
+            "revenue": 0,
+            "runtime": 117,
+            "spoken_languages": [
+                {
+                    "english_name": "Spanish",
+                    "iso_639_1": "es",
+                    "name": "Español"
+                }
+            ],
+            "status": "Released",
+            "tagline": "",
+            "title": "À contre-sens",
+            "video": false,
+            "vote_average": 8.433,
+            "vote_count": 268
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/h8gHn0OzBoaefsYseUByqsmEDMY.jpg",
+            "belongs_to_collection": {
+                "id": 404609,
+                "name": "John Wick - Saga",
+                "poster_path": "/jgL4XOWWjZPq9aROVDXdIAEBl3S.jpg",
+                "backdrop_path": "/fSwYa5q2xRkBoOOjueLpkLf3N1m.jpg"
+            },
+            "budget": 90000000,
+            "genres": [
+                {
+                    "id": 28,
+                    "name": "Action"
+                },
+                {
+                    "id": 53,
+                    "name": "Thriller"
+                },
+                {
+                    "id": 80,
+                    "name": "Crime"
+                }
+            ],
+            "homepage": "",
+            "id": 603692,
+            "imdb_id": "tt10366206",
+            "original_language": "en",
+            "original_title": "John Wick: Chapter 4",
+            "overview": "John Wick affronte ses adversaires les plus redoutables dans ce quatrième volet de la série.  De New York à Osaka, en passant par Paris et Berlin, John Wick mène un combat contre la Grande Table, la terrible organisation criminelle qui a mis sa tête à prix, en affrontant ses tueurs les plus dangereux...",
+            "popularity": 4935.527,
+            "poster_path": "/jAMVKvqxdNbUY2YQWhCclYI6coP.jpg",
+            "production_companies": [
+                {
+                    "id": 3528,
+                    "logo_path": "/cCzCClIzIh81Fa79hpW5nXoUsHK.png",
+                    "name": "Thunder Road",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 23008,
+                    "logo_path": "/5SarYupipdiejsEqUkwu1SpYfru.png",
+                    "name": "87Eleven",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 491,
+                    "logo_path": "/5LvDUt3KmvRnXQ4NrdWJYHeuA8J.png",
+                    "name": "Summit Entertainment",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 264,
+                    "logo_path": "/fA90qwUKgPhMONqtwY60GaHRyrW.png",
+                    "name": "Studio Babelsberg",
+                    "origin_country": "DE"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "DE",
+                    "name": "Germany"
+                },
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "release_date": "2023-03-22",
+            "revenue": 431769198,
+            "runtime": 169,
+            "spoken_languages": [
+                {
+                    "english_name": "Arabic",
+                    "iso_639_1": "ar",
+                    "name": "العربية"
+                },
+                {
+                    "english_name": "Cantonese",
+                    "iso_639_1": "cn",
+                    "name": "广州话 / 廣州話"
+                },
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                },
+                {
+                    "english_name": "French",
+                    "iso_639_1": "fr",
+                    "name": "Français"
+                },
+                {
+                    "english_name": "German",
+                    "iso_639_1": "de",
+                    "name": "Deutsch"
+                },
+                {
+                    "english_name": "Japanese",
+                    "iso_639_1": "ja",
+                    "name": "日本語"
+                },
+                {
+                    "english_name": "Latin",
+                    "iso_639_1": "la",
+                    "name": "Latin"
+                },
+                {
+                    "english_name": "Russian",
+                    "iso_639_1": "ru",
+                    "name": "Pусский"
+                },
+                {
+                    "english_name": "Spanish",
+                    "iso_639_1": "es",
+                    "name": "Español"
+                }
+            ],
+            "status": "Released",
+            "tagline": "Pas de retour, une seule sortie.",
+            "title": "John Wick : Chapitre 4",
+            "video": false,
+            "vote_average": 7.942,
+            "vote_count": 2875
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/o2xM9oVNDdm5tukYcGPj3jX3XpE.jpg",
+            "belongs_to_collection": null,
+            "budget": 0,
+            "genres": [
+                {
+                    "id": 35,
+                    "name": "Comédie"
+                },
+                {
+                    "id": 18,
+                    "name": "Drame"
+                }
+            ],
+            "homepage": "https://www.disneyplus.com/fr-fr/movies/flamin-hot/PmAiIWRz18HF",
+            "id": 626332,
+            "imdb_id": "tt8105234",
+            "original_language": "en",
+            "original_title": "Flamin' Hot",
+            "overview": "L’histoire inspirante de Richard Montañez, agent d’entretien chez Frito Lay qui, fort de son héritage latino-américain, révolutionne les célèbres Cheetos « Flamin’ Hot » pour en faire des chips qui vont bousculer les standards de l’industrie agro-alimentaire, avant de devenir un phénomène de pop culture à l’échelle mondiale.",
+            "popularity": 46.634,
+            "poster_path": "/l7HOPTRanBjjEPrqhZL8P5F7o1k.jpg",
+            "production_companies": [
+                {
+                    "id": 61377,
+                    "logo_path": "/6IQmmSszsXcxbew25Dgvu3cvmRd.png",
+                    "name": "Franklin Entertainment",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 127929,
+                    "logo_path": "/fCB4AVYvxxDvqumgYqsN6ehyN3G.png",
+                    "name": "Searchlight Pictures",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "release_date": "2023-03-11",
+            "revenue": 0,
+            "runtime": 99,
+            "spoken_languages": [
+                {
+                    "english_name": "Spanish",
+                    "iso_639_1": "es",
+                    "name": "Español"
+                },
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                }
+            ],
+            "status": "Released",
+            "tagline": "",
+            "title": "Flamin' Hot",
+            "video": false,
+            "vote_average": 7.133,
+            "vote_count": 30
+        }
+    ],
+    "series": [
+        {
+            "adult": false,
+            "backdrop_path": "/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg",
+            "created_by": [
+                {
+                    "id": 237053,
+                    "credit_id": "5db8d867a1d3320011e7ddf1",
+                    "name": "George R. R. Martin",
+                    "gender": 2,
+                    "profile_path": "/1A7W0L9dZz0rCN1oj6h8YUvusdN.jpg"
+                },
+                {
+                    "id": 1167458,
+                    "credit_id": "5db8d8fe3faba000163a83cb",
+                    "name": "Ryan Condal",
+                    "gender": 2,
+                    "profile_path": "/ohS1LQEw1aYccD6mxUhWGXc7glz.jpg"
+                }
+            ],
+            "episode_run_time": [],
+            "first_air_date": "2022-08-21",
+            "genres": [
+                {
+                    "id": 10765,
+                    "name": "Science-Fiction & Fantastique"
+                },
+                {
+                    "id": 18,
+                    "name": "Drame"
+                },
+                {
+                    "id": 10759,
+                    "name": "Action & Adventure"
+                }
+            ],
+            "homepage": "https://www.hbo.com/house-of-the-dragon",
+            "id": 94997,
+            "in_production": true,
+            "languages": [
+                "en"
+            ],
+            "last_air_date": "2022-10-23",
+            "last_episode_to_air": {
+                "id": 3846982,
+                "name": "La Reine Noire",
+                "overview": "Rhaenys apprend à Rhaenyra qu'Alicent et les siens ont usurpé la succession de Viserys. L'héritière bafouée réunit ses alliés pour élaborer la riposte adaptée. Jace presse sa mère de la laisser partir en mission.",
+                "vote_average": 8.395,
+                "vote_count": 43,
+                "air_date": "2022-10-23",
+                "episode_number": 10,
+                "production_code": "",
+                "runtime": 60,
+                "season_number": 1,
+                "show_id": 94997,
+                "still_path": "/8QXW8N0FneCDf8PkTJ0HUXpuVin.jpg"
+            },
+            "name": "House of the Dragon",
+            "next_episode_to_air": null,
+            "networks": [
+                {
+                    "id": 49,
+                    "logo_path": "/tuomPhY2UtuPTqqFnKMVHvSb724.png",
+                    "name": "HBO",
+                    "origin_country": "US"
+                }
+            ],
+            "number_of_episodes": 10,
+            "number_of_seasons": 1,
+            "origin_country": [
+                "US"
+            ],
+            "original_language": "en",
+            "original_name": "House of the Dragon",
+            "overview": "Près de 200 ans avant les évènements de Games of Thrones, le continent de Westeros est en proie à de nombreux dangers. Une guerre civile se prépare dans différents endroits du royaume : cette guerre sera appelée la Danse des Dragons. De son côté, la maison Targaryen se disloque peu à peu et le règne des dragons est menacé.",
+            "popularity": 188.671,
+            "poster_path": "/iEgwC7eutP3PFHhBsd0AvyLpVkg.jpg",
+            "production_companies": [
+                {
+                    "id": 3268,
+                    "logo_path": "/tuomPhY2UtuPTqqFnKMVHvSb724.png",
+                    "name": "HBO",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 180956,
+                    "logo_path": null,
+                    "name": "Bastard Sword",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 180957,
+                    "logo_path": null,
+                    "name": "1:26 Pictures",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 180958,
+                    "logo_path": null,
+                    "name": "GRRM",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "seasons": [
+                {
+                    "air_date": "2022-08-21",
+                    "episode_count": 20,
+                    "id": 309556,
+                    "name": "Épisodes spéciaux",
+                    "overview": "",
+                    "poster_path": "/sMl0QQ43eNIQZKo61egJJcuaqR7.jpg",
+                    "season_number": 0
+                },
+                {
+                    "air_date": "2022-08-21",
+                    "episode_count": 10,
+                    "id": 134965,
+                    "name": "Saison 1",
+                    "overview": "La série débute 189 ans avant l'époque de Game of Thrones et raconte les évènements qui ont provoqué une guerre civile appelée La Danse des Dragons (Dance of the Dragons), qui conduit à la perte des dragons et au début de la chute de la Maison Targaryen.",
+                    "poster_path": "/remq1VIaLdrHr5irv7mVOil7zPW.jpg",
+                    "season_number": 1
+                }
+            ],
+            "spoken_languages": [
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                }
+            ],
+            "status": "Returning Series",
+            "tagline": "Feu et sang.",
+            "type": "Scripted",
+            "vote_average": 8.472,
+            "vote_count": 3212
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/aFI4g3JXzPPyxm6tA6jK20mChKq.jpg",
+            "created_by": [],
+            "episode_run_time": [
+                24
+            ],
+            "first_air_date": "2023-04-08",
+            "genres": [
+                {
+                    "id": 16,
+                    "name": "Animation"
+                },
+                {
+                    "id": 35,
+                    "name": "Comédie"
+                },
+                {
+                    "id": 10759,
+                    "name": "Action & Adventure"
+                },
+                {
+                    "id": 10765,
+                    "name": "Science-Fiction & Fantastique"
+                }
+            ],
+            "homepage": "https://mashle.pw",
+            "id": 204832,
+            "in_production": true,
+            "languages": [
+                "ja"
+            ],
+            "last_air_date": "2023-06-10",
+            "last_episode_to_air": {
+                "id": 4350299,
+                "name": "Mash Burnedead et le sorcier au sort d’accélération",
+                "overview": "Pendant que Lance fait face à Wirth de Magia Lupus, Mashle combat Abyss du même clan. Forts de leurs compétences, les ennemis pensent rapidement prendre le dessus. Sauf que ni Lance ni Mashle ne comptent se laisser faire.",
+                "vote_average": 10,
+                "vote_count": 1,
+                "air_date": "2023-06-10",
+                "episode_number": 9,
+                "production_code": "",
+                "runtime": 24,
+                "season_number": 1,
+                "show_id": 204832,
+                "still_path": "/cWu9sSqfrd3YoSOzOHuk6F5qYbl.jpg"
+            },
+            "name": "Mashle : Magic And Muscles",
+            "next_episode_to_air": {
+                "id": 4350300,
+                "name": "Épisode 10",
+                "overview": "",
+                "vote_average": 0,
+                "vote_count": 0,
+                "air_date": "2023-06-17",
+                "episode_number": 10,
+                "production_code": "",
+                "runtime": 24,
+                "season_number": 1,
+                "show_id": 204832,
+                "still_path": null
+            },
+            "networks": [
+                {
+                    "id": 343,
+                    "logo_path": "/9rNqtDYAnD6yTOutvHI3synSEs2.png",
+                    "name": "Gunma TV",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 614,
+                    "logo_path": "/hSdroyVthq3CynxTIIY7lnS8w1.png",
+                    "name": "Tokyo MX",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 861,
+                    "logo_path": "/JQ5bx6n7Qmdmyqz6sqjo5Fz2iR.png",
+                    "name": "BS11",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 2478,
+                    "logo_path": "/2v82HpzoKRveJEJcGHkeTcktMRM.png",
+                    "name": "Tochigi TV",
+                    "origin_country": "JP"
+                }
+            ],
+            "number_of_episodes": 12,
+            "number_of_seasons": 1,
+            "origin_country": [
+                "JP"
+            ],
+            "original_language": "ja",
+            "original_name": "マッシュル-MASHLE-",
+            "overview": "Dans un monde où la magie fait loi, il était une fois Mash Burnedead ! Élevé au fin fond de la forêt, le jeune garçon partage ses journées entre séances de musculation et dégustation de choux à la crème. Mais un jour, un agent de police découvre son secret : il est né sans pouvoirs magiques, ce qui est puni de mort ! Pour survivre, il va devoir postuler à Easton, une prestigieuse académie de magie, et en devenir le meilleur élève… La magie n’a plus qu’à bien se tenir : avec sa musculature affûtée et sa force hors du commun, Mash compte bien pulvériser tous les sorts et briser les codes de cette société !",
+            "popularity": 334.294,
+            "poster_path": "/1rpMnOXe42hkvMN1Dj5Dzsu6NZz.jpg",
+            "production_companies": [
+                {
+                    "id": 13113,
+                    "logo_path": "/xV5tPYKZhP2Ko9dOh5A3FahuKsx.png",
+                    "name": "A-1 Pictures",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 2883,
+                    "logo_path": "/rDYExnBV61jGQnkhVVrPN4Yl7O1.png",
+                    "name": "Aniplex",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 189968,
+                    "logo_path": "/lDGcesNvJp4s3ReoKVDTjtFCkIg.png",
+                    "name": "INSPION EDGE",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 2918,
+                    "logo_path": "/gyEWUBWwqrm3H5T2hkERD9LxpOq.png",
+                    "name": "Shueisha",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 162019,
+                    "logo_path": "/inMGZK76HIbFhTnCGzVx39BMGzr.png",
+                    "name": "ADK Marketing Solutions",
+                    "origin_country": "JP"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "JP",
+                    "name": "Japan"
+                }
+            ],
+            "seasons": [
+                {
+                    "air_date": "2023-05-20",
+                    "episode_count": 1,
+                    "id": 341499,
+                    "name": "Épisodes spéciaux",
+                    "overview": "",
+                    "poster_path": null,
+                    "season_number": 0
+                },
+                {
+                    "air_date": "2023-04-08",
+                    "episode_count": 12,
+                    "id": 298699,
+                    "name": "Season 1",
+                    "overview": "",
+                    "poster_path": "/nmzu8OulSq2zCmBBfD2jDqkW0nM.jpg",
+                    "season_number": 1
+                }
+            ],
+            "spoken_languages": [
+                {
+                    "english_name": "Japanese",
+                    "iso_639_1": "ja",
+                    "name": "日本語"
+                }
+            ],
+            "status": "Returning Series",
+            "tagline": "",
+            "type": "Scripted",
+            "vote_average": 7.895,
+            "vote_count": 19
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/2AyySFf6MSoR7bavBvoBLck2gpo.jpg",
+            "created_by": [
+                {
+                    "id": 1098032,
+                    "credit_id": "5857f8a49251416fad05b143",
+                    "name": "Roberto Aguirre-Sacasa",
+                    "gender": 2,
+                    "profile_path": "/PtJSrAk7LDqaV5jExCYl10lcsN.jpg"
+                }
+            ],
+            "episode_run_time": [
+                45
+            ],
+            "first_air_date": "2017-01-26",
+            "genres": [
+                {
+                    "id": 80,
+                    "name": "Crime"
+                },
+                {
+                    "id": 18,
+                    "name": "Drame"
+                },
+                {
+                    "id": 9648,
+                    "name": "Mystère"
+                }
+            ],
+            "homepage": "http://www.cwtv.com/shows/riverdale/",
+            "id": 69050,
+            "in_production": true,
+            "languages": [
+                "en"
+            ],
+            "last_air_date": "2023-06-07",
+            "last_episode_to_air": {
+                "id": 4426461,
+                "name": "Épisode 11",
+                "overview": "Veronica décide d'animer une émission de fantômes après avoir appris que Riverdale ne célèbre pas Halloween comme elle en a l'habitude à Los Angeles. Betty tire le meilleur parti de sa soirée avec Archie et Reggie, et Jughead fait une découverte majeure dans un mystérieux brassage à Riverdale.",
+                "vote_average": 0,
+                "vote_count": 0,
+                "air_date": "2023-06-07",
+                "episode_number": 11,
+                "production_code": "",
+                "runtime": 43,
+                "season_number": 7,
+                "show_id": 69050,
+                "still_path": "/kCrFwchAAzIZ80yD03vmQp18sg4.jpg"
+            },
+            "name": "Riverdale",
+            "next_episode_to_air": {
+                "id": 4487343,
+                "name": "Épisode 12",
+                "overview": "Archie et Reggie s'appuient l'un sur l'autre alors qu'ils se préparent pour leur grand match de basket contre Stonewall Prep. Pendant ce temps, alors qu'ils traitent des problèmes en cours avec leurs parents, Betty et Veronica décident d'organiser une soirée pyjama avec Kevin et Clay.",
+                "vote_average": 0,
+                "vote_count": 0,
+                "air_date": "2023-06-21",
+                "episode_number": 12,
+                "production_code": "",
+                "runtime": null,
+                "season_number": 7,
+                "show_id": 69050,
+                "still_path": null
+            },
+            "networks": [
+                {
+                    "id": 71,
+                    "logo_path": "/ge9hzeaU7nMtQ4PjkFlc68dGAJ9.png",
+                    "name": "The CW",
+                    "origin_country": "US"
+                }
+            ],
+            "number_of_episodes": 132,
+            "number_of_seasons": 7,
+            "origin_country": [
+                "US"
+            ],
+            "original_language": "en",
+            "original_name": "Riverdale",
+            "overview": "Sous ses airs de petite ville tranquille, Riverdale cache en réalité de sombres secrets. Alors qu'une nouvelle année scolaire débute, le jeune Archie Andrews et ses amis Betty, Jughead, et Kevin voient leur quotidien bouleversé par la mort mystérieuse de Jason Blossom, un de leurs camarades de lycée. Alors que les secrets des uns et des autres menacent de remonter à la surface, et que la belle Veronica, fraîchement débarquée de New York, fait une arrivée remarquée en ville, plus rien ne sera jamais comme avant à Riverdale...",
+            "popularity": 308.006,
+            "poster_path": "/jZ06hkecIfBf46ftfMc5ANaaU2p.jpg",
+            "production_companies": [
+                {
+                    "id": 1957,
+                    "logo_path": "/pJJw98MtNFC9cHn3o15G7vaUnnX.png",
+                    "name": "Warner Bros. Television",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 27711,
+                    "logo_path": "/3e294jszfE6cE8TOogmj0zNd6pL.png",
+                    "name": "Berlanti Productions",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 1081,
+                    "logo_path": "/19kn4jVvpc3sAL3YpZNb3elhSMl.png",
+                    "name": "CBS Studios",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 160140,
+                    "logo_path": "/2rkg3AkLxRlreg7yecfFBDHfqxv.png",
+                    "name": "Archie Comics",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "seasons": [
+                {
+                    "air_date": "2017-01-26",
+                    "episode_count": 13,
+                    "id": 82752,
+                    "name": "Saison 1",
+                    "overview": "C'est la rentrée dans la petite ville de Riverdale, qui se remet doucement de la mort tragique du jeune Jason Blossom. Cette rentrée est un nouveau départ pour Archie Andrews qui s'est décidé à faire carrière dans la musique malgré la fin de sa relation secrète avec sa professeure de musique qui lui sert de mentor et la fragilité de son amitié avec son meilleur ami Jughead Jones.\n\nDe son côté, sa meilleure amie Betty Cooper, secrètement amoureuse de Archie, doit faire face à sa mère sur-protectrice qui la drogue aux médicaments. Mais tout va commencer à changer pour elle quand elle va faire la connaissance de Veronica Lodge, une nouvelle et riche élève qui arrive en ville à la suite d'un scandale ayant touché de près sa famille.\n\nMais tout ceci n'est qu'une partie des nombreuses histoires et secrets qui peuplent Riverdale, une ville calme et à l'image parfaite, mais qui cache dans l'ombre de nombreux dangers et une face très sombre.",
+                    "poster_path": "/gJDq9ZrEE0JRZwe9FsVaoBweaIw.jpg",
+                    "season_number": 1
+                },
+                {
+                    "air_date": "2017-10-11",
+                    "episode_count": 22,
+                    "id": 91793,
+                    "name": "Saison 2",
+                    "overview": "Après une tragédie familiale traumatisante, Archie tente de repousser un obsédant désir de vengeance.",
+                    "poster_path": "/2U7L22ca43z9DrQpYuMzk2c6l7f.jpg",
+                    "season_number": 2
+                },
+                {
+                    "air_date": "2018-10-10",
+                    "episode_count": 22,
+                    "id": 105507,
+                    "name": "Saison 3",
+                    "overview": "",
+                    "poster_path": "/fkYa2BJ5kn9dKkRcdMzNNknw5J7.jpg",
+                    "season_number": 3
+                },
+                {
+                    "air_date": "2019-10-09",
+                    "episode_count": 19,
+                    "id": 129417,
+                    "name": "Saison 4",
+                    "overview": "",
+                    "poster_path": "/najO471Cbht6dQgkWYhrMjAo7QB.jpg",
+                    "season_number": 4
+                },
+                {
+                    "air_date": "2021-01-20",
+                    "episode_count": 19,
+                    "id": 167134,
+                    "name": "Saison 5",
+                    "overview": "Naviguant dans les eaux troubles du sexe, de l'amour, de l'éducation et de la famille, Archie et ses amis se retrouvent plongés au cœur d'une mystérieuse affaire.",
+                    "poster_path": "/znLquWqswoxw12ZtTeGVcZYGLxS.jpg",
+                    "season_number": 5
+                },
+                {
+                    "air_date": "2021-11-16",
+                    "episode_count": 22,
+                    "id": 199280,
+                    "name": "Saison 6",
+                    "overview": "Une nouvelle saison de doute débute pour Archie, Betty, Cheryl, Veronica et Jughead quand les ténèbres se déchaînent dans leur petite ville loin d'être sans histoire.",
+                    "poster_path": "/zZyY0X4bIWxsk8uHUExzWhhHEE0.jpg",
+                    "season_number": 6
+                },
+                {
+                    "air_date": "2023-03-29",
+                    "episode_count": 15,
+                    "id": 313797,
+                    "name": "Saison 7",
+                    "overview": "Reprenant là où la saison 6 s'est terminée, la saison 7 trouve Jughead Jones piégé dans les années 1950. Il n'a aucune idée de comment il est arrivé là, ni comment revenir au présent. Ses amis ne sont d'aucune aide, car ils vivent des vies apparemment authentiques, similaires à leurs homologues classiques d'Archie Comics, ignorant qu'ils ont déjà été ailleurs que dans les années 1950. Jughead et la bande pourront-ils revenir dans le présent ? Ou nos personnages seront-ils piégés dans les années 1950 pour toujours ? Et, si oui… est-ce une si mauvaise chose ?",
+                    "poster_path": "/rMdRXnUb28XR4er6NHxEpIl3WTE.jpg",
+                    "season_number": 7
+                }
+            ],
+            "spoken_languages": [
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                }
+            ],
+            "status": "Returning Series",
+            "tagline": "Petite ville. Grands secrets.",
+            "type": "Scripted",
+            "vote_average": 8.5,
+            "vote_count": 13078
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/xZUZ9i6vVayjyhR1vRo9Bjku4h.jpg",
+            "created_by": [
+                {
+                    "id": 1222585,
+                    "credit_id": "55fdc50ec3a368132a001852",
+                    "name": "Tom Kapinos",
+                    "gender": 2,
+                    "profile_path": "/ol7GfeO0OIDCWGYzlg1LDLmwluO.jpg"
+                }
+            ],
+            "episode_run_time": [
+                45,
+                62
+            ],
+            "first_air_date": "2016-01-25",
+            "genres": [
+                {
+                    "id": 80,
+                    "name": "Crime"
+                },
+                {
+                    "id": 10765,
+                    "name": "Science-Fiction & Fantastique"
+                }
+            ],
+            "homepage": "https://www.netflix.com/title/80057918",
+            "id": 63174,
+            "in_production": false,
+            "languages": [
+                "en"
+            ],
+            "last_air_date": "2021-09-10",
+            "last_episode_to_air": {
+                "id": 2910296,
+                "name": "Partenaires à jamais",
+                "overview": "Pour sauver Rory, Lucifer et Chloe combattent son kidnappeur, chacun avec ses armes. Les ombres se dissipent. Lucifer finira-t-il par accepter sa vocation ?",
+                "vote_average": 7.9,
+                "vote_count": 17,
+                "air_date": "2021-09-10",
+                "episode_number": 10,
+                "production_code": "T13.22910",
+                "runtime": 53,
+                "season_number": 6,
+                "show_id": 63174,
+                "still_path": "/dahmfbzyZQMu9F8oryOlOQgWKAw.jpg"
+            },
+            "name": "Lucifer",
+            "next_episode_to_air": null,
+            "networks": [
+                {
+                    "id": 19,
+                    "logo_path": "/1DSpHrWyOORkL9N2QHX7Adt31mQ.png",
+                    "name": "FOX",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 213,
+                    "logo_path": "/wwemzKWzjKYJFfCeiB57q3r4Bcm.png",
+                    "name": "Netflix",
+                    "origin_country": ""
+                }
+            ],
+            "number_of_episodes": 93,
+            "number_of_seasons": 6,
+            "origin_country": [
+                "US"
+            ],
+            "original_language": "en",
+            "original_name": "Lucifer",
+            "overview": "Lassé d’être le Seigneur des Enfers, le diable s’installe à Los Angeles où il ouvre un nightclub et se lie avec une policière de la brigade criminelle...",
+            "popularity": 410.543,
+            "poster_path": "/tU34L2zd8sWxypSxAwg01mksLdq.jpg",
+            "production_companies": [
+                {
+                    "id": 1957,
+                    "logo_path": "/pJJw98MtNFC9cHn3o15G7vaUnnX.png",
+                    "name": "Warner Bros. Television",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 9993,
+                    "logo_path": "/2Tc1P3Ac8M479naPp1kYT3izLS5.png",
+                    "name": "DC Entertainment",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 40041,
+                    "logo_path": "/oP8TmVSh9DCP1yhR2yvjnKfMgbg.png",
+                    "name": "Jerry Bruckheimer Television",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 165407,
+                    "logo_path": "/5fnvtywvYSkskSJr99VcR3x9RTE.png",
+                    "name": "DC Vertigo",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "seasons": [
+                {
+                    "air_date": "2015-07-10",
+                    "episode_count": 24,
+                    "id": 70781,
+                    "name": "Épisodes spéciaux",
+                    "overview": "",
+                    "poster_path": "/dRaSkQJWlY39lZf9a2eoY99UGv5.jpg",
+                    "season_number": 0
+                },
+                {
+                    "air_date": "2016-01-25",
+                    "episode_count": 13,
+                    "id": 68415,
+                    "name": "Saison 1",
+                    "overview": "Lucifer, qui a décidé de prendre congé de son royaume des enfers, arrive sur Terre.\n\nIl devient propriétaire du Lux, une boîte de nuit, et se fait appeler Lucifer Morningstar. C'est un séducteur. L'une de ses conquêtes, Delilah, arrive au Lux pour le retrouver, mais se fait tuer. Lucifer décide d'enquêter. C'est ainsi qu'il fait la connaissance de Chloé Decker, lieutenant enquêtant sur la mort de Delilah. Il va vite s'apercevoir qu'avec elle, son charme n'est pas s'y opérant. De ce fait, il va tout faire pour comprendre pourquoi il ne peut la séduire aussi facilement qu'une autre femme, allant jusqu'à devenir son coéquipier au sein de la police, lors de ses enquêtes.",
+                    "poster_path": "/23h2nL2b14JYdFxQqIxyyPQyhUj.jpg",
+                    "season_number": 1
+                },
+                {
+                    "air_date": "2016-09-19",
+                    "episode_count": 18,
+                    "id": 78529,
+                    "name": "Saison 2",
+                    "overview": "La « Mère de toutes les créations », déesse, ex-femme de Dieu et mère de Lucifer et Amenadiel, a réussi à s'échapper des enfers et prend l'identité de la défunte Charlotte Richards, une avocate réputés. Lucifer et Amenadiel décident de faire tous leur possible pour découvrir ce qu'elle complote et la renvoyer en enfer.",
+                    "poster_path": "/eh1XUcOUyva5ikomqKtftIKBcMt.jpg",
+                    "season_number": 2
+                },
+                {
+                    "air_date": "2017-10-02",
+                    "episode_count": 26,
+                    "id": 91441,
+                    "name": "Saison 3",
+                    "overview": "Alors que Lucifer comptait révéler toute la vérité à Chloe, il se fait kidnapper et se réveille en plein milieu du désert. Lorsqu'il se relève, ses ailes se déploient et celui-ci n'a aucune explications. Au fil des enquêtes, il découvre que c'est un certain Sinnerman, un criminel qui semble s'intéresser de très près à Lucifer pour une raison inconnue et mystérieuse.",
+                    "poster_path": "/r17s6nDPV4smuHVRyDPA36tZeC3.jpg",
+                    "season_number": 3
+                },
+                {
+                    "air_date": "2019-05-08",
+                    "episode_count": 10,
+                    "id": 117593,
+                    "name": "Saison 4",
+                    "overview": "Alors que Chloé tente désespérément de digérer la révélation troublante de Lucifer, un prêtre dévoyé décide de mettre fin à une vieille prophétie.",
+                    "poster_path": "/dBUKQl5aIT4QmFBI9tLw08IwaER.jpg",
+                    "season_number": 4
+                },
+                {
+                    "air_date": "2020-08-21",
+                    "episode_count": 16,
+                    "id": 152759,
+                    "name": "Saison 5",
+                    "overview": "Lucifer fait un retour fracassant dans le monde des vivants et espère arranger les choses avec Chloe. Mais pourquoi faut-il toujours que le diable s'en mêle ?",
+                    "poster_path": "/4CSH1vOyC39kmuzU63gxdT1xhy0.jpg",
+                    "season_number": 5
+                },
+                {
+                    "air_date": "2021-09-10",
+                    "episode_count": 10,
+                    "id": 192616,
+                    "name": "Saison 6",
+                    "overview": "",
+                    "poster_path": "/5N4ZdQBJxHi9wRToyBxRXHHCyTZ.jpg",
+                    "season_number": 6
+                }
+            ],
+            "spoken_languages": [
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                }
+            ],
+            "status": "Ended",
+            "tagline": "C'est bon d'être mauvais..",
+            "type": "Scripted",
+            "vote_average": 8.484,
+            "vote_count": 13559
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/vqiRx5UNdvzm2YjF6fDBs1tSsUd.jpg",
+            "created_by": [],
+            "episode_run_time": [
+                25
+            ],
+            "first_air_date": "2023-04-01",
+            "genres": [
+                {
+                    "id": 16,
+                    "name": "Animation"
+                },
+                {
+                    "id": 18,
+                    "name": "Drame"
+                },
+                {
+                    "id": 10759,
+                    "name": "Action & Adventure"
+                },
+                {
+                    "id": 10765,
+                    "name": "Science-Fiction & Fantastique"
+                }
+            ],
+            "homepage": "https://www.jigokuraku.com/",
+            "id": 117465,
+            "in_production": true,
+            "languages": [
+                "ja"
+            ],
+            "last_air_date": "2023-06-10",
+            "last_episode_to_air": {
+                "id": 4336650,
+                "name": "Yin et Yang",
+                "overview": "Blessé, Gabimaru se retrouve face à Gantetsusai et Fuchi Yamada Asaemon. Il sait que le combat sera rude et préfère changer de stratégie pour conserver ses chances de trouver l'élixir. Dans le groupe de Sagiri, Senta met à profit les informations données par Hôko pour affiner sa vision de l'île.",
+                "vote_average": 8.7,
+                "vote_count": 3,
+                "air_date": "2023-06-10",
+                "episode_number": 10,
+                "production_code": "",
+                "runtime": 24,
+                "season_number": 1,
+                "show_id": 117465,
+                "still_path": "/ApVsykHWYMpwJnx2Qrk9pfT8g7C.jpg"
+            },
+            "name": "Hell's Paradise",
+            "next_episode_to_air": {
+                "id": 4336651,
+                "name": "Épisode 11",
+                "overview": "",
+                "vote_average": 0,
+                "vote_count": 0,
+                "air_date": "2023-06-17",
+                "episode_number": 11,
+                "production_code": "",
+                "runtime": null,
+                "season_number": 1,
+                "show_id": 117465,
+                "still_path": null
+            },
+            "networks": [
+                {
+                    "id": 98,
+                    "logo_path": "/1oTje9uOhRcuLSAc8ERn0cnG51i.png",
+                    "name": "TV Tokyo",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 252,
+                    "logo_path": "/zFZ5KCuvx7K0vP9XgGcidfXjuUd.png",
+                    "name": "TV Aichi",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 822,
+                    "logo_path": "/fGdBR7lxjrXsBlwZF7B1UNpG5ff.png",
+                    "name": "TVQ",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 824,
+                    "logo_path": "/6foQmoPac7WCDnDuDbuCZklmDuA.png",
+                    "name": "TV Osaka",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 938,
+                    "logo_path": "/f12LLqBVFnDVIY8HidhWEitI77c.png",
+                    "name": "TVh",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 2064,
+                    "logo_path": "/qi4L1ffRabF5LJqVimCaaUYpeSj.png",
+                    "name": "TSC",
+                    "origin_country": "JP"
+                }
+            ],
+            "number_of_episodes": 13,
+            "number_of_seasons": 1,
+            "origin_country": [
+                "JP"
+            ],
+            "original_language": "ja",
+            "original_name": "地獄楽",
+            "overview": "Basé sur le manga Jigokuraku de Kaku Yuji.\n\nL'histoire se déroule à l'époque d'Edo, au Japon.\n\nGabimaru, « Le Vide », un célèbre et puissant shinobi a été capturé et croupit en prison. Affirmant n'avoir plus aucune raison de vivre, il attend désespérément qu'un bourreau parvienne à lui ôter la vie, son entraînement surhumain lui permettant de résister aux pires des châtiments. C'est alors qu'il reçoit la visite d'un exécuteur pas comme les autres : une puissante manieuse de sabre et trancheuse de tête. Après un âpre combat dont il réchappe de peu, celle-ci le pousse dans ses retranchements. En échange de la vie sauve, elle lui propose un marché : il devra se rendre sur une île mystérieuse afin de récupérer un élixir d'immortalité. Seul problème : les seuls humains rescapés de cette île en sont revenu sous forme de... fleurs.",
+            "popularity": 478.152,
+            "poster_path": "/agxWe7siS8Pp5X7xztCFn6rj9wg.jpg",
+            "production_companies": [
+                {
+                    "id": 21444,
+                    "logo_path": "/wSejGn3lAZdQ5muByxvzigwyDY6.png",
+                    "name": "MAPPA",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 120469,
+                    "logo_path": "/tyNprnyeLLQuNfdqhFf4UEiPayF.png",
+                    "name": "Twin Engine",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 2918,
+                    "logo_path": "/gyEWUBWwqrm3H5T2hkERD9LxpOq.png",
+                    "name": "Shueisha",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 150545,
+                    "logo_path": "/df2KyiUSCxpoQxV88AI3zxu8kbD.png",
+                    "name": "dugout",
+                    "origin_country": "JP"
+                },
+                {
+                    "id": 171086,
+                    "logo_path": null,
+                    "name": "Fujipacific Music",
+                    "origin_country": "JP"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "JP",
+                    "name": "Japan"
+                }
+            ],
+            "seasons": [
+                {
+                    "air_date": "2023-04-01",
+                    "episode_count": 13,
+                    "id": 178239,
+                    "name": "Saison 1",
+                    "overview": "",
+                    "poster_path": "/dRFsIANud9OHYYUibsaMIJoZPTW.jpg",
+                    "season_number": 1
+                }
+            ],
+            "spoken_languages": [
+                {
+                    "english_name": "Japanese",
+                    "iso_639_1": "ja",
+                    "name": "日本語"
+                }
+            ],
+            "status": "Returning Series",
+            "tagline": "",
+            "type": "Scripted",
+            "vote_average": 8.125,
+            "vote_count": 28
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/eljErfkQUcFUgQkI4I1soZcH8MW.jpg",
+            "created_by": [
+                {
+                    "id": 1319310,
+                    "credit_id": "602ecedfdd731b003d0b7a9b",
+                    "name": "Jessica Gao",
+                    "gender": 1,
+                    "profile_path": "/u7HvgxVCqxeHnzBLIpyqRYf7bIt.jpg"
+                }
+            ],
+            "episode_run_time": [],
+            "first_air_date": "2022-08-18",
+            "genres": [
+                {
+                    "id": 35,
+                    "name": "Comédie"
+                },
+                {
+                    "id": 10765,
+                    "name": "Science-Fiction & Fantastique"
+                }
+            ],
+            "homepage": "https://www.disneyplus.com/series/she-hulk-attorney-at-law/gPwaYusKqRQh",
+            "id": 92783,
+            "in_production": false,
+            "languages": [
+                "en"
+            ],
+            "last_air_date": "2022-10-13",
+            "last_episode_to_air": {
+                "id": 3722677,
+                "name": "Le bon côté de la barre",
+                "overview": "Jen a des démêlés avec la justice et se bat pour reconstruire sa vie.",
+                "vote_average": 5.794,
+                "vote_count": 34,
+                "air_date": "2022-10-13",
+                "episode_number": 9,
+                "production_code": "",
+                "runtime": 35,
+                "season_number": 1,
+                "show_id": 92783,
+                "still_path": "/lK7eyB70k8NJiQA4pfi68aEDFBv.jpg"
+            },
+            "name": "She-Hulk : Avocate",
+            "next_episode_to_air": null,
+            "networks": [
+                {
+                    "id": 2739,
+                    "logo_path": "/uzKjVDmQ1WRMvGBb7UNRE0wTn1H.png",
+                    "name": "Disney+",
+                    "origin_country": ""
+                }
+            ],
+            "number_of_episodes": 9,
+            "number_of_seasons": 1,
+            "origin_country": [
+                "US"
+            ],
+            "original_language": "en",
+            "original_name": "She-Hulk: Attorney at Law",
+            "overview": "Avocate le jour, super-héroïne la nuit, la cousine de Bruce Banner, Jennifer Walters acquiert des pouvoirs semblables à ceux de Hulk.",
+            "popularity": 76.675,
+            "poster_path": "/poWy1hDzaIFv6UaYtFDNcNfiM2C.jpg",
+            "production_companies": [
+                {
+                    "id": 420,
+                    "logo_path": "/hUzeosd33nzE5MCNsZxCGEKTXaQ.png",
+                    "name": "Marvel Studios",
+                    "origin_country": "US"
+                },
+                {
+                    "id": 176762,
+                    "logo_path": null,
+                    "name": "Kevin Feige Productions",
+                    "origin_country": "US"
+                }
+            ],
+            "production_countries": [
+                {
+                    "iso_3166_1": "US",
+                    "name": "United States of America"
+                }
+            ],
+            "seasons": [
+                {
+                    "air_date": "2022-08-18",
+                    "episode_count": 9,
+                    "id": 163259,
+                    "name": "Mini-série",
+                    "overview": "Avocate le jour, super-héroïne la nuit, la cousine de Bruce Banner, Jennifer Walters acquiert des pouvoirs semblables à ceux de Hulk.",
+                    "poster_path": "/poWy1hDzaIFv6UaYtFDNcNfiM2C.jpg",
+                    "season_number": 1
+                }
+            ],
+            "spoken_languages": [
+                {
+                    "english_name": "English",
+                    "iso_639_1": "en",
+                    "name": "English"
+                }
+            ],
+            "status": "Ended",
+            "tagline": "Vous allez l'aimer en colère.",
+            "type": "Miniseries",
+            "vote_average": 6.433,
+            "vote_count": 1669
+        }
+    ]
+}
