@@ -3,13 +3,11 @@ import Dialog, { Position } from "./components/dialog.mjs";
 import NoScroll from "./components/noscroll.mjs";
 import emitter from "./helpers/emitter.mjs";
 
-const breakpoint = matchMedia('(max-width: 992px)');
 
-const swipers = [...document.querySelectorAll('.swiper')].map(el =>
+
+
+function initiateSwiper(el)
 {
-
-
-
 
     let navigation = false, next = el.nextElementSibling;
 
@@ -19,9 +17,6 @@ const swipers = [...document.querySelectorAll('.swiper')].map(el =>
             nextEl: next
         };
     }
-
-
-
     return new Swiper(el, {
         navigation,
         grabCursor: true,
@@ -36,12 +31,15 @@ const swipers = [...document.querySelectorAll('.swiper')].map(el =>
     });
 
 
+}
 
-});
+const swipers = [...document.querySelectorAll('.swiper')].map(initiateSwiper);
 
 
 
-
+/**
+ * Event listeners 
+ */
 
 let regles;
 
@@ -66,7 +64,9 @@ emitter('.info-btn').on('click', e =>
     regles.showModal();
 });
 
-
+/**
+ * Burger button checkbox listener
+ */
 const burger = document.getElementById('burger-btn');
 
 
@@ -84,6 +84,11 @@ emitter(burger).on('change', e =>
     }
 
 });
+
+/**
+ * Resize listener
+ */
+const breakpoint = matchMedia('(max-width: 992px)');
 
 breakpoint.addEventListener('change', e =>
 {
