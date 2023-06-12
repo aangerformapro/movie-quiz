@@ -1,5 +1,5 @@
 <script>
-    import url from "./url";
+    import url from "./utils/url";
     function handleLinkClick(e) {
         e.preventDefault();
         const href = e.target.href;
