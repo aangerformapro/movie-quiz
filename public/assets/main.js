@@ -3343,7 +3343,7 @@ function attachEvents(events)
             });
         }
 
-        if (events === RouterEvent.HASH || events === RouterEvent.HASH)
+        if (events === RouterEvent.HASH || events === RouterEvent.ALL)
         {
             emitter.on('hashchange', e =>
             {
