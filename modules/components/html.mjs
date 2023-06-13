@@ -3,11 +3,6 @@ import { isElement, createElement, isHTML, isValidSelector } from '../utils/util
 import emitter from '../utils/emitter.mjs';
 
 
-
-
-
-
-
 /**
  * The base HTML Element
  */

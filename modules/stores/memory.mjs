@@ -80,7 +80,7 @@ export class NestedStore extends DataStore
 {
 
 
-    get hook()
+    get _hook()
     {
         return Hooks.get(this);
     }
@@ -104,14 +104,14 @@ export class NestedStore extends DataStore
 
     get keys()
     {
-        return Object.keys(this.hook.getItem({}));
+        return Object.keys(this._hook.getItem({}));
     }
 
 
 
     getItem(/** @type {string} */name, defaultValue = null)
     {
-        return super.getItem(name, this.hook.getItem(name) ?? defaultValue);
+        return super.getItem(name, this._hook.getItem(name) ?? defaultValue);
     }
 
     setItem(/** @type {string} */name, value)
@@ -119,11 +119,11 @@ export class NestedStore extends DataStore
 
         if (value === null)
         {
-            this.hook.setItem(this.key(name), null);
+            this._hook.setItem(this.key(name), null);
         }
         else
         {
-            this.hook.setItem(this.key(name), encode(value));
+            this._hook.setItem(this.key(name), value);
         }
 
         return super.setItem(name, value);
