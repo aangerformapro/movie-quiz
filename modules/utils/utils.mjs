@@ -235,7 +235,6 @@ export function encode(value)
 }
 
 
-
 function parseAttributes(obj, /** @type {string|undefined} */ name)
 {
 
@@ -257,6 +256,7 @@ function parseAttributes(obj, /** @type {string|undefined} */ name)
     }
     return result.map(item => name ? [[name, item[0]].join('-'), item[1]] : item);
 }
+
 
 
 
@@ -405,7 +405,6 @@ export function createElement(
     return elem;
 
 }
-
 
 
 /**

@@ -1,7 +1,6 @@
-import { uuidv4, encode, decode, isString } from "../utils/utils.mjs";
-import { DataStore } from "./datastore.mjs";
-
-
+import { uuidv4, encode, decode, isString, IS_UNSAFE } from "../utils/utils.mjs";
+import { DataStore, updateDataStore } from "./datastore.mjs";
+import emitter from './../utils/emitter.mjs';
 
 
 const VENDOR_KEY = 'NGSOFT:UUID', SEP = ':';
@@ -9,6 +8,7 @@ const VENDOR_KEY = 'NGSOFT:UUID', SEP = ':';
 
 function getDefaultPrefix()
 {
+
     let prefix = '';
 
 
@@ -50,24 +50,44 @@ export class WebStore extends DataStore
         }
         super(prefix);
         this.#store = storage;
+
+        // listen to other tabs modifications
+
+        emitter.on('storage', e =>
+        {
+
+            if (e.storageArea === storage)
+            {
+                let prefix = this.key(''), name = e.key;
+                if (name.startsWith(prefix))
+                {
+                    name = name.slice(prefix.length);
+                    updateDataStore(this, name, decode(e.newValue));
+                }
+            }
+        });
     }
 
-
-
-    clear()
+    get keys()
     {
-        let prefix = this.key(''), { store } = this, keys = [];
 
-        // keys will change inside the loop as they are removed
-        for (let i = 0; i < prefix.length; i++)
+        const result = [], prefix = this.key(''), { store } = this;
+
+        for (let i = 0; i < store.length; i++)
         {
-            keys.push(store.keys(i));
+
+            let key = store.key(i);
+            if (key.startsWith(prefix))
+            {
+                result.push(key.slice(prefix.length));
+            }
+
         }
 
-        keys.filter(key => key.startsWith(prefix)).forEach(key => store.removeItem(key));
-        super.clear();
-
+        return result;
     }
+
+
 
     getItem(/** @type {string} */name, defaultValue = null)
     {
@@ -84,6 +104,7 @@ export class WebStore extends DataStore
 
     setItem(/** @type {string} */name, value)
     {
+
         if (value === null)
         {
             this.store.removeItem(this.key(name));

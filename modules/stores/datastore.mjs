@@ -1,23 +1,32 @@
+import EventManager from "../utils/event-manager.mjs";
 import { BackedEnum, getClass, isAbstract, isFunction, isUndef, noop, } from "../utils/utils.mjs";
 
 
 
 
-
+/**
+ * Private properties
+ */
 const
     SEP = ':',
     _prefixes = new Map(),
     _hooks = new Map(),
     _prefix = store => _prefixes.get(store),
     _queue = [],
-    _notify = (store, name, value) =>
+    _events = new Map();
+
+
+
+
+
+export function updateDataStore(/** @type {DataStore} */  store, /** @type {string} */ name, value)
+{
+    const hook = store.hook(name);
+    if (hook.length > 0)
     {
-        const hook = store.hook(name);
-        if (hook.length > 0)
-        {
-            hook(value);
-        }
-    };
+        _events.get(hook).trigger('update', value);
+    }
+}
 
 
 export class DataStoreType extends BackedEnum
@@ -27,99 +36,13 @@ export class DataStoreType extends BackedEnum
 }
 
 
-
-
-
-function getHook( /** @type {DataStore} */  store, /** @type {string} */  name)
-{
-
-
-    if (!_hooks.has(store))
-    {
-        _hooks.set(store, new Map());
-    }
-
-    const map = _hooks.get(store);
-
-    if (!map.has(name))
-    {
-
-        const
-            listeners = new Set(),
-            hook = (value) =>
-            {
-                const run = !_queue.length;
-
-                listeners.forEach(item =>
-                {
-                    item[1]();
-                    _queue.push([item[0], value]);
-                });
-
-                if (run)
-                {
-                    for (let item of _queue)
-                    {
-                        item[0](item[1]);
-                    }
-                    _queue.length = 0;
-
-                }
-            };
-
-        Object.assign(hook, {
-
-            subscribe(listener, updater = noop)
-            {
-                if (isFunction(listener))
-                {
-                    const obj = [listener, updater];
-
-                    listeners.add(obj);
-                    listener(this.getItem());
-                    return () =>
-                    {
-                        listeners.delete(obj);
-                    };
-
-                }
-
-            },
-            getItem: (defaultValue = null) => store.getItem(name, defaultValue),
-            setItem: (value) => store.setItem(name, value),
-            hasItem: () => store.hasItem(name),
-            removeItem: () => store.removeItem(name),
-        });
-
-        Object.defineProperty(hook, 'length', {
-            configurable: true,
-            get()
-            {
-                return listeners.size;
-            }
-
-        });
-
-        map.set(name, hook);
-    }
-
-
-    return map.get(name);
-}
-
 export class DataStore
 {
-
-
-
 
     get type()
     {
         return DataStoreType.SYNC;
     }
-
-
-
 
     constructor(prefix = '')
     {
@@ -130,6 +53,8 @@ export class DataStore
         }
 
         _prefixes.set(this, prefix);
+
+        _hooks.set(this, new Map());
 
     }
 
@@ -188,9 +113,84 @@ export class DataStore
     }
 
 
-    hook(/** @type {string} */name)
+    hook(/** @type {string} */name, defaultValue = null)
     {
-        return getHook(this, name);
+
+
+        if (!_hooks.get(this).has(name))
+        {
+
+            const
+                listeners = new Set(),
+                run_queue = (value) =>
+                {
+                    const run = !_queue.length;
+
+                    listeners.forEach(item =>
+                    {
+                        item[1]();
+                        _queue.push([item[0], value]);
+                    });
+
+                    if (run)
+                    {
+                        for (let item of _queue)
+                        {
+                            item[0](item[1]);
+                        }
+                        _queue.length = 0;
+
+                    }
+                },
+                subscribe = (listener, updater = noop) =>
+                {
+                    if (isFunction(listener))
+                    {
+                        const obj = [listener, updater];
+                        listeners.add(obj);
+                        listener(this.getItem(name, defaultValue));
+                        return () =>
+                        {
+                            listeners.delete(obj);
+                        };
+                    }
+
+                },
+                set = (_value) =>
+                {
+                    this.setItem(name, _value);
+                },
+                update = (fn) =>
+                {
+                    set(fn(this.getItem(name)));
+                },
+                getItem = (defaultValue = null) => this.getItem(name, defaultValue),
+                setItem = (value) => this.setItem(name, value);
+
+            const $that = {
+                subscribe, set, update, getItem, setItem
+            };
+            Object.defineProperty($that, 'length', { configurable: true, get: () => listeners.size });
+            const evt = new EventManager(false);
+            evt.on('update', (e) => run_queue(e.data));
+            _events.set($that, evt);
+            _hooks.get(this).set(name, $that);
+        }
+        return _hooks.get(this).get(name);
+    }
+
+
+    clear()
+    {
+
+        const keys = this.keys;
+
+        for (let key of keys)
+        {
+            this.removeItem(key);
+        }
+
+        return keys;
     }
 
 
@@ -198,25 +198,33 @@ export class DataStore
     // ---------------- Abstract Methods ----------------
 
 
-    clear()
+    get keys()
     {
-        [
-            getClass(DataStore),
-            getClass(AsyncDataStore)
-        ].forEach(x => isAbstract(this, x, 'clear'));
-        _notify(this);
+        isAbstract(this, getClass(DataStore), 'clear');
+        return [];
     }
+
+
 
     getItem(/** @type {string} */name, defaultValue = null)
     {
-        [
-            getClass(AsyncDataStore),
-            getClass(DataStore)
-        ].forEach(x => isAbstract(this, x, 'getItem'));
+
+        isAbstract(this, getClass(DataStore), 'getItem');
 
         if (isFunction(defaultValue))
         {
-            defaultValue = this.setItem(name, defaultValue());
+
+            let result = defaultValue();
+            if (result instanceof Promise)
+            {
+                result.then(value => this.setItem(name, value));
+                defaultValue = null;
+            }
+            else
+            {
+                defaultValue = this.setItem(name, result);
+            }
+
         }
 
         return defaultValue;
@@ -225,61 +233,18 @@ export class DataStore
     setItem(/** @type {string} */name, value)
     {
 
-        [
-            getClass(AsyncDataStore),
-            getClass(DataStore)
-        ].forEach(x => isAbstract(this, x, 'setItem'));
+        isAbstract(this, getClass(DataStore), 'setItem');
 
         if (isUndef(value))
         {
             throw new TypeError("value is undefined");
         }
 
-        _notify(this, name, value);
+        updateDataStore(this, name, value);
 
         return value;
     }
 }
 
-export class AsyncDataStore extends DataStore
-{
 
-
-    get type()
-    {
-        return DataStoreType.ASYNC;
-    }
-
-    // ---------------- Common Methods ----------------
-
-    async hasItem(/** @type {string} */name)
-    {
-        return super.hasItem(name);
-    }
-
-    async removeItem(name)
-    {
-        return super.removeItem(name);
-    }
-
-    async setMany(items = {})
-    {
-        const result = new Map();
-        for (let name in items)
-        {
-            const value = items[name];
-            result.set(name, await this.setItem(name, value));
-        }
-        return result;
-    }
-
-    async getMany(keys = [], defaultValue = null)
-    {
-        return await Promise.all(keys.map(key => [key, this.getItem(key, defaultValue)]));
-    }
-
-
-
-
-}
-
+export default DataStore;

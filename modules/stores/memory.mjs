@@ -1,9 +1,11 @@
+import { isEmpty, isPlainObject, isUndef } from "../utils/utils.mjs";
 import { DataStore } from "./datastore.mjs";
 
 
 const
     SHARED = 'shared',
-    Store = new Map();
+    Store = new Map(),
+    Hooks = new Map();
 
 
 export class MemoryStore extends DataStore
@@ -12,16 +14,21 @@ export class MemoryStore extends DataStore
 
     get store()
     {
-        return Store.get(this.#prefix);
+        return Store.get(this.key(''));
     }
 
-    #prefix;
+
 
     constructor(prefix = SHARED)
     {
 
-        super();
-        this.#prefix = prefix;
+        if (isEmpty(prefix))
+        {
+            throw new TypeError("prefix cannot be empty");
+        }
+
+        super(prefix);
+
 
         if (!Store.has(prefix))
         {
@@ -31,12 +38,13 @@ export class MemoryStore extends DataStore
     }
 
 
-
-    clear()
+    get keys()
     {
-        Store.set(this.#prefix, {});
-        return super.clear();
+        return Object.keys(this.store);
     }
+
+
+
 
     getItem(/** @type {string} */name, defaultValue = null)
     {
@@ -61,6 +69,66 @@ export class MemoryStore extends DataStore
 
 }
 
+
+
+
+
+/**
+ * Takes a key in an obj and manages it
+ */
+export class NestedStore extends DataStore
+{
+
+
+    get hook()
+    {
+        return Hooks.get(this);
+    }
+
+
+    constructor(store, name)
+    {
+        super();
+
+        const hook = store.hook(name);
+
+
+        Hooks.set(this, hook);
+
+        if (!isPlainObject(hook.getItem()))
+        {
+            hook.setItem({});
+        }
+    }
+
+
+    get keys()
+    {
+        return Object.keys(this.hook.getItem({}));
+    }
+
+
+
+    getItem(/** @type {string} */name, defaultValue = null)
+    {
+        return super.getItem(name, this.hook.getItem(name) ?? defaultValue);
+    }
+
+    setItem(/** @type {string} */name, value)
+    {
+
+        if (value === null)
+        {
+            this.hook.setItem(this.key(name), null);
+        }
+        else
+        {
+            this.hook.setItem(this.key(name), encode(value));
+        }
+
+        return super.setItem(name, value);
+    }
+}
 
 
 export default new MemoryStore();
