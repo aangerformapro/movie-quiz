@@ -1,4 +1,4 @@
-import { uuidv4, encode, decode, isString } from "../helpers/utils.mjs";
+import { uuidv4, encode, decode, isString } from "../utils/utils.mjs";
 import { DataStore } from "./datastore.mjs";
 
 
@@ -9,7 +9,13 @@ const VENDOR_KEY = 'NGSOFT:UUID', SEP = ':';
 
 function getDefaultPrefix()
 {
-    let prefix;
+    let prefix = '';
+
+
+    if (!IS_UNSAFE)
+    {
+        return prefix;
+    }
 
     if (null === (prefix = localStorage.getItem(VENDOR_KEY)))
     {

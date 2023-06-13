@@ -26,7 +26,6 @@ import LocalStore from './../src/stores/webstore.mjs';
 
 export const name = writable(LocalStore.getItem('name'), set =>
 {
-
     return LocalStore.subscribe('name', value =>
     {
         set(value);
@@ -34,14 +33,15 @@ export const name = writable(LocalStore.getItem('name'), set =>
 });
 
 
-name.subscribe(value =>
-{
-    LocalStore.setItem("name", value);
-});
 
-const localdata = await fetch("./localapi.json").then(d => d.json());
 
-export const localapi = readable(localdata);
+
+
+
+
+// const localdata = await fetch("./localapi.json").then(d => d.json());
+
+// export const localapi = readable(localdata);
 
 
 // current entry loaded into localstorage

@@ -52,7 +52,7 @@
         crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" crossorigin>
 
-    <link rel="stylesheet" href="./assets/layout.css">
+    <link rel="stylesheet" href="./assets/main.css">
     <link rel="stylesheet" href="./assets/style.css">
 
     <!-- Scripts -->
@@ -86,10 +86,10 @@
             <input type="checkbox" id="burger-btn" name="burger-btn" title="Burger Button Checkbox">
             <nav class="nav flex-column flex-lg-row justify-content-center">
 
-                <a href="./" class="nav-link active">Accueil</a>
-                <a href="./tv.html" class="nav-link">Séries</a>
-                <a href="./movies.html" class="nav-link">Films</a>
-                <a href="./both.html" class="nav-link">Tous les films et séries</a>
+                <a href="./" class="nav-link active" data-route="home">Accueil</a>
+                <a href="./tv.html" class="nav-link" data-route="tv">Séries</a>
+                <a href="./movies.html" class="nav-link" data-route="movies">Films</a>
+                <a href="./both.html" class="nav-link" data-route="both">Tous les films et séries</a>
 
             </nav>
             <a class="info-btn ms-auto my-2" href="#">
@@ -108,7 +108,12 @@
 
 
     </header>
-    <main class="app user-select-none"></main>
+    <main class="app user-select-none">
+
+
+        <!-- <div class="loading">Loading...</div> -->
+
+    </main>
     <footer class="text-center p-3 my-3">
         Une réalisation &copy; ACS Lons-le-Saunier - Mentions légales
     </footer>
