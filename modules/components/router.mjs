@@ -4,6 +4,10 @@
  * Only route html pages
  */
 
+import { noop } from "../utils/utils.mjs";
+
+
+
 
 const routes = new Map();
 
@@ -13,8 +17,7 @@ export class Route
     name = '';
     path = '';
     params = {};
-    search = {};
-    listeners = new Set();
+    fn = noop;
 
 }
 
@@ -39,6 +42,7 @@ export default class Router
     {
 
     }
+
 
 
 
