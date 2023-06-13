@@ -12,6 +12,7 @@ import json from '@rollup/plugin-json';
 
 const
     prod = !process.env.ROLLUP_WATCH,
+    USE_BABEL = false,
     inputdir = 'src', outputdir = 'public/assets',
     plugins = [
         json(),
@@ -48,17 +49,21 @@ const inputFiles = fs.readdirSync('src').filter(filename => filename.endsWith('.
 if (prod)
 {
 
-    plugins.unshift(babel({
-        presets: [
-            [
-                '@babel/preset-env', {
-                    targets: { esmodules: true },
-                    loose: true, modules: false
-                }
+    if (USE_BABEL)
+    {
+        plugins.unshift(babel({
+            presets: [
+                [
+                    '@babel/preset-env', {
+                        targets: { esmodules: true },
+                        loose: true, modules: false
+                    }
 
-            ]
-        ], babelHelpers: 'bundled'
-    }));
+                ]
+            ], babelHelpers: 'bundled'
+        }));
+    }
+
 
     plugins.push(terser());
 
