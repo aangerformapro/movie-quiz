@@ -4,7 +4,7 @@
     "description": "",
     "type": "module",
     "scripts": {
-        "watch": "run-p -n serve rollup:watch sass:watch postcss:watch",
+        "watch": "run-p -n rollup:watch sass:watch postcss:watch",
         "sass:dev": "sass --embed-sources --load-path=node_modules scss:build",
         "sass:watch": "sass --embed-sources --load-path=node_modules --watch scss:build",
         "postcss:dev": "postcss build/*.css --verbose --map --dir public/assets",
