@@ -1,5 +1,5 @@
 
-import { noop } from '../utils/utils.mjs';
+import { BackedEnum, noop } from '../utils/utils.mjs';
 import EventManager from './../utils/event-manager.mjs';
 import emitter from './../utils/emitter.mjs';
 
@@ -21,11 +21,10 @@ export const attachPushState = (fn = noop) =>
 
     function push(state, unused, url)
     {
-        pushState.apply(context, [arguments]); (this, [state, unused, url]);
+        pushState.apply(this, [state, unused, url]);
         //notify
         EventListeners.trigger('push change', { url, state }); //async
         fn(url, state); //linear
-
     }
 
     history.pushState = push;
@@ -50,7 +49,7 @@ export const attachReplaceState = (fn = noop) =>
 
     function replace(state, unused, url)
     {
-        replaceState.apply(context, [arguments]); (this, [state, unused, url]);
+        replaceState.apply(this, [state, unused, url]);
         //notify
         EventListeners.trigger('replace change', { url, state });
         fn(url, state);
@@ -72,27 +71,60 @@ export const attachReplaceState = (fn = noop) =>
 
 
 
-function attachEvents()
+function attachEvents(events)
 {
     if (!attachedOnce)
     {
         attachedOnce = true;
-        attachPushState();
-        attachReplaceState();
-        emitter.on('popstate hashchange', e =>
+
+
+        if (events === RouterEvent.ALL || events === RouterEvent.PUSH)
         {
-            const type = e.type === 'popstate' ? 'pop' : 'hash';
-            EventListeners.trigger(type + ' change', {
-                state: e.state ?? history.state,
-                url: location.href
+            attachPushState();
+        }
+        if (events === RouterEvent.ALL || events === RouterEvent.REPLACE)
+        {
+            attachReplaceState();
+        }
+
+
+        if (events.value.includes('pop') || events === RouterEvent.ALL)
+        {
+            emitter.on('popstate', e =>
+            {
+                EventListeners.trigger('pop change', {
+                    state: e.state,
+                    url: location.href
+                });
             });
-        });
+        }
+
+        if (events === RouterEvent.HASH || events === RouterEvent.HASH)
+        {
+            emitter.on('hashchange', e =>
+            {
+                EventListeners.trigger('hash change', {
+                    state: history.state,
+                    url: location.href
+                });
+            });
+        }
+
+
 
 
     }
 }
 
+export class RouterEvent extends BackedEnum
+{
 
+    static ALL = new RouterEvent('change');
+    static PUSH = new RouterEvent('push pop');
+    static REPLACE = new RouterEvent('replace pop');
+    static HASH = new RouterEvent('hash');
+
+}
 
 
 export default class History
@@ -108,12 +140,13 @@ export default class History
     static onChange(fn)
     {
 
-        attachEvents();
-        EventListeners.on('change', fn);
+        const type = RouterEvent.ALL.value;
+
+        EventListeners.on(type, fn);
 
         return () =>
         {
-            EventManager.off('change', fn);
+            EventManager.off(type, fn);
         };
     }
 
@@ -121,52 +154,50 @@ export default class History
     static onPush(fn)
     {
 
-        attachEvents();
-        EventListeners.on('push', fn);
+        const type = RouterEvent.PUSH.value;
+
+        EventListeners.on(type, fn);
+
 
 
         return () =>
         {
-            EventManager.off('push', fn);
+            EventManager.off(type, fn);
         };
 
     }
     static onReplace(fn)
     {
+        const type = RouterEvent.REPLACE.value;
 
-        attachEvents();
-        EventListeners.on('replace', fn);
+        EventListeners.on(type, fn);
 
         return () =>
         {
-            EventManager.off('replace', fn);
+            EventManager.off(type, fn);
         };
 
     }
 
-    static onPop(fn)
-    {
 
-        attachEvents();
-        EventListeners.on('pop', fn);
-
-
-        return () =>
-        {
-            EventManager.off('pop', fn);
-        };
-
-    }
 
     static onHash(fn)
     {
-        attachEvents();
-        EventListeners.on('hash', fn);
+
+        const type = RouterEvent.HASH.value;
+
+        EventListeners.on(type, fn);
 
         return () =>
         {
-            EventManager.off('hash', fn);
+            EventManager.off(type, fn);
         };
+    }
+
+
+    static start(events = RouterEvent.default)
+    {
+        attachEvents(events);
     }
 
 }

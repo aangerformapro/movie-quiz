@@ -6,7 +6,7 @@
 import "./_dialog.scss";
 
 
-import { isElement, createElement, decode, encode, isEmpty, isString, isArray, BackedEnum } from '../helpers/utils.mjs';
+import { isElement, createElement, decode, encode, isEmpty, isString, isArray, BackedEnum } from '../utils/utils.mjs';
 
 import icons from './sprite.mjs';
 import NoScroll from './noscroll.mjs';

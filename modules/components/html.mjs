@@ -1,6 +1,6 @@
 
-import { isElement, createElement, isHTML, isValidSelector } from '../helpers/utils.mjs';
-import emitter from '../helpers/emitter.mjs';
+import { isElement, createElement, isHTML, isValidSelector } from '../utils/utils.mjs';
+import emitter from '../utils/emitter.mjs';
 
 
 

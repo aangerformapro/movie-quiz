@@ -68,7 +68,7 @@ if (prod)
 export default inputFiles.map(item => ({
     watch: {
         exclude: 'node_modules/**',
-        include: [inputdir + '/**', 'app/**']
+        include: [inputdir + '/**', 'modules/**']
     },
     context: 'globalThis',
     input: item.input,

@@ -1,5 +1,8 @@
 
-
+/**
+ * A simple router to route Static pages
+ * Only route html pages
+ */
 
 
 const routes = new Map();
@@ -11,11 +14,7 @@ export class Route
     path = '';
     params = {};
     search = {};
-
-
-
-
-
+    listeners = new Set();
 
 }
 
@@ -40,6 +39,9 @@ export default class Router
     {
 
     }
+
+
+
 
 
 

@@ -3,7 +3,9 @@ import App from "./App.svelte";
 
 import Dialog, { Position } from "../modules/components/dialog.mjs";
 import NoScroll from "../modules/components/noscroll.mjs";
-import emitter from "../modules/helpers/emitter.mjs";
+import emitter from "../modules/utils/emitter.mjs";
+import History from "../modules/components/history";
+
 
 
 
@@ -134,6 +136,11 @@ emitter(document.body).on("click", e =>
 
 
 
+History.onChange(console.dir);
+
+History.start();
+
+
 
 const app = new App({
     target: document.querySelector('main'),
@@ -145,4 +152,3 @@ const app = new App({
 export default app;
 
 
-console.debug(app);

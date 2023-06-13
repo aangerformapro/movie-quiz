@@ -1,5 +1,5 @@
-import { isInt, isUnsignedInt } from "../helpers/utils.mjs";
-import { EventManager } from './../helpers/event-manager';
+import { isInt, isUnsignedInt } from "../utils/utils.mjs";
+import { EventManager } from './../utils/event-manager';
 
 
 

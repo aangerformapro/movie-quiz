@@ -1,4 +1,4 @@
-function noop() { }
+function noop$1() { }
 function add_location(element, file, line, column, char) {
     element.__svelte_meta = {
         loc: { file, line, column, char }
@@ -29,7 +29,7 @@ function validate_store(store, name) {
 }
 function subscribe(store, ...callbacks) {
     if (store == null) {
-        return noop;
+        return noop$1;
     }
     const unsub = store.subscribe(...callbacks);
     return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
@@ -247,7 +247,7 @@ function init(component, options, instance, create_fragment, not_equal, props, a
         ctx: [],
         // state
         props,
-        update: noop,
+        update: noop$1,
         not_equal,
         bound: blank_object(),
         // lifecycle
@@ -306,11 +306,11 @@ function init(component, options, instance, create_fragment, not_equal, props, a
 class SvelteComponent {
     $destroy() {
         destroy_component(this, 1);
-        this.$destroy = noop;
+        this.$destroy = noop$1;
     }
     $on(type, callback) {
         if (!is_function(callback)) {
-            return noop;
+            return noop$1;
         }
         const callbacks = (this.$$.callbacks[type] || (this.$$.callbacks[type] = []));
         callbacks.push(callback);
@@ -409,7 +409,7 @@ function readable(value, start) {
  * @param {*=}value initial value
  * @param {StartStopNotifier=} start
  */
-function writable(value, start = noop) {
+function writable(value, start = noop$1) {
     let stop;
     const subscribers = new Set();
     function set(new_value) {
@@ -433,11 +433,11 @@ function writable(value, start = noop) {
     function update(fn) {
         set(fn(value));
     }
-    function subscribe(run, invalidate = noop) {
+    function subscribe(run, invalidate = noop$1) {
         const subscriber = [run, invalidate];
         subscribers.add(subscriber);
         if (subscribers.size === 1) {
-            stop = start(set) || noop;
+            stop = start(set) || noop$1;
         }
         run(value);
         return () => {
@@ -460,7 +460,7 @@ function derived(stores, fn, initial_value) {
         let started = false;
         const values = [];
         let pending = 0;
-        let cleanup = noop;
+        let cleanup = noop$1;
         const sync = () => {
             if (pending) {
                 return;
@@ -471,7 +471,7 @@ function derived(stores, fn, initial_value) {
                 set(result);
             }
             else {
-                cleanup = is_function(result) ? result : noop;
+                cleanup = is_function(result) ? result : noop$1;
             }
         };
         const unsubscribers = stores_array.map((store, i) => subscribe(store, (value) => {
@@ -700,8 +700,8 @@ function create_fragment(ctx) {
 				}
 			}
 		},
-		i: noop,
-		o: noop,
+		i: noop$1,
+		o: noop$1,
 		d: function destroy(detaching) {
 			if (detaching) detach_dev(nav);
 			if (detaching) detach_dev(t5);
@@ -764,6 +764,7 @@ class App extends SvelteComponentDev {
 
 
 const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
+    noop = () => { },
     global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
     { JSON, document: document$1 } = global,
     isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
@@ -902,7 +903,6 @@ function encode(value)
 }
 
 
-
 function parseAttributes(obj, /** @type {string|undefined} */ name)
 {
 
@@ -924,6 +924,7 @@ function parseAttributes(obj, /** @type {string|undefined} */ name)
     }
     return result.map(item => name ? [[name, item[0]].join('-'), item[1]] : item);
 }
+
 
 
 
@@ -2320,19 +2321,23 @@ const instance$1 = new EventManager();
 
 const { documentElement } = document;
 
-class NoScroll {
+class NoScroll
+{
 
 
-    static #scrollTop = 0
-    static #stylesheet
+    static #scrollTop = 0;
+    static #stylesheet;
 
-    static get enabled() {
+    static get enabled()
+    {
         return documentElement.classList.contains('noscroll');
     }
 
-    static #getStylesheet() {
+    static #getStylesheet()
+    {
 
-        if (!this.#stylesheet) {
+        if (!this.#stylesheet)
+        {
             this.#stylesheet = createElement('style', { type: 'text/css', id: 'no-scroll-component' });
             document.getElementsByTagName('head')[0].appendChild(this.#stylesheet);
 
@@ -2341,16 +2346,19 @@ class NoScroll {
     }
 
 
-    static async enable(savePosition = true) {
+    static async enable(savePosition = true)
+    {
 
-        if (this.enabled) {
+        if (this.enabled)
+        {
             return true;
         }
 
 
         let pos = Math.max(0, documentElement.scrollTop);
         this.#scrollTop = pos;
-        if (savePosition) {
+        if (savePosition)
+        {
             this.#getStylesheet().innerHTML = `html.noscroll{top:-${pos}px;}`;
         }
         documentElement.classList.add('noscroll');
@@ -2361,14 +2369,17 @@ class NoScroll {
 
 
 
-    static async disable(savePosition = true) {
+    static async disable(savePosition = true)
+    {
 
-        if (!this.enabled) {
+        if (!this.enabled)
+        {
             return true;
         }
 
         documentElement.classList.remove('noscroll');
-        if (this.#scrollTop > 0 && savePosition) {
+        if (this.#scrollTop > 0 && savePosition)
+        {
             documentElement.classList.add('scrollback');
             documentElement.scrollTo(0, this.#scrollTop);
             documentElement.classList.remove('scrollback');
@@ -3239,6 +3250,202 @@ class Dialog extends HtmlComponent
 
 }
 
+const EventListeners = new EventManager();
+
+let attachedOnce = false;
+
+
+/**
+ * Monkey patch the history pushState
+ */
+const attachPushState = (fn = noop) =>
+{
+
+    const { pushState } = history;
+
+    function push(state, unused, url)
+    {
+        pushState.apply(this, [state, unused, url]);
+        //notify
+        EventListeners.trigger('push change', { url, state }); //async
+        fn(url, state); //linear
+    }
+
+    history.pushState = push;
+
+    return () =>
+    {
+        if (push === history.pushState)
+        {
+            history.pushState = pushState;
+        }
+    };
+
+};
+
+/**
+ * Monkey patch the history replaceState
+ */
+const attachReplaceState = (fn = noop) =>
+{
+
+    const { replaceState } = history;
+
+    function replace(state, unused, url)
+    {
+        replaceState.apply(this, [state, unused, url]);
+        //notify
+        EventListeners.trigger('replace change', { url, state });
+        fn(url, state);
+
+    }
+
+    history.replaceState = replace;
+
+    return () =>
+    {
+        if (replace === history.replaceState)
+        {
+            history.replaceState = replaceState;
+        }
+    };
+
+};
+
+
+
+
+function attachEvents(events)
+{
+    if (!attachedOnce)
+    {
+        attachedOnce = true;
+
+
+        if (events === RouterEvent.ALL || events === RouterEvent.PUSH)
+        {
+            attachPushState();
+        }
+        if (events === RouterEvent.ALL || events === RouterEvent.REPLACE)
+        {
+            attachReplaceState();
+        }
+
+
+        if (events.value.includes('pop') || events === RouterEvent.ALL)
+        {
+            emitter.on('popstate', e =>
+            {
+                EventListeners.trigger('pop change', {
+                    state: e.state,
+                    url: location.href
+                });
+            });
+        }
+
+        if (events === RouterEvent.HASH || events === RouterEvent.HASH)
+        {
+            emitter.on('hashchange', e =>
+            {
+                EventListeners.trigger('hash change', {
+                    state: history.state,
+                    url: location.href
+                });
+            });
+        }
+
+
+
+
+    }
+}
+
+class RouterEvent extends BackedEnum
+{
+
+    static ALL = new RouterEvent('change');
+    static PUSH = new RouterEvent('push pop');
+    static REPLACE = new RouterEvent('replace pop');
+    static HASH = new RouterEvent('hash');
+
+}
+
+
+class History
+{
+
+
+    static get eventManager()
+    {
+        return EventListeners;
+    }
+
+
+    static onChange(fn)
+    {
+
+        const type = RouterEvent.ALL.value;
+
+        EventListeners.on(type, fn);
+
+        return () =>
+        {
+            EventManager.off(type, fn);
+        };
+    }
+
+
+    static onPush(fn)
+    {
+
+        const type = RouterEvent.PUSH.value;
+
+        EventListeners.on(type, fn);
+
+
+
+        return () =>
+        {
+            EventManager.off(type, fn);
+        };
+
+    }
+    static onReplace(fn)
+    {
+        const type = RouterEvent.REPLACE.value;
+
+        EventListeners.on(type, fn);
+
+        return () =>
+        {
+            EventManager.off(type, fn);
+        };
+
+    }
+
+
+
+    static onHash(fn)
+    {
+
+        const type = RouterEvent.HASH.value;
+
+        EventListeners.on(type, fn);
+
+        return () =>
+        {
+            EventManager.off(type, fn);
+        };
+    }
+
+
+    static start(events = RouterEvent.default)
+    {
+        attachEvents(events);
+    }
+
+}
+
 // const swipers = [...document.querySelectorAll('.swiper')].map(initiateSwiper);
 
 /**
@@ -3338,6 +3545,11 @@ emitter(document.body).on("click", e =>
 
 
 
+History.onChange(console.dir);
+
+History.start();
+
+
 
 const app = new App({
     target: document.querySelector('main'),
@@ -3345,9 +3557,6 @@ const app = new App({
     // 	name: 'world'
     // }
 });
-
-
-console.debug(app);
 
 export { app as default };
 //# sourceMappingURL=main.js.map
