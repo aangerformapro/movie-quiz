@@ -4,7 +4,8 @@ import App from "./App.svelte";
 import Dialog, { Position } from "../modules/components/dialog.mjs";
 import NoScroll from "../modules/components/noscroll.mjs";
 import emitter from "../modules/utils/emitter.mjs";
-import History from "../modules/components/history";
+import Router from "../modules/components/router.mjs";
+
 
 
 
@@ -122,33 +123,48 @@ NoScroll.on('disabled', e =>
  * Handles [data-route]
  */
 
-emitter(document.body).on("click", e =>
+// emitter(document.body).on("click", e =>
+// {
+//     let target = e.target.closest('[href][data-route]');
+
+//     if (target)
+//     {
+//         e.preventDefault();
+//         history.pushState(target.href, '', target.href);
+//     }
+// });
+
+if (location.pathname.startsWith("/public"))
 {
-    let target = e.target.closest('[href][data-route]');
+    Router.basePath = '/public';
+}
 
-    if (target)
-    {
-        e.preventDefault();
-        history.pushState(target.href, '', target.href);
-    }
-});
+// Router.get('/', () =>
+// {
+//     alert('home');
+// }, 'home').get('/index.html', () =>
+// {
+//     alert('home');
+// }, 'home').get('/movies.html', () =>
+// {
+//     alert('movies');
+// }, 'movies').start(console.debug);
 
 
 
 
-History.onChange(console.dir);
-
-History.start();
 
 
 
 const app = new App({
     target: document.querySelector('main'),
-    // props: {
-    // 	name: 'world'
-    // }
+
 });
 
 export default app;
 
 
+// const { prompt, alert, confirm } = Dialog;
+
+
+// prompt('entrez le nom du film').then(confirm);

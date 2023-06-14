@@ -1,9 +1,4 @@
 function noop$1() { }
-function add_location(element, file, line, column, char) {
-    element.__svelte_meta = {
-        loc: { file, line, column, char }
-    };
-}
 function run(fn) {
     return fn();
 }
@@ -22,53 +17,10 @@ function safe_not_equal(a, b) {
 function is_empty(obj) {
     return Object.keys(obj).length === 0;
 }
-function validate_store(store, name) {
-    if (store != null && typeof store.subscribe !== 'function') {
-        throw new Error(`'${name}' is not a store with a 'subscribe' method`);
-    }
-}
-function subscribe(store, ...callbacks) {
-    if (store == null) {
-        return noop$1;
-    }
-    const unsub = store.subscribe(...callbacks);
-    return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
-}
-function component_subscribe(component, store, callback) {
-    component.$$.on_destroy.push(subscribe(store, callback));
-}
-function append(target, node) {
-    target.appendChild(node);
-}
-function insert(target, node, anchor) {
-    target.insertBefore(node, anchor || null);
-}
 function detach(node) {
     if (node.parentNode) {
         node.parentNode.removeChild(node);
     }
-}
-function element(name) {
-    return document.createElement(name);
-}
-function text(data) {
-    return document.createTextNode(data);
-}
-function space() {
-    return text(' ');
-}
-function empty() {
-    return text('');
-}
-function listen(node, event, handler, options) {
-    node.addEventListener(event, handler, options);
-    return () => node.removeEventListener(event, handler, options);
-}
-function attr(node, attribute, value) {
-    if (value == null)
-        node.removeAttribute(attribute);
-    else if (node.getAttribute(attribute) !== value)
-        node.setAttribute(attribute, value);
 }
 function children(element) {
     return Array.from(element.childNodes);
@@ -332,40 +284,6 @@ class SvelteComponent {
 function dispatch_dev(type, detail) {
     document.dispatchEvent(custom_event(type, Object.assign({ version: '3.59.1' }, detail), { bubbles: true }));
 }
-function append_dev(target, node) {
-    dispatch_dev('SvelteDOMInsert', { target, node });
-    append(target, node);
-}
-function insert_dev(target, node, anchor) {
-    dispatch_dev('SvelteDOMInsert', { target, node, anchor });
-    insert(target, node, anchor);
-}
-function detach_dev(node) {
-    dispatch_dev('SvelteDOMRemove', { node });
-    detach(node);
-}
-function listen_dev(node, event, handler, options, has_prevent_default, has_stop_propagation, has_stop_immediate_propagation) {
-    const modifiers = options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
-    if (has_prevent_default)
-        modifiers.push('preventDefault');
-    if (has_stop_propagation)
-        modifiers.push('stopPropagation');
-    if (has_stop_immediate_propagation)
-        modifiers.push('stopImmediatePropagation');
-    dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
-    const dispose = listen(node, event, handler, options);
-    return () => {
-        dispatch_dev('SvelteDOMRemoveEventListener', { node, event, handler, modifiers });
-        dispose();
-    };
-}
-function attr_dev(node, attribute, value) {
-    attr(node, attribute, value);
-    if (value == null)
-        dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
-    else
-        dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
-}
 function validate_slots(name, slot, keys) {
     for (const slot_key of Object.keys(slot)) {
         if (!~keys.indexOf(slot_key)) {
@@ -393,323 +311,19 @@ class SvelteComponentDev extends SvelteComponent {
     $inject_state() { }
 }
 
-const subscriber_queue = [];
-/**
- * Creates a `Readable` store that allows reading by subscription.
- * @param value initial value
- * @param {StartStopNotifier} [start]
- */
-function readable(value, start) {
-    return {
-        subscribe: writable(value, start).subscribe
-    };
-}
-/**
- * Create a `Writable` store that allows both updating and reading by subscription.
- * @param {*=}value initial value
- * @param {StartStopNotifier=} start
- */
-function writable(value, start = noop$1) {
-    let stop;
-    const subscribers = new Set();
-    function set(new_value) {
-        if (safe_not_equal(value, new_value)) {
-            value = new_value;
-            if (stop) { // store is ready
-                const run_queue = !subscriber_queue.length;
-                for (const subscriber of subscribers) {
-                    subscriber[1]();
-                    subscriber_queue.push(subscriber, value);
-                }
-                if (run_queue) {
-                    for (let i = 0; i < subscriber_queue.length; i += 2) {
-                        subscriber_queue[i][0](subscriber_queue[i + 1]);
-                    }
-                    subscriber_queue.length = 0;
-                }
-            }
-        }
-    }
-    function update(fn) {
-        set(fn(value));
-    }
-    function subscribe(run, invalidate = noop$1) {
-        const subscriber = [run, invalidate];
-        subscribers.add(subscriber);
-        if (subscribers.size === 1) {
-            stop = start(set) || noop$1;
-        }
-        run(value);
-        return () => {
-            subscribers.delete(subscriber);
-            if (subscribers.size === 0 && stop) {
-                stop();
-                stop = null;
-            }
-        };
-    }
-    return { set, update, subscribe };
-}
-function derived(stores, fn, initial_value) {
-    const single = !Array.isArray(stores);
-    const stores_array = single
-        ? [stores]
-        : stores;
-    const auto = fn.length < 2;
-    return readable(initial_value, (set) => {
-        let started = false;
-        const values = [];
-        let pending = 0;
-        let cleanup = noop$1;
-        const sync = () => {
-            if (pending) {
-                return;
-            }
-            cleanup();
-            const result = fn(single ? values[0] : values, set);
-            if (auto) {
-                set(result);
-            }
-            else {
-                cleanup = is_function(result) ? result : noop$1;
-            }
-        };
-        const unsubscribers = stores_array.map((store, i) => subscribe(store, (value) => {
-            values[i] = value;
-            pending &= ~(1 << i);
-            if (started) {
-                sync();
-            }
-        }, () => {
-            pending |= (1 << i);
-        }));
-        started = true;
-        sync();
-        return function stop() {
-            run_all(unsubscribers);
-            cleanup();
-            // We need to set this to false because callbacks can still happen despite having unsubscribed:
-            // Callbacks might already be placed in the queue which doesn't know it should no longer
-            // invoke this derived store.
-            started = false;
-        };
-    });
-}
-
-const href = writable(window.location.href);
-const originalPushState = history.pushState;
-const originalReplaceState = history.replaceState;
-const updateHref = () => href.set(window.location.href);
-history.pushState = function ()
-{
-    originalPushState.apply(this, arguments);
-    updateHref();
-};
-history.replaceState = function ()
-{
-    originalReplaceState.apply(this, arguments);
-    updateHref();
-};
-window.addEventListener("popstate", updateHref);
-// window.addEventListener("hashchange", updateHref);
-var url = derived(href, $href => new URL($href));
-
-const basePath = location.pathname.slice(0, location.pathname.lastIndexOf("/"));
-
-
-function getRoute(path)
-{
-    if (path.startsWith(basePath))
-    {
-        return path.slice(basePath.length);
-    }
-    return path;
-}
-
 /* src\App.svelte generated by Svelte v3.59.1 */
-const file = "src\\App.svelte";
-
-// (19:0) {:else}
-function create_else_block(ctx) {
-	let h1;
-
-	const block = {
-		c: function create() {
-			h1 = element("h1");
-			h1.textContent = "404";
-			add_location(h1, file, 19, 4, 577);
-		},
-		m: function mount(target, anchor) {
-			insert_dev(target, h1, anchor);
-		},
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(h1);
-		}
-	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_else_block.name,
-		type: "else",
-		source: "(19:0) {:else}",
-		ctx
-	});
-
-	return block;
-}
-
-// (17:52) 
-function create_if_block_1(ctx) {
-	let h1;
-
-	const block = {
-		c: function create() {
-			h1 = element("h1");
-			h1.textContent = "About What?";
-			add_location(h1, file, 17, 4, 542);
-		},
-		m: function mount(target, anchor) {
-			insert_dev(target, h1, anchor);
-		},
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(h1);
-		}
-	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_if_block_1.name,
-		type: "if",
-		source: "(17:52) ",
-		ctx
-	});
-
-	return block;
-}
-
-// (15:0) {#if getRoute($url.pathname) === "/"}
-function create_if_block(ctx) {
-	let h1;
-
-	const block = {
-		c: function create() {
-			h1 = element("h1");
-			h1.textContent = "Home Sweet Home";
-			add_location(h1, file, 15, 4, 458);
-		},
-		m: function mount(target, anchor) {
-			insert_dev(target, h1, anchor);
-		},
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(h1);
-		}
-	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_if_block.name,
-		type: "if",
-		source: "(15:0) {#if getRoute($url.pathname) === \\\"/\\\"}",
-		ctx
-	});
-
-	return block;
-}
 
 function create_fragment(ctx) {
-	let nav;
-	let a0;
-	let t1;
-	let a1;
-	let t3;
-	let a2;
-	let t5;
-	let show_if;
-	let show_if_1;
-	let if_block_anchor;
-	let mounted;
-	let dispose;
-
-	function select_block_type(ctx, dirty) {
-		if (dirty & /*$url*/ 1) show_if = null;
-		if (dirty & /*$url*/ 1) show_if_1 = null;
-		if (show_if == null) show_if = !!(getRoute(/*$url*/ ctx[0].pathname) === "/");
-		if (show_if) return create_if_block;
-		if (show_if_1 == null) show_if_1 = !!(getRoute(/*$url*/ ctx[0].pathname) === "/about.html");
-		if (show_if_1) return create_if_block_1;
-		return create_else_block;
-	}
-
-	let current_block_type = select_block_type(ctx, -1);
-	let if_block = current_block_type(ctx);
-
 	const block = {
-		c: function create() {
-			nav = element("nav");
-			a0 = element("a");
-			a0.textContent = "Home";
-			t1 = space();
-			a1 = element("a");
-			a1.textContent = "About";
-			t3 = space();
-			a2 = element("a");
-			a2.textContent = "404";
-			t5 = space();
-			if_block.c();
-			if_block_anchor = empty();
-			attr_dev(a0, "href", "./");
-			add_location(a0, file, 10, 4, 236);
-			attr_dev(a1, "href", "./about.html");
-			add_location(a1, file, 11, 4, 290);
-			attr_dev(a2, "href", "./404");
-			add_location(a2, file, 12, 4, 355);
-			add_location(nav, file, 9, 0, 225);
-		},
+		c: noop$1,
 		l: function claim(nodes) {
 			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
 		},
-		m: function mount(target, anchor) {
-			insert_dev(target, nav, anchor);
-			append_dev(nav, a0);
-			append_dev(nav, t1);
-			append_dev(nav, a1);
-			append_dev(nav, t3);
-			append_dev(nav, a2);
-			insert_dev(target, t5, anchor);
-			if_block.m(target, anchor);
-			insert_dev(target, if_block_anchor, anchor);
-
-			if (!mounted) {
-				dispose = [
-					listen_dev(a0, "click", handleLinkClick, false, false, false, false),
-					listen_dev(a1, "click", handleLinkClick, false, false, false, false),
-					listen_dev(a2, "click", handleLinkClick, false, false, false, false)
-				];
-
-				mounted = true;
-			}
-		},
-		p: function update(ctx, [dirty]) {
-			if (current_block_type !== (current_block_type = select_block_type(ctx, dirty))) {
-				if_block.d(1);
-				if_block = current_block_type(ctx);
-
-				if (if_block) {
-					if_block.c();
-					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-				}
-			}
-		},
+		m: noop$1,
+		p: noop$1,
 		i: noop$1,
 		o: noop$1,
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(nav);
-			if (detaching) detach_dev(t5);
-			if_block.d(detaching);
-			if (detaching) detach_dev(if_block_anchor);
-			mounted = false;
-			run_all(dispose);
-		}
+		d: noop$1
 	};
 
 	dispatch_dev("SvelteRegisterBlock", {
@@ -723,16 +337,7 @@ function create_fragment(ctx) {
 	return block;
 }
 
-function handleLinkClick(e) {
-	e.preventDefault();
-	const href = e.target.href;
-	history.pushState(href, "", href);
-}
-
-function instance$2($$self, $$props, $$invalidate) {
-	let $url;
-	validate_store(url, 'url');
-	component_subscribe($$self, url, $$value => $$invalidate(0, $url = $$value));
+function instance$2($$self, $$props) {
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots('App', slots, []);
 	const writable_props = [];
@@ -741,8 +346,7 @@ function instance$2($$self, $$props, $$invalidate) {
 		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
 	});
 
-	$$self.$capture_state = () => ({ url, getRoute, handleLinkClick, $url });
-	return [$url];
+	return [];
 }
 
 class App extends SvelteComponentDev {
@@ -1095,6 +699,30 @@ function html2element(html)
         }
         return content.childNodes[0];
     }
+}
+
+
+/**
+ * Resolves an URL
+ * 
+ * @param {URL|String} url 
+ * @returns {URL|undefined}
+ */
+function getUrl(url)
+{
+    if (isString(url))
+    {
+        const a = getUrl.a ??= createElement("a");
+        getUrl.a.href = url;
+        url = new URL(a.href);
+    }
+
+
+    if (url instanceof URL)
+    {
+        return url;
+    }
+
 }
 
 /**
@@ -3446,6 +3074,292 @@ class History
 
 }
 
+const routes = new Set();
+
+
+let base = '';
+
+let started = false;
+
+class Route
+{
+    name = '*';
+    path = '*';
+    params = [];
+    fn = noop;
+
+
+    constructor({ path, name, params, fn } = {})
+    {
+
+        if (isString(path))
+        {
+            this.path = path;
+        }
+
+        if (isString(name))
+        {
+            this.name = name;
+        }
+
+        if (isArray(params))
+        {
+            this.params.push(...params);
+        }
+
+        if (isFunction(fn))
+        {
+            this.fn = fn;
+        }
+    }
+
+
+    matches(path)
+    {
+        return path.slice(base.length) === this.path || this.path === '*';
+    }
+
+
+
+    getParams(url)
+    {
+
+        const params = new Map();
+        for (const [key, value] of getUrl(url).searchParams)
+        {
+            params.set(key, decode(value));
+        }
+
+        return params;
+    }
+
+
+
+
+    run(url)
+    {
+        const params = this.getParams(url);
+        this.fn(...this.params.map(p => params.get(p)), params);
+    }
+
+
+    urlFor(params = {})
+    {
+
+        let path = base + this.path;
+
+        if (!isEmpty(params))
+        {
+
+            const search = new URLSearchParams();
+            for (let key in params)
+            {
+                let value = encode(params[key]);
+                search.set(key, value);
+            }
+
+            path += '?' + search.toString();
+        }
+
+        return path;
+    }
+
+
+
+}
+
+
+
+
+class Router
+{
+
+
+    static get basePath()
+    {
+        return base;
+    }
+
+
+    static set basePath(value)
+    {
+
+        if (!isEmpty(value) && !value.startsWith("/"))
+        {
+            throw new TypeError("basepath " + value + ' is incorrect.');
+        }
+
+        while (value.endsWith("/"))
+        {
+            value = value.slice(0, -1);
+        }
+
+        base = value;
+
+    }
+
+
+
+    static get route()
+    {
+
+        const url = getUrl(location.href); url.pathname;
+
+        for (let route of routes)
+        {
+
+            if (route.matches(url.pathname))
+            {
+                return route.name;
+            }
+        }
+
+    }
+
+
+
+
+    static get routes()
+    {
+        return routes;
+    }
+
+
+    static get(path, fn, name, params = [])
+    {
+
+        if (!isString(name))
+        {
+            throw new TypeError('Your route must be named');
+        }
+
+
+        if (isString(path))
+        {
+            path = [path];
+        }
+
+        if (!isArray(path))
+        {
+            throw new TypeError("path must be a String|String[]");
+        }
+
+        path.forEach(p => routes.add(new Route({ p, fn, name, params })));
+
+        return this;
+    }
+
+
+    static urlFor(/** @param {string} */name, params = {})
+    {
+        const route = getRoute(name);
+
+        if (!route)
+        {
+            throw new Error('invalid route ' + name);
+        }
+        return route.urlFor(params);
+    }
+
+
+
+
+    getRoute(name)
+    {
+
+        for (let route of routes)
+        {
+            if (route.name === name)
+            {
+                return route;
+            }
+        }
+    }
+
+    goto(route, params = {}, push = true)
+    {
+        if (!started)
+        {
+            return;
+        }
+
+        if (isString(route))
+        {
+            route = this.getRoute(route);
+        }
+
+        if (route instanceof Route === false)
+        {
+            throw new TyperError("invalid route");
+        }
+
+        const url = route.urlFor(params);
+        if (push)
+        {
+            history.pushState(url, '', url);
+        } else
+        {
+            location.href = url.href;
+        }
+
+        return route;
+    }
+
+
+
+
+    static start(fn)
+    {
+
+        if (!isFunction(fn))
+        {
+            throw new TypeError("fn is not a Function");
+        }
+
+        const detach = History.onPush(e =>
+        {
+
+
+            const url = getUrl(e.data.url);
+
+
+            for (let route of routes)
+            {
+
+                if (route.matches(url.pathname))
+                {
+                    fn(route, url);
+                    route.run(url);
+
+                    return;
+
+                }
+            }
+
+
+            fn(new Route(), _url);
+
+
+        });
+
+        if (!started)
+        {
+
+            started = true;
+            History.start(RouterEvent.PUSH);
+        }
+
+        return detach;
+
+    }
+
+
+
+
+
+
+}
+
 // const swipers = [...document.querySelectorAll('.swiper')].map(initiateSwiper);
 
 /**
@@ -3531,32 +3445,49 @@ NoScroll.on('disabled', e =>
  * Handles [data-route]
  */
 
-emitter(document.body).on("click", e =>
+// emitter(document.body).on("click", e =>
+// {
+//     let target = e.target.closest('[href][data-route]');
+
+//     if (target)
+//     {
+//         e.preventDefault();
+//         history.pushState(target.href, '', target.href);
+//     }
+// });
+
+if (location.pathname.startsWith("/public"))
 {
-    let target = e.target.closest('[href][data-route]');
+    Router.basePath = '/public';
+}
 
-    if (target)
-    {
-        e.preventDefault();
-        history.pushState(target.href, '', target.href);
-    }
-});
+// Router.get('/', () =>
+// {
+//     alert('home');
+// }, 'home').get('/index.html', () =>
+// {
+//     alert('home');
+// }, 'home').get('/movies.html', () =>
+// {
+//     alert('movies');
+// }, 'movies').start(console.debug);
 
 
 
 
-History.onChange(console.dir);
-
-History.start();
 
 
 
 const app = new App({
     target: document.querySelector('main'),
-    // props: {
-    // 	name: 'world'
-    // }
+
 });
+
+
+// const { prompt, alert, confirm } = Dialog;
+
+
+// prompt('entrez le nom du film').then(confirm);
 
 export { app as default };
 //# sourceMappingURL=main.js.map
