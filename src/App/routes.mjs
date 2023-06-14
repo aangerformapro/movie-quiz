@@ -7,19 +7,10 @@ import { getUrl } from "../../modules/utils/utils.mjs";
 
 
 
-
-
-export const routes = [
-    ['home', ['/', '/index.html']],
-    ['game', '/game', ['mode']],
-    ['details', '/details', ['id']]
-
-];
-
-
 export const route = readable(Router.route, set =>
 {
-    return Router.onPush(set);
+
+    Router.start(v => set(v));
 });
 
 export const href = readable(new URL(location.href), set =>
@@ -29,3 +20,6 @@ export const href = readable(new URL(location.href), set =>
         set(getUrl(e.data.url));
     });
 });
+
+
+

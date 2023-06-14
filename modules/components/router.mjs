@@ -19,7 +19,7 @@ let started = false;
 
 export class Route
 {
-    name = '*';
+    name = 'notfound';
     path = '*';
     params = [];
     fn = noop;
@@ -139,14 +139,13 @@ export default class Router
     static get route()
     {
 
-        const url = getUrl(location.href), path = url.pathname;
+        const url = getUrl(location.href);
 
         for (let route of routes)
         {
-
             if (route.matches(url.pathname))
             {
-                return route.name;
+                return route;
             }
         }
 
@@ -180,7 +179,7 @@ export default class Router
             throw new TypeError("path must be a String|String[]");
         }
 
-        path.forEach(p => routes.add(new Route({ p, fn, name, params })));
+        path.forEach(p => routes.add(new Route({ path: p, fn, name, params })));
 
         return this;
     }
@@ -210,6 +209,9 @@ export default class Router
                 return route;
             }
         }
+
+
+        return new Route();
     }
 
     goto(route, params = {}, push = true)
@@ -244,38 +246,22 @@ export default class Router
 
 
 
-    static start(fn)
+    static start(fn = noop)
     {
 
-        if (!isFunction(fn))
-        {
-            throw new TypeError("fn is not a Function");
-        }
+
+        let route = this.route, url = getUrl(location.href);
+
+        fn(route, url);
+        route.run(url);
+
 
         const detach = History.onPush(e =>
         {
-
-
-            const url = getUrl(e.data.url);
-
-
-            for (let route of routes)
-            {
-
-                if (route.matches(url.pathname))
-                {
-                    fn(route, url);
-                    route.run(url);
-
-                    return;
-
-                }
-            }
-
-
-            fn(new Route(), _url);
-
-
+            url = getUrl(e.data.url);
+            route = this.route;
+            fn(route, url);
+            route.run(url);
         });
 
         if (!started)

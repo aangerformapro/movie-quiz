@@ -6,7 +6,8 @@ import NoScroll from "../modules/components/noscroll.mjs";
 import emitter from "../modules/utils/emitter.mjs";
 import Router from "../modules/components/router.mjs";
 
-
+import { routes } from "./App/config.mjs";
+import { isArray, noop } from "../modules/utils/utils.mjs";
 
 
 
@@ -123,36 +124,48 @@ NoScroll.on('disabled', e =>
  * Handles [data-route]
  */
 
-// emitter(document.body).on("click", e =>
-// {
-//     let target = e.target.closest('[href][data-route]');
+emitter(document.body).on("click", e =>
+{
+    let target = e.target.closest('[href]:not([href^="http"], [href*="#"])');
 
-//     if (target)
-//     {
-//         e.preventDefault();
-//         history.pushState(target.href, '', target.href);
-//     }
-// });
+    if (target)
+    {
+        e.preventDefault();
+        history.pushState(target.href, '', target.href);
+    }
+});
 
+
+/**
+ * Generate routes
+ */
 if (location.pathname.startsWith("/public"))
 {
     Router.basePath = '/public';
 }
 
-// Router.get('/', () =>
-// {
-//     alert('home');
-// }, 'home').get('/index.html', () =>
-// {
-//     alert('home');
-// }, 'home').get('/movies.html', () =>
-// {
-//     alert('movies');
-// }, 'movies').start(console.debug);
+
+routes.forEach(item =>
+{
 
 
+    let [name, path, params] = item;
 
+    params ??= [];
 
+    if (!isArray(path))
+    {
+        path = [path];
+    }
+
+    path.forEach(p =>
+    {
+        Router.get(p, noop, name, params);
+    });
+
+});
+
+Router.start();
 
 
 
@@ -164,7 +177,4 @@ const app = new App({
 export default app;
 
 
-// const { prompt, alert, confirm } = Dialog;
 
-
-// prompt('entrez le nom du film').then(confirm);
