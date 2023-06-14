@@ -217,7 +217,7 @@ parser.innerHTML = `<svg width="0" height="0" style="display: none;">
 </svg>`;
 
 export const sprite = parser.removeChild(parser.firstChild);
-// document.documentElement.appendChild(sprite);
+document.documentElement.appendChild(sprite);
 
 
 
@@ -267,6 +267,7 @@ export class SvgIcon
       }
     }
   }
+
   detach()
   {
     this.element.remove();

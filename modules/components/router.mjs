@@ -4,25 +4,54 @@
  * Only route html pages
  */
 
-import { decode, encode, getUrl, isArray, isEmpty, isFunction, isString, noop } from "../utils/utils.mjs";
+import { decode, encode, getUrl, isArray, isEmpty, isFunction, isString, noop, uniqid } from "../utils/utils.mjs";
 import History, { RouterEvent } from "./history.mjs";
 
-
-
-
-const routes = new Set(), listeners = new Set();
-
-
+/**
+ * Base Path
+ */
 export let base = '';
 
+
+
+
+const routes = new Set();
 let started = false;
+
+
+
+
+
+
+function getParams(url)
+{
+
+    const params = {}, search = getUrl(url).searchParams;
+
+    for (const key of search.keys())
+    {
+        params[key] = search.getAll(key)
+            .map(val => decode(val));
+        if (params[key].length === 1)
+        {
+            params[key] = params[key][0];
+        }
+    }
+
+    return params;
+}
+
+
+
+
+
 
 export class Route
 {
     name = 'notfound';
     path = '*';
     params = [];
-    fn = noop;
+    fn;
 
 
     constructor({ path, name, params, fn } = {})
@@ -57,53 +86,62 @@ export class Route
 
 
 
-    getParams(url)
-    {
 
-        const params = new Map();
-        for (const [key, value] of getUrl(url).searchParams)
-        {
-            params.set(key, decode(value));
-        }
-
-        return params;
-    }
 
 
 
 
     run(url)
     {
-        const params = this.getParams(url);
-        this.fn(...this.params.map(p => params.get(p)), params);
+
+        if (this.fn)
+        {
+            const
+                { fn } = this,
+                params = getParams(url),
+                matchedParams = this.params.map(key => params[key] ??= null);
+
+            return fn(...matchedParams, params);
+        }
+
+
     }
 
 
     urlFor(params = {})
     {
 
-        let path = base + this.path;
 
-        if (!isEmpty(params))
+        if ('*' === this.path)
         {
-
-            const search = new URLSearchParams();
-            for (let key in params)
-            {
-                let value = encode(params[key]);
-                search.set(key, value);
-            }
-
-            path += '?' + search.toString();
+            return new URL(location.href);
         }
 
-        return path;
+
+        let path = getUrl(base + this.path), search = path.URLSearchParams;
+
+
+        for (let key in params)
+        {
+            let value = params[key];
+
+            if (!isArray(value))
+            {
+                value = [value];
+            }
+
+            value.forEach(val => search.append(key, encode(val)));
+        }
+
+        return path.href;
     }
 
 
 
 }
 
+
+const DEFAULT_ROUTE = new Route();
 
 
 
@@ -148,7 +186,7 @@ export default class Router
                 return route;
             }
         }
-
+        return DEFAULT_ROUTE;
     }
 
 
@@ -163,7 +201,8 @@ export default class Router
     static get(path, fn, name, params = [])
     {
 
-        if (!isString(name))
+
+        if (!isString(name ??= uniqid()))
         {
             throw new TypeError('Your route must be named');
         }
@@ -244,8 +283,6 @@ export default class Router
     }
 
 
-
-
     static start(fn = noop)
     {
 
@@ -266,7 +303,6 @@ export default class Router
 
         if (!started)
         {
-
             started = true;
             History.start(RouterEvent.PUSH);
         }
