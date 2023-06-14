@@ -187,7 +187,7 @@ export default class Router
 
     static urlFor(/** @param {string} */name, params = {})
     {
-        const route = getRoute(name);
+        const route = this.getRoute(name);
 
         if (!route)
         {
@@ -199,7 +199,7 @@ export default class Router
 
 
 
-    getRoute(name)
+    static getRoute(name)
     {
 
         for (let route of routes)
@@ -214,7 +214,7 @@ export default class Router
         return new Route();
     }
 
-    goto(route, params = {}, push = true)
+    static goto(route, params = {}, push = true)
     {
         if (!started)
         {
