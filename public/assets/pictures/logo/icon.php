@@ -8,17 +8,17 @@ $dir      = __DIR__;
 
 do
 {
-    $base       = basename($dir);
-
-    if ('public' === $base)
+    if (is_file($dir . '/../package.json'))
     {
         break;
     }
 
+    $base       = basename($dir);
     $relative[] = $base;
 } while ($dir = dirname($dir));
 
 $relative = sprintf('./%s/', implode('/', array_reverse($relative)));
+$images   = [];
 
 foreach (scandir(__DIR__) as $file)
 {
@@ -30,27 +30,25 @@ foreach (scandir(__DIR__) as $file)
     $arr = explode('.', $file);
     $ext = array_pop($arr);
 
+    if('webp' === $ext)
+    {
+        continue;
+    }
+
     if (preg_match('#(\d+)#', $file, $matches))
     {
-        [,$size] = $matches;
+        [,$size]                 = $matches;
 
-        printf(
-            '<link rel="shortcut icon" href="%s" sizes="%sx%s" type="image/%s">' . "\n",
-            $relative . $file,
-            $size,
-            $size,
-            $ext
-        );
-
-        if ('64' === $size)
-        {
-            printf(
-                '<link rel="apple-touch-icon" href="%s" sizes="%sx%s" type="image/%s">' . "\n",
-                $relative . $file,
-                $size,
-                $size,
-                $ext
-            );
-        }
+        $images[$ext]["{$size}"] = $relative . $file;
     }
 }
+
+ksort($images['png']);
+// ksort($images['webp']);
+
+foreach ($images as $ext => $item):
+    foreach ($item as $size => $src) :?>
+<link rel="shortcut icon" href="<?= $src; ?>" sizes="<?= $size . 'x' . $size; ?>" type="image/<?= $ext; ?>">
+<?php if('64' == $size && 'png' === $ext):?>
+<link rel="apple-touch-icon" href="<?= $src; ?>" sizes="<?= $size . 'x' . $size; ?>" type="image/<?= $ext; ?>">
+<?php endif; endforeach; endforeach;
