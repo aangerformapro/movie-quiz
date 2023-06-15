@@ -6,6 +6,7 @@
 @use './components/modal' as *;
 @use './components/notifications' as *;
 @use './components/details' as *;
+@use './components/fluo' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -227,3 +228,4 @@ footer {
 
 @include notifications;
 @include details;
+@include fluo;

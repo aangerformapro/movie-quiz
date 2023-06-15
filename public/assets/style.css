@@ -14,6 +14,57 @@
   --netflix-black-lg: linear-gradient(90deg, rgb(51, 51, 51) 5%, rgb(24, 24, 24) 95%);
   --netflix-red-lg: linear-gradient(180deg, rgb(229, 9, 20), rgb(219, 5, 16));
 }
+@keyframes blink {
+  from, 50% {
+    opacity: 1;
+  }
+  25%, 75% {
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes zoom-in {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+  50% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes roll {
+  from {
+    transform: translate(-100%) rotate(0turn);
+  }
+  to {
+    transform: translate(100%) rotate(10turn);
+  }
+}
 *,
 *::after,
 *::before {
@@ -606,6 +657,88 @@ footer {
 .media-info .overview {
   font-size: 14px;
   line-height: 25px;
+}
+.fluo {
+  --fluo-outer-size: 10rem;
+  --fluo-wheel-size: 10%;
+  --fluo-inner-bg: #ddd;
+  --fluo-text-color: #000;
+  --fluo-wheel-gradient: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+  position: relative;
+  width: 10rem;
+  width: var(--fluo-outer-size);
+  height: 10rem;
+  height: var(--fluo-outer-size);
+  font-size: calc(10rem * 0.275);
+  font-size: calc(var(--fluo-outer-size) * 0.275);
+  margin: calc(10rem / 6);
+  margin: calc(var(--fluo-outer-size) / 6);
+  animation: spin 0.5s linear infinite;
+  box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+  background: var(--fluo-wheel-gradient);
+  color: #000;
+  color: var(--fluo-text-color);
+}
+.fluo > * {
+  border-radius: 50%;
+  background: var(--fluo-wheel-gradient);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.fluo > *:nth-child(1) {
+  filter: blur(5px);
+}
+.fluo > *:nth-child(2) {
+  filter: blur(10px);
+}
+.fluo > *:nth-child(3) {
+  filter: blur(25px);
+}
+.fluo > *:nth-child(4) {
+  filter: blur(50px);
+}
+.fluo::after {
+  content: "";
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  top: var(--fluo-wheel-size);
+  right: var(--fluo-wheel-size);
+  bottom: var(--fluo-wheel-size);
+  left: var(--fluo-wheel-size);
+  width: calc(100% - 2 * var(--fluo-wheel-size));
+  height: calc(100% - 2 * var(--fluo-wheel-size));
+  border-radius: 50%;
+  background: var(--fluo-inner-bg);
+  box-shadow: inset 0 0 16px 16px rgba(0, 0, 0, 0.3);
+  text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+  animation: spin 0.5s linear infinite reverse;
+}
+.fluo.fast, .fluo::after.fast {
+  animation-duration: 0.25s;
+}
+.fluo.faster, .fluo::after.faster {
+  animation-duration: 0.15s;
+}
+.fluo.slow, .fluo::after.slow {
+  animation-duration: 0.75s;
+}
+.fluo.slower, .fluo::after.slower {
+  animation-duration: 1s;
+}
+.fluo[data-percent]::after {
+  content: attr(data-percent) "%";
+}
+.fluo[data-percent="100"], .fluo.complete {
+  animation-duration: 5s;
+}
+.fluo[data-percent="100"]::after, .fluo.complete::after {
+  animation-duration: 5s;
 }
 @media (min-width: 768px){
   #top .logo img {

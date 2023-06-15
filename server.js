@@ -6,6 +6,9 @@ import path from "node:path";
 
 
 const liveReloadServer = livereload.createServer();
+
+liveReloadServer.watch(path.resolve(process.cwd(), 'public'));
+
 liveReloadServer.server.once("connection", () =>
 {
     setTimeout(() =>

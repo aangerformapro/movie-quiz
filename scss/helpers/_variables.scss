@@ -94,5 +94,12 @@ $burger-border-size: 3px;
 $burger-size: 25px;
 $burger-layer-gap: 8px;
 
+// fluo
+$fluo-outer-size: 10rem !default;
+$fluo-wheel-size: 10% !default;
+$fluo-inner-bg: #ddd !default;
+$fluo-text-color: #000 !default;
+// $fluo-wheel-gradient: $cyberpunk;
+
 // loads theme
 @include v-load($root: true);

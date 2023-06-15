@@ -5,6 +5,13 @@ module.exports = (ctx) =>
 
     const prod = ctx.enx === 'production';
 
+
+    //  console.debug(ctx);
+
+    //  throw new Error('');
+
+
+
     return {
         map: ctx.options.map,
         parser: ctx.options.parser,
