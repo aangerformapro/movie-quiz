@@ -602,7 +602,7 @@ export function selectText(node)
     }
 }
 
-export function sansAccent(str)
+export function removeAccent(str)
 {
     let accent = [
         /[\300-\306]/g, /[\340-\346]/g, // A, a
