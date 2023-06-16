@@ -50,22 +50,6 @@ export class WebStore extends DataStore
         }
         super(prefix);
         this.#store = storage;
-
-        // listen to other tabs modifications
-
-        emitter.on('storage', e =>
-        {
-
-            if (e.storageArea === storage)
-            {
-                let prefix = this.key(''), name = e.key;
-                if (name.startsWith(prefix))
-                {
-                    name = name.slice(prefix.length);
-                    updateDataStore(this, name, decode(e.newValue));
-                }
-            }
-        });
     }
 
     get keys()
@@ -116,6 +100,58 @@ export class WebStore extends DataStore
 
         return super.setItem(name, value);
 
+    }
+
+
+
+    hook(/** @type {string} */name, defaultValue = null)
+    {
+
+        const hook = super.hook(name, defaultValue);
+
+        if (!hook._custom)
+        {
+            const
+                { subscribe } = hook,
+                listener = e =>
+                {
+                    if (e.storageArea === this.store)
+                    {
+                        if (e.key === this.key(name))
+                        {
+                            updateDataStore(this, name, decode(e.newValue));
+                        }
+                    }
+                };
+
+            hook._custom = true;
+
+            let attached = false;
+
+
+            hook.subscribe = (...args) =>
+            {
+
+
+                if (!attached)
+                {
+                    // listen to other tabs modifications
+                    emitter.on('storage', listener);
+                    attached = true;
+                }
+
+
+                const unsub = subscribe.apply(this, args);
+                return () =>
+                {
+                    unsub();
+                    emitter.off('storage', listener);
+                    attached = false;
+                };
+
+            };
+        }
+        return hook;
     }
 
 }

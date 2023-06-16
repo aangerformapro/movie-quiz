@@ -4,8 +4,7 @@ import { DataStore } from "./datastore.mjs";
 
 const
     SHARED = 'shared',
-    Store = new Map(),
-    Hooks = new Map();
+    Store = new Map();
 
 
 export class MemoryStore extends DataStore
@@ -32,7 +31,7 @@ export class MemoryStore extends DataStore
 
         if (!Store.has(prefix))
         {
-            Store.set(prefix, {});
+            Store.set(this.key(''), {});
         }
 
     }
@@ -70,67 +69,7 @@ export class MemoryStore extends DataStore
 }
 
 
-
-
-
-/**
- * Takes a key in an obj and manages it
- */
-export class NestedStore extends DataStore
-{
-
-
-    get _hook()
-    {
-        return Hooks.get(this);
-    }
-
-
-    constructor(store, name)
-    {
-        super();
-
-        const hook = store.hook(name);
-
-
-        Hooks.set(this, hook);
-
-        if (!isPlainObject(hook.getItem()))
-        {
-            hook.setItem({});
-        }
-    }
-
-
-    get keys()
-    {
-        return Object.keys(this._hook.getItem({}));
-    }
-
-
-
-    getItem(/** @type {string} */name, defaultValue = null)
-    {
-        return super.getItem(name, this._hook.getItem(name) ?? defaultValue);
-    }
-
-    setItem(/** @type {string} */name, value)
-    {
-
-        if (value === null)
-        {
-            this._hook.setItem(this.key(name), null);
-        }
-        else
-        {
-            this._hook.setItem(this.key(name), value);
-        }
-
-        return super.setItem(name, value);
-    }
-}
-
-
 export default new MemoryStore();
+
 
 

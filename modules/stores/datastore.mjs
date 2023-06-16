@@ -1,5 +1,5 @@
 import EventManager from "../utils/event-manager.mjs";
-import { BackedEnum, getClass, isAbstract, isFunction, isUndef, noop, } from "../utils/utils.mjs";
+import { BackedEnum, getClass, isAbstract, isFunction, isPlainObject, isUndef, noop, } from "../utils/utils.mjs";
 
 
 
@@ -248,3 +248,87 @@ export class DataStore
 
 
 export default DataStore;
+
+
+const
+    // contains the hooks
+    Nested = new Map(),
+    //contains the current values
+    NestedValues = new Map();
+
+
+export class NestedStore extends DataStore
+{
+
+
+
+
+    get store()
+    {
+        return NestedValues.get(this);
+    }
+
+
+    get keys()
+    {
+        return Object.keys(this.hook);
+    }
+
+
+    constructor(/** @type {DataStore} */datastore, /** @type {String} */ key)
+    {
+
+        super();
+
+        let current = datastore.getItem(key);
+        if (!isPlainObject(current))
+        {
+            datastore.setItem(key, {});
+        }
+
+        const hook = datastore.hook(key);
+        Nested.set(this, hook);
+
+        hook.subscribe(value =>
+        {
+            if (!isPlainObject(value))
+            {
+                value = {};
+            }
+            NestedValues.set(this, value);
+        });
+
+    }
+
+
+    getItem(/** @type {string} */name, defaultValue = null)
+    {
+        return super.getItem(name, NestedValues.store[name] ?? defaultValue);
+    }
+
+    setItem(/** @type {string} */name, value)
+    {
+
+        if (value === null)
+        {
+            delete NestedValues.store[name];
+        }
+        else
+        {
+            this.store[name] = value;
+        }
+
+        // update the hook
+        Nested.get(this).setItem(this.store);
+
+        // notify the subscribers
+        return super.setItem(name, value);
+    }
+
+
+
+
+}
+
+
+
