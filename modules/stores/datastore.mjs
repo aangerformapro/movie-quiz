@@ -1,5 +1,5 @@
 import EventManager from "../utils/event-manager.mjs";
-import { BackedEnum, getClass, isAbstract, isFunction, isPlainObject, isUndef, noop, } from "../utils/utils.mjs";
+import { BackedEnum, getClass, isAbstract, isFunction, isPlainObject, isUndef, noop, promisify, } from "../utils/utils.mjs";
 
 
 
@@ -14,7 +14,6 @@ const
     _prefix = store => _prefixes.get(store),
     _queue = [],
     _events = new Map();
-
 
 
 
@@ -124,23 +123,27 @@ export class DataStore
                 listeners = new Set(),
                 run_queue = (value) =>
                 {
-                    const run = !_queue.length;
 
-                    listeners.forEach(item =>
+                    promisify(value).then(value =>
                     {
-                        item[1]();
-                        _queue.push([item[0], value]);
-                    });
+                        const run = !_queue.length;
 
-                    if (run)
-                    {
-                        for (let item of _queue)
+                        listeners.forEach(item =>
                         {
-                            item[0](item[1]);
-                        }
-                        _queue.length = 0;
+                            item[1]();
+                            _queue.push([item[0], value]);
+                        });
 
-                    }
+                        if (run)
+                        {
+                            for (let item of _queue)
+                            {
+                                item[0](item[1]);
+                            }
+                            _queue.length = 0;
+
+                        }
+                    });
                 },
                 subscribe = (listener, updater = noop) =>
                 {
@@ -148,7 +151,7 @@ export class DataStore
                     {
                         const obj = [listener, updater];
                         listeners.add(obj);
-                        listener(this.getItem(name, defaultValue));
+                        promisify(this.getItem(name, defaultValue)).then(listener);
                         return () =>
                         {
                             listeners.delete(obj);
@@ -162,7 +165,7 @@ export class DataStore
                 },
                 update = (fn) =>
                 {
-                    set(fn(this.getItem(name)));
+                    promisify(this.getItem(name)).then(value => set(fn(value)));
                 },
                 getItem = (defaultValue = null) => this.getItem(name, defaultValue),
                 setItem = (value) => this.setItem(name, value);
@@ -248,6 +251,82 @@ export class DataStore
 
 
 export default DataStore;
+
+
+
+
+
+
+export class AsyncDataStore extends DataStore
+{
+
+
+
+    get type()
+    {
+        return DataStoreType.ASYNC;
+    }
+
+
+
+    async setMany(items = {})
+    {
+        const result = new Map();
+        for (let name in items)
+        {
+            const value = items[name];
+            result.set(name, await this.setItem(name, value));
+        }
+
+        return result;
+    }
+
+    async getMany(keys = [], defaultValue = null)
+    {
+
+        const result = [];
+        for (let name of keys)
+        {
+            const value = await this.getItem(name, defaultValue);
+            result.push([name, value]);
+        }
+        return result;
+    }
+
+
+    async hasItem(/** @type {string} */name)
+    {
+        return await this.getItem(name) !== null;
+    }
+
+
+    async removeItem(name)
+    {
+        await this.setItem(name, null);
+    }
+
+
+    async clear()
+    {
+
+        const keys = this.keys;
+
+        for (let key of await keys)
+        {
+            await this.removeItem(key);
+        }
+
+        return keys;
+    }
+
+}
+
+
+
+
+
+
+
 
 
 const

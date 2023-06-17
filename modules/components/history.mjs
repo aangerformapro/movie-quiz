@@ -155,28 +155,22 @@ export default class History
     {
 
         const type = RouterEvent.PUSH.value;
-
         EventListeners.on(type, fn);
-
-
-
         return () =>
         {
             EventManager.off(type, fn);
         };
 
     }
+
     static onReplace(fn)
     {
         const type = RouterEvent.REPLACE.value;
-
         EventListeners.on(type, fn);
-
         return () =>
         {
             EventManager.off(type, fn);
         };
-
     }
 
 
@@ -185,7 +179,6 @@ export default class History
     {
 
         const type = RouterEvent.HASH.value;
-
         EventListeners.on(type, fn);
 
         return () =>
