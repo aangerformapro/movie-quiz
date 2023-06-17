@@ -689,7 +689,8 @@ export function loadScript(url, options)
 
 
 /**
- * PHP Enum like Api
+ * PHP BackedEnum like Api
+ * Accepts more types than (str|int)
  */
 export class BackedEnum
 {
@@ -754,21 +755,30 @@ export class BackedEnum
         return Object.keys(this).filter(name => name[0] === name[0].toUpperCase() && this[name] instanceof BackedEnum);
     }
 
+    /**
+     * Get the number of values
+     * length is buggy on static classes
+     */
+    static get size()
+    {
+        return this.keys.length;
+    }
+
 
     //------------------- Instance implementation -------------------
 
 
     /**
      * Get current enum name
+     * Only works if enum instanciated correctly
+     * and after the constructor has been called
      */
     get name()
     {
-        return Object.keys(this.constructor).filter(
+        return Object.keys(this.constructor).find(
             key => this.constructor[key] === this
-        )[0] ?? '';
+        ) ?? '';
     }
-
-
 
 
     constructor(value)
@@ -792,4 +802,3 @@ export class BackedEnum
 
     }
 }
-
