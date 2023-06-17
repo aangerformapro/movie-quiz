@@ -687,6 +687,7 @@ export function loadScript(url, options)
     });
 }
 
+
 /**
  * PHP Enum like Api
  */
@@ -694,11 +695,19 @@ export class BackedEnum
 {
 
 
+    /**
+     * This is the first defined case
+     * Overrirde this to set your own default case
+     */
     static get default()
     {
         return this.cases()[0];
     }
 
+
+    /**
+     * Get the enum from the value
+     */
     static tryFrom(value)
     {
 
@@ -710,6 +719,9 @@ export class BackedEnum
         return this.cases().find(x => x.value === value);
     }
 
+    /**
+     * Throws if enum does not exists
+     */
     static from(value)
     {
 
@@ -724,21 +736,41 @@ export class BackedEnum
 
 
     /**
+     * 
      * @returns {BackedEnum[]}
      */
     static cases()
     {
-        return Object.keys(this)
-            .filter(name => name === name.toUpperCase() && this[name] instanceof BackedEnum)
-            .map(x => this[x]);
+        return this.keys.map(x => this[x]);
     }
 
 
-    get value()
+    /**
+     * Gets names from the enums
+     * they must be camel cased or uppercased
+     */
+    static get keys()
     {
-        return this.#value;
+        return Object.keys(this).filter(name => name[0] === name[0].toUpperCase() && this[name] instanceof BackedEnum);
     }
-    #value;
+
+
+    //------------------- Instance implementation -------------------
+
+
+    /**
+     * Get current enum name
+     */
+    get name()
+    {
+        return Object.keys(this.constructor).filter(
+            key => this.constructor[key] === this
+        )[0] ?? '';
+    }
+
+
+
+
     constructor(value)
     {
 
@@ -747,25 +779,17 @@ export class BackedEnum
             throw new Error('Cannot instantiate BackedEnum directly, it must be extended.');
         }
 
-        if (isUndef(value))
+        if (isUndef(value) || isFunction(value))
         {
-            throw new TypeError('value is undefined');
+            throw new TypeError('value is not valid');
         }
-        this.#value = value;
 
-    }
-}
+        Object.defineProperty(this, "value", {
+            writable: false, configurable: false, enumerable: true,
+            value
+        });
 
 
-export function isAbstract(
-    /** @type object */ obj,
-    /** @type string */ className,
-    /** @type string */ method
-)
-{
-    if (getClass(obj) === className)
-    {
-        throw new Error(`${className}.${method}() is not implemented`);
     }
 }
 

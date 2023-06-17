@@ -1,7 +1,7 @@
 <script>
     import Router from "../../modules/components/router.mjs";
 
-    export let titre = "",
+    export let title = "",
         youtube = "",
         id = "";
 </script>
@@ -9,7 +9,7 @@
 <!-- S'affiche apres que le résultat ait été trouvé -->
 <div class="heading p-lg-3">
     <h3 class="heading-title text-uppercase mb-3">
-        {titre}
+        {title}
     </h3>
 
     <div class="d-flex flex-column flex-lg-row align-items-center">

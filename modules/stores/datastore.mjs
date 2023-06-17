@@ -1,5 +1,4 @@
-import EventManager from "../utils/event-manager.mjs";
-import { BackedEnum, getClass, isAbstract, isFunction, isPlainObject, isUndef, noop, promisify, } from "../utils/utils.mjs";
+import { BackedEnum, getClass, isFunction, isPlainObject, isUndef, noop, promisify } from "../utils/utils.mjs";
 
 
 
@@ -11,21 +10,7 @@ const
     SEP = ':',
     _prefixes = new Map(),
     _hooks = new Map(),
-    _prefix = store => _prefixes.get(store),
-    _queue = [],
-    _events = new Map();
-
-
-
-
-export function updateDataStore(/** @type {DataStore} */  store, /** @type {string} */ name, value)
-{
-    const hook = store.hook(name);
-    if (hook.length > 0)
-    {
-        _events.get(hook).trigger('update', value);
-    }
-}
+    _queue = [];
 
 
 export class DataStoreType extends BackedEnum
@@ -33,6 +18,108 @@ export class DataStoreType extends BackedEnum
     static SYNC = new DataStoreType('sync');
     static ASYNC = new DataStoreType('async');
 }
+
+
+function safeNotEqual(value, newValue)
+{
+    return value != value ? newValue == newValue : value !== newValue || ((value && typeof value === 'object') || typeof value === 'function');
+}
+
+
+export function GetDataStoreHook(
+    /** @type {DataStore} */ store,
+    /** @type {string} */ name,
+    /** @type {function} */ init = noop
+)
+{
+
+    let $that;
+
+    if ($that = _hooks.get(store).get(name))
+    {
+        return $that;
+    }
+
+    let stop, value = null;
+
+    const
+        subscribers = new Set(),
+        set = (newValue) =>
+        {
+            if (safeNotEqual(value, newValue))
+            {
+                value = newValue;
+
+                const canRun = !_queue.length;
+
+                for (let sub of subscribers)
+                {
+                    sub[1]();
+                    _queue.push([sub[0], value]);
+                }
+
+                if (canRun)
+                {
+                    store.setItem(name, value);
+
+                    for (let item of _queue)
+                    {
+                        item[0](item[1]);
+                    }
+                    _queue.length = 0;
+                }
+            }
+
+        },
+        update = (fn) =>
+        {
+            if (isFunction(fn))
+            {
+                set(fn(value));
+            }
+        },
+        subscribe = (subscriber, notifier = noop) =>
+        {
+            if (isFunction(subscriber))
+            {
+                const obj = [subscriber, notifier];
+
+                subscribers.add(obj);
+
+                if (subscribers.size === 1)
+                {
+                    stop = init(set) ?? noop;
+                }
+
+                subscriber(value);
+
+                return () =>
+                {
+                    subscribers.delete(obj);
+                    if (0 === subscribers.size && stop)
+                    {
+                        stop();
+                        stop = null;
+                    }
+                };
+
+            }
+
+        },
+        get = (defaultValue = null) =>
+        {
+            return store.getItem(name, defaultValue);
+        };
+
+    $that = {
+        subscribe, set, update, get
+    };
+    Object.defineProperty($that, 'length', { configurable: true, get: () => subscribers.size });
+    _hooks.get(store).set(name, $that);
+    return $that;
+}
+
+
 
 
 export class DataStore
@@ -52,9 +139,7 @@ export class DataStore
         }
 
         _prefixes.set(this, prefix);
-
         _hooks.set(this, new Map());
-
     }
 
 
@@ -68,16 +153,16 @@ export class DataStore
 
     key(/** @type {string} */name)
     {
-        return _prefix(this) + name;
+        return _prefixes.get(this) + name;
     }
+
+
 
     // ---------------- Subscriptions ----------------
 
-
-
-    subscribe(/** @type {string} */name, /** @type {function} */listener, /** @type {function} */ onUpdate = noop)
+    subscribe(/** @type {string} */name, /** @type {function} */subscriber, /** @type {function} */ notifier = noop)
     {
-        return this.hook(name).subscribe(listener, onUpdate);
+        return this.hook(name).subscribe(subscriber, notifier);
     }
 
 
@@ -114,72 +199,11 @@ export class DataStore
 
     hook(/** @type {string} */name, defaultValue = null)
     {
-
-
-        if (!_hooks.get(this).has(name))
+        return GetDataStoreHook(this, name, set =>
         {
+            set(this.getItem(name, defaultValue));
 
-            const
-                listeners = new Set(),
-                run_queue = (value) =>
-                {
-
-                    promisify(value).then(value =>
-                    {
-                        const run = !_queue.length;
-
-                        listeners.forEach(item =>
-                        {
-                            item[1]();
-                            _queue.push([item[0], value]);
-                        });
-
-                        if (run)
-                        {
-                            for (let item of _queue)
-                            {
-                                item[0](item[1]);
-                            }
-                            _queue.length = 0;
-
-                        }
-                    });
-                },
-                subscribe = (listener, updater = noop) =>
-                {
-                    if (isFunction(listener))
-                    {
-                        const obj = [listener, updater];
-                        listeners.add(obj);
-                        promisify(this.getItem(name, defaultValue)).then(listener);
-                        return () =>
-                        {
-                            listeners.delete(obj);
-                        };
-                    }
-
-                },
-                set = (_value) =>
-                {
-                    this.setItem(name, _value);
-                },
-                update = (fn) =>
-                {
-                    promisify(this.getItem(name)).then(value => set(fn(value)));
-                },
-                getItem = (defaultValue = null) => this.getItem(name, defaultValue),
-                setItem = (value) => this.setItem(name, value);
-
-            const $that = {
-                subscribe, set, update, getItem, setItem
-            };
-            Object.defineProperty($that, 'length', { configurable: true, get: () => listeners.size });
-            const evt = new EventManager(false);
-            evt.on('update', (e) => run_queue(e.data));
-            _events.set($that, evt);
-            _hooks.get(this).set(name, $that);
-        }
-        return _hooks.get(this).get(name);
+        });
     }
 
 
@@ -203,8 +227,7 @@ export class DataStore
 
     get keys()
     {
-        isAbstract(this, getClass(DataStore), 'clear');
-        return [];
+        throw new Error(getClass(this) + '.keys not implemented.');
     }
 
 
@@ -212,20 +235,17 @@ export class DataStore
     getItem(/** @type {string} */name, defaultValue = null)
     {
 
-        isAbstract(this, getClass(DataStore), 'getItem');
-
         if (isFunction(defaultValue))
         {
 
-            let result = defaultValue();
-            if (result instanceof Promise)
+            defaultValue = defaultValue();
+            if (defaultValue instanceof Promise)
             {
-                result.then(value => this.setItem(name, value));
-                defaultValue = null;
+                defaultValue.then(value => this.setItem(name, value));
             }
             else
             {
-                defaultValue = this.setItem(name, result);
+                this.setItem(name, defaultValue);
             }
 
         }
@@ -235,17 +255,7 @@ export class DataStore
 
     setItem(/** @type {string} */name, value)
     {
-
-        isAbstract(this, getClass(DataStore), 'setItem');
-
-        if (isUndef(value))
-        {
-            throw new TypeError("value is undefined");
-        }
-
-        updateDataStore(this, name, value);
-
-        return value;
+        throw new Error(getClass(this) + '.setItem() not implemented.');
     }
 }
 
@@ -254,97 +264,17 @@ export default DataStore;
 
 
 
-
-
-
-export class AsyncDataStore extends DataStore
-{
-
-
-
-    get type()
-    {
-        return DataStoreType.ASYNC;
-    }
-
-
-
-    async setMany(items = {})
-    {
-        const result = new Map();
-        for (let name in items)
-        {
-            const value = items[name];
-            result.set(name, await this.setItem(name, value));
-        }
-
-        return result;
-    }
-
-    async getMany(keys = [], defaultValue = null)
-    {
-
-        const result = [];
-        for (let name of keys)
-        {
-            const value = await this.getItem(name, defaultValue);
-            result.push([name, value]);
-        }
-        return result;
-    }
-
-
-    async hasItem(/** @type {string} */name)
-    {
-        return await this.getItem(name) !== null;
-    }
-
-
-    async removeItem(name)
-    {
-        await this.setItem(name, null);
-    }
-
-
-    async clear()
-    {
-
-        const keys = this.keys;
-
-        for (let key of await keys)
-        {
-            await this.removeItem(key);
-        }
-
-        return keys;
-    }
-
-}
-
-
-
-
-
-
-
-
-
 const
-    // contains the hooks
-    Nested = new Map(),
-    //contains the current values
-    NestedValues = new Map();
+    // contains the hook
+    Nested = new Map();
 
 
 export class NestedStore extends DataStore
 {
 
-
-
-
     get store()
     {
-        return NestedValues.get(this);
+        return Nested.get(this);
     }
 
 
@@ -356,52 +286,47 @@ export class NestedStore extends DataStore
 
     constructor(/** @type {DataStore} */datastore, /** @type {String} */ key)
     {
-
         super();
-
-        let current = datastore.getItem(key);
-        if (!isPlainObject(current))
-        {
-            datastore.setItem(key, {});
-        }
-
-        const hook = datastore.hook(key);
-        Nested.set(this, hook);
-
-        hook.subscribe(value =>
-        {
-            if (!isPlainObject(value))
-            {
-                value = {};
-            }
-            NestedValues.set(this, value);
-        });
-
+        Nested.set(this, datastore.hook(key, {}));
     }
 
 
     getItem(/** @type {string} */name, defaultValue = null)
     {
-        return super.getItem(name, NestedValues.store[name] ?? defaultValue);
+        let obj = this.store.get();
+
+        if (!isPlainObject(obj))
+        {
+            return super.getItem(name, defaultValue);
+        }
+
+        return super.getItem(name, obj[name] ?? defaultValue);
     }
 
     setItem(/** @type {string} */name, value)
     {
 
-        if (value === null)
+        this.store.update(obj =>
         {
-            delete NestedValues.store[name];
-        }
-        else
-        {
-            this.store[name] = value;
-        }
 
-        // update the hook
-        Nested.get(this).setItem(this.store);
+            if (!isPlainObject(obj))
+            {
+                obj = {};
+            }
 
-        // notify the subscribers
-        return super.setItem(name, value);
+            if (value === null)
+            {
+                delete obj[name];
+            }
+            else
+            {
+                obj[name] = value;
+            }
+
+            return obj;
+        });
+
+        return value;
     }
 
 

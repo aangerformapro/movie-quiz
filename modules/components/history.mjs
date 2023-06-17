@@ -5,6 +5,14 @@ import emitter from './../utils/emitter.mjs';
 
 
 
+export class RouterEvent extends BackedEnum
+{
+    static ALL = new RouterEvent('change');
+    static PUSH = new RouterEvent('push pop');
+    static REPLACE = new RouterEvent('replace pop');
+    static HASH = new RouterEvent('hash');
+}
+
 
 const EventListeners = new EventManager();
 
@@ -71,7 +79,7 @@ export const attachReplaceState = (fn = noop) =>
 
 
 
-function attachEvents(events)
+function attachEvents(events = RouterEvent.ALL)
 {
     if (!attachedOnce)
     {
@@ -116,15 +124,7 @@ function attachEvents(events)
     }
 }
 
-export class RouterEvent extends BackedEnum
-{
 
-    static ALL = new RouterEvent('change');
-    static PUSH = new RouterEvent('push pop');
-    static REPLACE = new RouterEvent('replace pop');
-    static HASH = new RouterEvent('hash');
-
-}
 
 
 export default class History

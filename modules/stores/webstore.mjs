@@ -1,5 +1,5 @@
 import { uuidv4, encode, decode, isString, IS_UNSAFE } from "../utils/utils.mjs";
-import { DataStore, updateDataStore } from "./datastore.mjs";
+import { DataStore, GetDataStoreHook } from "./datastore.mjs";
 import emitter from './../utils/emitter.mjs';
 
 
@@ -98,60 +98,38 @@ export class WebStore extends DataStore
             this.store.setItem(this.key(name), encode(value));
         }
 
-        return super.setItem(name, value);
-
+        return value;
     }
 
 
 
     hook(/** @type {string} */name, defaultValue = null)
     {
-
-        const hook = super.hook(name, defaultValue);
-
-        if (!hook._custom)
+        return GetDataStoreHook(this, name, set =>
         {
-            const
-                { subscribe } = hook,
-                listener = e =>
-                {
-                    if (e.storageArea === this.store)
-                    {
-                        if (e.key === this.key(name))
-                        {
-                            updateDataStore(this, name, decode(e.newValue));
-                        }
-                    }
-                };
 
-            hook._custom = true;
-
-            let attached = false;
-
-
-            hook.subscribe = (...args) =>
+            const listener = e =>
             {
 
-
-                if (!attached)
+                if (e.storageArea === this.store)
                 {
-                    // listen to other tabs modifications
-                    emitter.on('storage', listener);
-                    attached = true;
+                    if (e.key === this.key(name))
+                    {
+                        set(decode(e.newValue));
+                    }
                 }
-
-
-                const unsub = subscribe.apply(this, args);
-                return () =>
-                {
-                    unsub();
-                    emitter.off('storage', listener);
-                    attached = false;
-                };
-
             };
-        }
-        return hook;
+
+            emitter.on('storage', listener);
+
+            set(this.getItem(name, defaultValue));
+
+            return () =>
+            {
+                emitter.off('storage', listener);
+            };
+
+        });
     }
 
 }

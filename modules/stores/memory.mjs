@@ -62,7 +62,7 @@ export class MemoryStore extends DataStore
             this.store[name] = value;
         }
 
-        return super.setItem(name, value);
+        return value;
 
     }
 
