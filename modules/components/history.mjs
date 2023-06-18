@@ -1,5 +1,5 @@
 
-import { BackedEnum, noop } from '../utils/utils.mjs';
+import { BackedEnum, getUrl, isFunction, noop } from '../utils/utils.mjs';
 import EventManager from './../utils/event-manager.mjs';
 import emitter from './../utils/emitter.mjs';
 
@@ -22,17 +22,22 @@ let attachedOnce = false;
 /**
  * Monkey patch the history pushState
  */
-export const attachPushState = (fn = noop) =>
+export const attachPushState = (/** @type {function} */ fn) =>
 {
+
+
+    if (!isFunction(fn))
+    {
+        throw new TypeError("fn is not a Function");
+    }
+
 
     const { pushState } = history;
 
     function push(state, unused, url)
     {
         pushState.apply(this, [state, unused, url]);
-        //notify
-        EventListeners.trigger('push change', { url, state }); //async
-        fn(url, state); //linear
+        fn(getUrl(url), state); //linear
     }
 
     history.pushState = push;
@@ -50,18 +55,22 @@ export const attachPushState = (fn = noop) =>
 /**
  * Monkey patch the history replaceState
  */
-export const attachReplaceState = (fn = noop) =>
+export const attachReplaceState = (/** @type {function} */ fn) =>
 {
+
+    if (!isFunction(fn))
+    {
+        throw new TypeError("fn is not a Function");
+    }
+
+
 
     const { replaceState } = history;
 
     function replace(state, unused, url)
     {
         replaceState.apply(this, [state, unused, url]);
-        //notify
-        EventListeners.trigger('replace change', { url, state });
-        fn(url, state);
-
+        fn(getUrl(url), state);
     }
 
     history.replaceState = replace;
@@ -77,8 +86,6 @@ export const attachReplaceState = (fn = noop) =>
 };
 
 
-
-
 function attachEvents(events = RouterEvent.ALL)
 {
     if (!attachedOnce)
@@ -88,11 +95,17 @@ function attachEvents(events = RouterEvent.ALL)
 
         if (events === RouterEvent.ALL || events === RouterEvent.PUSH)
         {
-            attachPushState();
+            attachPushState((url, state) =>
+            {
+                EventListeners.trigger(RouterEvent.PUSH, { url, state });
+            });
         }
         if (events === RouterEvent.ALL || events === RouterEvent.REPLACE)
         {
-            attachReplaceState();
+            attachReplaceState((url, state) =>
+            {
+                EventListeners.trigger(RouterEvent.REPLACE, { url, state });
+            });
         }
 
 
@@ -102,7 +115,7 @@ function attachEvents(events = RouterEvent.ALL)
             {
                 EventListeners.trigger('pop change', {
                     state: e.state,
-                    url: location.href
+                    url: getUrl(location.href)
                 });
             });
         }
@@ -113,13 +126,10 @@ function attachEvents(events = RouterEvent.ALL)
             {
                 EventListeners.trigger('hash change', {
                     state: history.state,
-                    url: location.href
+                    url: getUrl(location.href)
                 });
             });
         }
-
-
-
 
     }
 }
@@ -146,7 +156,7 @@ export default class History
 
         return () =>
         {
-            EventManager.off(type, fn);
+            EventListeners.off(type, fn);
         };
     }
 
@@ -158,7 +168,7 @@ export default class History
         EventListeners.on(type, fn);
         return () =>
         {
-            EventManager.off(type, fn);
+            EventListeners.off(type, fn);
         };
 
     }
@@ -169,7 +179,7 @@ export default class History
         EventListeners.on(type, fn);
         return () =>
         {
-            EventManager.off(type, fn);
+            EventListeners.off(type, fn);
         };
     }
 
@@ -183,7 +193,7 @@ export default class History
 
         return () =>
         {
-            EventManager.off(type, fn);
+            EventListeners.off(type, fn);
         };
     }
 

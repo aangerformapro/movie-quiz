@@ -10,7 +10,7 @@ import { isElement, createElement, decode, encode, isEmpty, isString, isArray, B
 
 import icons from './sprite.mjs';
 import NoScroll from './noscroll.mjs';
-import HtmlComponent from "./html.mjs";
+import HtmlComponent from "./htmlcomponent.mjs";
 
 
 const dialogs = new Set();

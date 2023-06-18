@@ -1,4 +1,4 @@
-import { BackedEnum } from "../utils/utils.mjs";
+import { BackedEnum } from "../modules/utils/utils.mjs";
 
 
 export default class ImageType extends BackedEnum

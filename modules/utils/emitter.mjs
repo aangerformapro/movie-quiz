@@ -1,4 +1,4 @@
-import { global, isArray, isBool, isFunction, isPlainObject, isString, isValidSelector } from './utils.mjs';
+import { global, document, isArray, isBool, isFunction, isPlainObject, isString, isValidSelector } from './utils.mjs';
 
 const
     isEventTarget = obj => obj instanceof Object && isFunction(obj.addEventListener) && isFunction(obj.dispatchEvent),

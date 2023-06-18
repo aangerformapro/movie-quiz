@@ -37,7 +37,6 @@ export default class NoScroll
             return true;
         }
 
-
         let pos = Math.max(0, documentElement.scrollTop);
         this.#scrollTop = pos;
         if (savePosition)
@@ -59,7 +58,6 @@ export default class NoScroll
         {
             return true;
         }
-
         documentElement.classList.remove('noscroll');
         if (this.#scrollTop > 0 && savePosition)
         {
@@ -70,11 +68,6 @@ export default class NoScroll
         this.trigger('disabled');
         return true;
     }
-
-
-
-
-
 
 }
 

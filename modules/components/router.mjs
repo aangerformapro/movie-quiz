@@ -19,10 +19,6 @@ const routes = new Set();
 let started = false;
 
 
-
-
-
-
 function getParams(url)
 {
 
@@ -40,10 +36,6 @@ function getParams(url)
 
     return params;
 }
-
-
-
-
 
 
 export class Route

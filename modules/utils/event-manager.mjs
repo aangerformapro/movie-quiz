@@ -1,11 +1,10 @@
-import { isFunction, isString, runAsync, uniqid } from "./utils.mjs";
+import { isFunction, isString, runAsync } from "./utils.mjs";
 
 
 function getListenersForEvent(listeners, type)
 {
     return listeners.filter(item => item.type === type);
 }
-
 
 
 export class EventManager
