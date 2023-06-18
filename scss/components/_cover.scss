@@ -1,0 +1,61 @@
+@use '../helpers' as *;
+@use 'blured' as *;
+
+@mixin cover {
+    .cover {
+        background: $netflix-black;
+    }
+    .background-picture {
+        @include blured {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 32px;
+            @include lg {
+                height: 96px;
+            }
+        }
+
+        position: relative;
+        z-index: 0;
+
+        user-select: none;
+        pointer-events: none;
+        padding: 0;
+
+        aspect-ratio: 1280/720;
+
+        width: 100vw;
+        max-width: $cover-max-width;
+        max-height: $cover-max-height;
+        margin: 0 auto;
+
+        img {
+            width: 100%;
+            object-fit: contain;
+            object-position: top center;
+        }
+    }
+
+    .background-picture2 {
+        z-index: -3;
+        user-select: none;
+        pointer-events: none;
+        padding: 0;
+
+        img {
+            position: relative;
+            z-index: -3;
+            object-fit: cover;
+            object-position: center;
+            width: 100vw;
+            height: 550px;
+
+            @include lg {
+                aspect-ratio: 16/10;
+                height: 720px;
+            }
+        }
+    }
+}

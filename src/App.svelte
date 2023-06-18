@@ -8,6 +8,7 @@
     import Footer from "./components/Footer.svelte";
     import MainLoader from "./components/MainLoader.svelte";
     import History from "../modules/components/history.mjs";
+    import Home from "./pages/Home.svelte";
 
     const unlisten = History.onPush((e) => {
         if (e.type === "push") {
@@ -33,7 +34,20 @@
 
 <Router>
     <Header />
-    <main id="app" />
+    <main id="app">
+        <Route path="/">
+            <Home />
+        </Route>
+        <Route path="tv/*">
+            <h1>Séries</h1>
+        </Route>
+        <Route path="movies/*">
+            <h1>Movies</h1>
+        </Route>
+        <Route path="all/*">
+            <h1>All</h1>
+        </Route>
+    </main>
     <MainLoader />
     <Footer />
 </Router>

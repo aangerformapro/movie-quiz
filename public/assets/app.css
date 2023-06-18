@@ -193,28 +193,39 @@ body {
   transform: translateY(calc(var(--burger-layer-gap) * -1)) rotateZ(-45deg) scaleX(1.25);
 }
 
-#top {
-  height: 64px;
+header {
   position: absolute;
+  height: 64px;
+  left: 0;
   top: 0;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 3;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 64px;
   font-size: 18px;
 }
 
-#top .logo img {
+.nav-container .logo img {
   height: 32px;
   max-width: 32px;
   object-fit: cover;
 }
 
-#top::before {
+.nav-container::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 64px;
-  z-index: -2;
+  z-index: -1;
   background: rgba(24, 24, 24, 0.4);
   background: rgba(var(--netflix-black-rgb), 0.4);
   filter: blur(3px);
@@ -222,11 +233,11 @@ body {
   box-shadow: 0 0 2px 2px rgba(var(--netflix-black-rgb), 0.4);
 }
 
-#top .nav {
+.nav-container .nav {
   transition: right 0.75s ease-out;
 }
 
-#top .nav .nav-link {
+.nav-container .nav .nav-link {
   color: rgb(254, 252, 248);
   color: var(--netflix-white);
   position: relative;
@@ -234,24 +245,24 @@ body {
   color: rgba(var(--netflix-white-rgb), 0.8);
 }
 
-#top .nav .nav-link.active, #top .nav .nav-link:hover {
+.nav-container .nav .nav-link.active, .nav-container .nav .nav-link:hover {
   font-weight: 600;
   color: rgba(254, 252, 248, 1);
   color: rgba(var(--netflix-white-rgb), 1);
 }
 
-#top .nav .nav-link.active {
+.nav-container .nav .nav-link.active {
   pointer-events: none;
 }
 
-#top .info-btn {
+.nav-container .info-btn {
   color: rgb(254, 252, 248);
   color: var(--netflix-white);
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-#top .info-btn.active, #top .info-btn:hover {
+.nav-container .info-btn.active, .nav-container .info-btn:hover {
   color: rgba(254, 252, 248, 1);
   color: rgba(var(--netflix-white-rgb), 1);
 }
@@ -510,7 +521,7 @@ body {
 .main-loader .fluo {
   --fluo-outer-size: 15vmin;
   --fluo-wheel-size: 15%;
-  --fluo-inner-bg: rgba(24, 24, 24, 0.2);
+  --fluo-inner-bg: rgba(var(--netflix-black-rgb), 0.2);
   --fluo-text-color: var(--netflix-white);
   --fluo-wheel-gradient: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   position: relative;
@@ -615,8 +626,64 @@ body {
   margin-right: 8px;
 }
 
-:not(:empty) + .main-loader {
-  display: none;
+#app .cover {
+  background: rgb(24, 24, 24);
+  background: var(--netflix-black);
+}
+
+#app .background-picture {
+  position: relative;
+  z-index: 0;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  padding: 0;
+  aspect-ratio: 1280/720;
+  width: 100vw;
+  max-width: 1200px;
+  max-height: 675px;
+  margin: 0 auto;
+}
+
+#app .background-picture .blured {
+  background: rgba(24, 24, 24, 0.5);
+  background: rgba(var(--netflix-black-rgb), 0.5);
+  filter: blur(3px);
+  box-shadow: 0 0 2px 2px rgba(24, 24, 24, 0.5);
+  box-shadow: 0 0 2px 2px rgba(var(--netflix-black-rgb), 0.5);
+  z-index: 1;
+  pointer-events: none;
+  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+}
+
+#app .background-picture img {
+  width: 100%;
+  object-fit: contain;
+  object-position: top center;
+}
+
+#app .background-picture2 {
+  z-index: -3;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  padding: 0;
+}
+
+#app .background-picture2 img {
+  position: relative;
+  z-index: -3;
+  object-fit: cover;
+  object-position: center;
+  width: 100vw;
+  height: 550px;
 }
 
 .ng-dialog--form {
@@ -704,7 +771,7 @@ body {
 }
 
 @media (min-width: 768px) {
-  #top .logo img {
+  .nav-container .logo img {
     max-width: none;
     max-width: initial;
   }
@@ -720,7 +787,7 @@ body {
 }
 
 @media (min-width: 992px) {
-  #top .nav .nav-link::after {
+  .nav-container .nav .nav-link::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -731,12 +798,19 @@ body {
     background: rgba(var(--netflix-white-rgb), 1);
     transition-duration: 0.25s;
   }
-  #top .nav .nav-link:hover::after {
+  .nav-container .nav .nav-link:hover::after {
     left: 15%;
     right: 15%;
   }
   .ng-dialog:modal .ng-dialog--form {
     transform: scale(1.2);
+  }
+  #app .background-picture .blured {
+    height: 96px;
+  }
+  #app .background-picture2 img {
+    aspect-ratio: 16/10;
+    height: 720px;
   }
   .mobile-only {
     display: none !important;
@@ -744,7 +818,7 @@ body {
 }
 
 @media (max-width: 992px) {
-  #top .nav {
+  .nav-container .nav {
     position: fixed;
     bottom: 0;
     z-index: 4;
@@ -758,20 +832,20 @@ body {
     border-radius: 4px;
     align-items: center;
   }
-  #top .nav .nav-link {
+  .nav-container .nav .nav-link {
     transition: filter 0.25s ease;
     font-size: 18px;
     font-weight: 500;
     text-align: center;
     margin-bottom: 24px;
   }
-  #top .nav .nav-link:hover {
+  .nav-container .nav .nav-link:hover {
     filter: drop-shadow(4px 4px 20px rgb(244, 6, 18)) contrast(200%);
     filter: drop-shadow(4px 4px 20px var(--netflix-red-hover)) contrast(200%);
     -webkit-text-decoration: none;
     text-decoration: none;
   }
-  #top #burger-btn:checked ~ .nav {
+  .nav-container #burger-btn:checked ~ .nav {
     right: 0;
   }
   .hide-on-mobile {

@@ -1,0 +1,13 @@
+@use '../helpers' as *;
+
+@mixin blured($z-index: 1) {
+    .blured {
+        background: rgba($netflix-black-rgb, 0.5);
+        filter: blur(3px);
+        box-shadow: 0 0 2px 2px rgba($netflix-black-rgb, 0.5);
+        z-index: $z-index;
+        pointer-events: none;
+        position: relative;
+        @content;
+    }
+}

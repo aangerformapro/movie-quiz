@@ -3,6 +3,7 @@
 @use './components/nav' as *;
 @use './components/dialog' as *;
 @use './components/mainloader' as *;
+@use './components/cover' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -14,8 +15,11 @@
 @include burger-btn;
 @include nav;
 @include dialog;
-
 @include main-loader;
+
+#app {
+    @include cover;
+}
 
 // dialog overrides
 .ng-dialog {

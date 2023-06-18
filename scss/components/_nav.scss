@@ -1,11 +1,24 @@
 @use '../helpers' as *;
 
 @mixin nav {
-    #top {
-        height: 64px;
+    header {
         position: absolute;
+        height: 64px;
+        left: 0;
         top: 0;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         z-index: 3;
+    }
+    .nav-container {
+        max-width: $layout-max-width;
+        margin: 0 auto;
+        height: 64px;
+        // position: relative;
+        // z-index: 3;
+
         .logo {
             img {
                 height: 32px;
@@ -26,7 +39,7 @@
             right: 0;
             height: 64px;
 
-            z-index: -2;
+            z-index: -1;
 
             background: rgba($netflix-black-rgb, 0.4);
             filter: blur(3px);
@@ -114,13 +127,5 @@
                 }
             }
         }
-    }
-
-    header {
-        // height: 550px;
-        // position: relative;
-        // @include lg {
-        //     height: 620px;
-        // }
     }
 }

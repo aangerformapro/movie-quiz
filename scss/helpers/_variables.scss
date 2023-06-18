@@ -50,39 +50,23 @@ $netflix-red-lg: v-add('netflix-red-lg', $_netflix-red-lg);
 // 182, 6 , 14
 
 // https://colorswall.com/palette/154112
-$cyberpunk-cyan: #02d7f2;
-$cyberpunk-yellow: #f2e900;
-$cyberpunk-blue: #007aff;
-$cyberpunk-red: #ff1111;
+// $cyberpunk-cyan: #02d7f2;
+// $cyberpunk-yellow: #f2e900;
+// $cyberpunk-blue: #007aff;
+// $cyberpunk-red: #ff1111;
 
-$cyberpunk-cyan-rgb: 2, 215, 242;
-$cyberpunk-yellow-rgb: 242, 233, 0;
-$cyberpunk-blue-rgb: 0, 122, 255;
-$cyberpunk-red-rgb: 255, 17, 17;
+// $cyberpunk-cyan-rgb: 2, 215, 242;
+// $cyberpunk-yellow-rgb: 242, 233, 0;
+// $cyberpunk-blue-rgb: 0, 122, 255;
+// $cyberpunk-red-rgb: 255, 17, 17;
 
-$cyberpunk: linear-gradient(
-    -225deg,
-    $cyberpunk-cyan 0%,
-    $cyberpunk-yellow 29%,
-    $cyberpunk-blue 67%,
-    $cyberpunk-red 100%
-);
-
-// $purpureus: #9d44b5;
-// $raspberry-rose: #b5446e;
-// $davys-gray: #525252;
-// $uranian-blue: #badefc;
-// $fluorescent-cyan: #0affef;
-
-// $purpureus-rgb: 157, 68, 181;
-// $raspberry-rose-rgb: 181, 68, 110;
-// $davys-gray-rgb: 82, 82, 82;
-// $uranian-blue-rgb: 186, 222, 252;
-// $fluorescent-cyan-rgb: 10, 255, 237;
-
-// $loader-g-size: 50vmin;
-// $fluo-inner-bg: #000;
-// $fluo-text-color: #ddd !default;
+// $cyberpunk: linear-gradient(
+//     -225deg,
+//     $cyberpunk-cyan 0%,
+//     $cyberpunk-yellow 29%,
+//     $cyberpunk-blue 67%,
+//     $cyberpunk-red 100%
+// );
 
 // burger menu
 $burger-transition-duration: 0.25s;
@@ -97,9 +81,16 @@ $burger-layer-gap: 8px;
 // fluo
 $fluo-outer-size: 15vmin;
 $fluo-wheel-size: 15%;
-$fluo-inner-bg: rgba(24, 24, 24, 0.2);
+$fluo-inner-bg: rgba($netflix-black-rgb, 0.2);
 $fluo-text-color: $netflix-white;
 // $fluo-wheel-gradient: $cyberpunk;
+
+//layout
+
+$layout-max-width: 1200px;
+$cover-max-width: $layout-max-width;
+$cover-max-height: 675px;
+// $cover-min-height: 480px;
 
 // loads theme
 @include v-load($root: true);
