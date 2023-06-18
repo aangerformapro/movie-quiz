@@ -9,11 +9,20 @@
 
     let visible = true;
 
+    // to be replaced by load events
     setTimeout(() => {
         visible = false;
     }, 5000);
 
-    const unlisten = History.onPush(console.debug);
+    const unlisten = History.onPush((e) => {
+        if (e.type === "push") {
+            visible = true;
+            // to be replaced by load events
+            setTimeout(() => {
+                visible = false;
+            }, 500);
+        }
+    });
 
     onDestroy(() => {
         unlisten();
