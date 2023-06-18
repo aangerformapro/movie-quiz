@@ -11,6 +11,17 @@ export class RouterEvent extends BackedEnum
     static PUSH = new RouterEvent('push pop');
     static REPLACE = new RouterEvent('replace pop');
     static HASH = new RouterEvent('hash');
+
+
+    get list()
+    {
+        return this.value.split(' ');
+    }
+
+    get first()
+    {
+        return this.list[0];
+    }
 }
 
 
@@ -36,7 +47,7 @@ export const attachPushState = (/** @type {function} */ fn) =>
 
     function push(state, unused, url)
     {
-        pushState.apply(this, [state, unused, url]);
+        pushState.apply(history, [state, unused, url]);
         fn(getUrl(url), state); //linear
     }
 
@@ -69,7 +80,7 @@ export const attachReplaceState = (/** @type {function} */ fn) =>
 
     function replace(state, unused, url)
     {
-        replaceState.apply(this, [state, unused, url]);
+        replaceState.apply(history, [state, unused, url]);
         fn(getUrl(url), state);
     }
 
@@ -97,14 +108,14 @@ function attachEvents(events = RouterEvent.ALL)
         {
             attachPushState((url, state) =>
             {
-                EventListeners.trigger(RouterEvent.PUSH, { url, state });
+                EventListeners.trigger(RouterEvent.PUSH.first + ' change', { url, state });
             });
         }
         if (events === RouterEvent.ALL || events === RouterEvent.REPLACE)
         {
             attachReplaceState((url, state) =>
             {
-                EventListeners.trigger(RouterEvent.REPLACE, { url, state });
+                EventListeners.trigger(RouterEvent.REPLACE.first + ' change', { url, state });
             });
         }
 

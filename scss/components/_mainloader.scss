@@ -1,0 +1,29 @@
+@use '../helpers/' as *;
+@use 'fluo' as *;
+
+@mixin main-loader {
+    .main-loader {
+        position: absolute;
+        z-index: 500;
+        inset: 0;
+        background: $netflix-black;
+        // color: $netflix-red;
+        @include flex-center(column);
+
+        @include fluo;
+
+        .fluo::after {
+            box-shadow: none;
+            background: rgba($netflix-black-rgb, 0.6);
+        }
+
+        .typed {
+            @include font-size(18px, 600);
+            margin-right: 8px;
+        }
+    }
+
+    :not(:empty) + .main-loader {
+        display: none;
+    }
+}

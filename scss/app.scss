@@ -2,10 +2,7 @@
 @use './components/burger' as *;
 @use './components/nav' as *;
 @use './components/dialog' as *;
-
-@include burger-btn;
-@include nav;
-@include dialog;
+@use './components/mainloader' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -13,6 +10,12 @@
     color: $netflix-white;
     overflow-x: hidden;
 }
+
+@include burger-btn;
+@include nav;
+@include dialog;
+
+@include main-loader;
 
 // dialog overrides
 .ng-dialog {
