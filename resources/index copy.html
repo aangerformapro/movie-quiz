@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/">
     <!-- Icons -->
     <link rel="shortcut icon" href="./assets/pictures/logo/logox16.png" sizes="16x16" type="image/png">
     <link rel="shortcut icon" href="./assets/pictures/logo/logox32.png" sizes="32x32" type="image/png">
@@ -43,15 +42,13 @@
         crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" crossorigin>
 
-    <!-- <link rel="stylesheet" href="./assets/main.css">
-    <link rel="stylesheet" href="./assets/style.css"> -->
-
-    <link rel="stylesheet" href="./assets/app.css">
+    <link rel="stylesheet" href="./assets/main.css">
+    <link rel="stylesheet" href="./assets/style.css">
 
     <!-- Scripts -->
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" defer></script>
-    <script defer src="./assets/app.js" type="module"></script>
+    <script defer src="./assets/main.js" type="module"></script>
 
     <!-- Metadata -->
 
@@ -66,7 +63,55 @@
 <body>
 
 
+    <header class="user-select-none">
+        <div class="nav-container w-100 d-flex align-items-center px-2 px-md-5" id="top">
+            <a class="logo" href="./" title="Movie Quiz">
+                <img src="./assets/pictures/m.webp" width="32" height="32" alt="Movie Quiz Logo Mini" class="d-md-none">
+                <img src="./assets/pictures/moviequiz.webp" height="32" width="126" alt="Movie Quiz Logo"
+                    class="d-none d-md-inline-block">
+            </a>
 
+            <input type="checkbox" id="burger-btn" name="burger-btn" title="Burger Button Checkbox">
+            <nav class="nav flex-column flex-lg-row justify-content-center">
+
+                <a href="./" class="nav-link active" data-route="home">Accueil</a>
+                <a href="./tv.html" class="nav-link">Séries</a>
+                <a href="./movies.html" class="nav-link">Films</a>
+                <a href="./both.html" class="nav-link">Tous les films et séries</a>
+
+            </nav>
+            <a class="info-btn ms-auto my-2" href="#">
+                <i class="bi bi-question-circle"></i>
+                <span class="hide-on-mobile">Comment Jouer</span>
+            </a>
+
+
+            <label for="burger-btn" class="burger-btn ms-3 mobile-only">
+                <div class="burger"></div>
+            </label>
+
+        </div>
+
+
+    </header>
+    <main id="app" class="user-select-none"></main>
+    <div class="page-loader">
+
+        <div class="fluo">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <footer class="text-center p-3 my-3">
+        Une réalisation &copy; ACS Lons-le-Saunier - Mentions légales<br>
+        <a href="/credits.html" title="crédits">
+            Crédits
+        </a>
+    </footer>
 </body>
 
 </html>

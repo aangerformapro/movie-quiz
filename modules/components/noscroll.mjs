@@ -1,6 +1,7 @@
 import EventManager from "../utils/event-manager.mjs";
 import { createElement } from "../utils/utils.mjs";
-import "./noscroll.css";
+
+// import "./noscroll.css";
 
 const { documentElement } = document;
 

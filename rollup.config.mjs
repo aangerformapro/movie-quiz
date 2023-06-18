@@ -21,7 +21,10 @@ const
                 dev: !prod
             }
         }),
-        postcss({ extract: true }),
+        postcss({
+            // extract: true ,
+            extract: false,
+        }),
         resolve({
             moduleDirectories: ['node_modules'],
             extensions: ['.js', '.mjs', '.cjs'],

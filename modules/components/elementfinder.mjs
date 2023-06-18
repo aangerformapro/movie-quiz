@@ -92,7 +92,7 @@ export default function ElementFinder(
     watcher();
     if (!signal.aborted)
     {
-        // we use all mutations to trigger a scan that don't uses them
+        // we use all mutations to trigger a scan
         observer.observe(root, {
             attributes: true, childList: true, subtree: true
         });

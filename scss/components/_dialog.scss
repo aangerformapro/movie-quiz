@@ -1,154 +1,238 @@
-@use '../helpers' as *;
-@use 'animations';
-
-//prefix for userscripts
-$overlay-prefix: '' !default;
-
-// Overlay variables
-$_vars_overlay: (
-    overlay-background,
-    overlay-close-background,
-    overlay-close-background-hover,
-    overlay-close-color,
-    overlay-close-color-hover
-);
-
-$overlay-background: v-add(overlay-background, rgba(8, 25, 43, 0.85)) !default;
-$overlay-close-background: v-add(overlay-close-background, rgba(0, 0, 0, 0)) !default;
-$overlay-close-background-hover: v-add(overlay-close-background-hover, rgba(255, 255, 255, 0.2)) !default;
-$overlay-close-color: v-add(overlay-close-color, #fff) !default;
-$overlay-close-color-hover: v-add(overlay-close-color-hover, #fff) !default;
-
-// https://sparkbox.com/foundry/bem_by_example BEM Classes
-// [block]__[element]--[modifier]
-@mixin dialog-overlay($prefix: $overlay-prefix) {
-    @if str-length($prefix) > 0 {
-        $prefix: str-insert($prefix, '__', 5000);
-    }
-
-    [hidden],
-    %hidden {
-        visibility: hidden !important;
-        position: fixed !important;
-        z-index: -1 !important;
-        pointer-events: none !important;
-        opacity: 0 !important;
-    }
-
-    .#{$prefix}overlay {
-        @include v-load($_vars_overlay);
-        position: fixed;
-        z-index: 2147483630;
-        inset: 0;
-        margin: 0;
-        padding: 0;
+@mixin dialog {
+    .ng-dialog {
+        /*
+            Dialog Reset
+        */
+        font-family: 'Poppins', 'Roboto', sans-serif;
+        border: 0;
         outline: 0;
-        box-sizing: border-box;
-        backface-visibility: hidden;
-        background: $overlay-background;
-        box-shadow: inset 0 0 16px 16px $overlay-background;
-        width: 100vw;
-        min-height: 100vh;
-        overflow-y: scroll;
-        transition: opacity 2.5s cubic-bezier(1, 0, 0, 1);
+        background: transparent;
+        position: unset;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: auto;
+        height: auto;
+        position: relative;
 
-        @include flex-center(column) {
-            user-select: none;
-            flex-wrap: wrap;
-
-            &__top {
-                justify-content: flex-start;
-            }
-            &__bottom {
-                justify-content: flex-end;
-            }
-        }
-
-        &--close {
-            animation: fade-in 0.25s linear 0.5s both;
-            position: fixed;
-            right: 1vw;
-            top: 1vh;
-            z-index: 2147483632;
-            @include flex-center;
-            @include font-size(32px, 400, 32px);
-            @include size(40px);
-            cursor: pointer;
-            user-select: none;
-            background: $overlay-close-background;
-            color: $overlay-close-color;
-            border-radius: 3px;
-            transition: background 0.25s linear, color 0.25s linear;
-
-            &:hover {
-                background: $overlay-close-background-hover;
-                color: $overlay-close-color-hover;
-            }
-            &:empty:before {
-                content: '×';
-            }
-        }
-
-        &:not([data-open='true']) {
-            @extend %hidden;
-            transform: scale(0);
-        }
-
-        @content;
-    }
-}
-
-//dialog variables
-$_vars_dialog: (
-    dialog-width,
-    dialog-height,
-    dialog-color,
-    dialog-background,
-    dialog-border,
-    dialog-border-radius,
-    dialog-margin-x,
-    dialog-margin-y
-);
-
-$dialog-width: v-add(dialog-width, 80vw) !default;
-$dialog-height: v-add(dialog-height, 60vh) !default;
-$dialog-color: v-add(dialog-color, #333) !default;
-$dialog-background: v-add(dialog-background, #fff) !default;
-$dialog-border: v-add(dialog-border, 3 px solid rgba(0, 0, 0, 0.3)) !default;
-$dialog-border-radius: v-add(dialog-border-radius, 8px) !default;
-$dialog-margin-x: v-add(dialog-margin-x, auto) !default;
-$dialog-margin-y: v-add(dialog-margin-y, 32px) !default;
-
-@mixin dialog($prefix: $overlay-prefix) {
-    @include dialog-overlay($prefix) {
-        @if str-length($prefix) > 0 {
-            $prefix: str-insert($prefix, '__', 5000);
-        }
-
-        .#{$prefix}dialog {
-            @include v-load($_vars_dialog);
-            //z-index: 2147483631;
-            animation: zoom-in 0.25s ease-out 0.5s both;
-            color: $dialog-color;
-            background: $dialog-background;
-            width: $dialog-width;
-            min-height: $dialog-height;
-            border: $dialog-border;
-            border-radius: $dialog-border-radius;
-            margin: $dialog-margin-y $dialog-margin-x;
-            box-shadow: 4px 4px 16px 16px rgba(0, 0, 0, 0.3);
+        &--form {
             display: flex;
             flex-direction: column;
-            flex-wrap: wrap;
-            overflow-y: auto;
+            justify-content: space-between;
+            border-radius: 2px;
 
-            @content;
+            background: #ddd;
+            padding: 0.5em;
+
+            input,
+            textarea {
+                -webkit-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
+            }
+
+            label {
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+            //   Default firefox buttons without borders
+            [type='submit'],
+            [type='button'],
+            [type='reset'],
+            [role='button'],
+            button {
+                padding: 0.25em 1em;
+                text-transform: capitalize;
+                border: 0;
+                outline: 0;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                border-radius: 0.25em;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                color: #0c0c0d;
+                background-color: rgba(12, 12, 13, 0.1);
+
+                cursor: pointer;
+
+                &:hover:not(:disabled),
+                &:focus:not(:disabled) {
+                    background-color: rgba(12, 12, 13, 0.2);
+                }
+
+                &:active:not(:disabled) {
+                    background-color: rgba(12, 12, 13, 0.3);
+                }
+
+                &:disabled {
+                    color: #b1b1b3;
+                    cursor: default;
+                }
+
+                @media (min-width: 768px) {
+                    &[title]:not([type='button'])::after {
+                        display: inline-block;
+                        content: attr(title);
+                        margin-left: 8px;
+                    }
+                }
+            }
+
+            button + button {
+                margin-left: 2vmin;
+            }
         }
 
-        &:not([data-open='true']) {
-            .#{$prefix}dialog {
-                @extend %hidden;
+        &--heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            button[value='close'] {
+                // padding: 0.25em;
+                width: 32px;
+                height: 32px;
+                padding: 0;
+                margin: 0;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
+
+            h4 {
+                font-size: 18px;
+                font-weight: 600;
+                padding: 0 0 0 1em;
+                margin: 0;
+            }
+        }
+        &--contents {
+            padding: 3vmin;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 15vmin;
+        }
+
+        &--footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        &:not([open]) {
+            visibility: hidden;
+            opacity: 0;
+            clip: rect(0, 0, 0, 0);
+            width: 0;
+            height: 0;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        &:not([open]),
+        &.closing {
+            .ng-dialog--form {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        &:modal {
+            position: fixed;
+            width: 100vw;
+            min-height: 100vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            max-width: unset;
+            max-height: unset;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            .ng-dialog--form {
+                min-height: 20vmin;
+                min-width: 30vmin;
+                max-width: 100vw;
+                max-height: 100vh;
+                transition-duration: 0.5s;
+                transition-timing-function: ease;
+                transform-origin: center center;
+
+                @media (min-width: 992px) {
+                    transform: scale(1.2);
+                }
+            }
+        }
+
+        &.pos- {
+            &top {
+                align-items: flex-start;
+                .ng-dialog--form {
+                    margin-top: 10vmax;
+                }
+            }
+
+            &bottom {
+                align-items: flex-end;
+                .ng-dialog--form {
+                    margin-bottom: 10vmax;
+                }
+            }
+
+            &left {
+                justify-content: flex-start;
+                .ng-dialog--form {
+                    margin-left: 10vmax;
+                }
+            }
+
+            &right {
+                justify-content: flex-end;
+                .ng-dialog--form {
+                    margin-right: 10vmax;
+                }
+            }
+        }
+
+        &::backdrop {
+            background: rgba(14, 14, 14, 0.5);
+            -webkit-filter: blur(3px);
+            filter: blur(3px);
+            box-shadow: 0 0 3px 3px rgba(14, 14, 14, 0.5);
+        }
+
+        .ng-dialog--form-input {
+            display: flex;
+            flex-direction: column;
+            label + input {
+                margin: 0.25em 0;
+            }
+
+            &-inline {
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: space-between;
+                align-items: center;
+                label + input {
+                    margin: 0 0.5em 0 0;
+                }
+            }
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+        [disabled] {
+            pointer-events: none;
+            opacity: 0.9;
         }
     }
 }

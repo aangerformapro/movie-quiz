@@ -1,0 +1,73 @@
+@use 'helpers' as *;
+@use './components/burger' as *;
+@use './components/nav' as *;
+@use './components/dialog' as *;
+
+@include burger-btn;
+@include nav;
+@include dialog;
+
+@include simple-reset {
+    background-color: $netflix-background;
+    background-image: $netflix-black-lg;
+    color: $netflix-white;
+    overflow-x: hidden;
+}
+
+// dialog overrides
+.ng-dialog {
+    &--form {
+        color: $netflix-white;
+        background-color: rgba($netflix-black-rgb, 0.8);
+        background-image: $netflix-black-lg;
+
+        [type='submit'],
+        [type='button'],
+        [type='reset'],
+        [role='button'],
+        button {
+            background: rgba($netflix-black-rgb, 1) !important;
+            color: $netflix-white !important;
+            &:hover,
+            &:focus {
+                box-shadow: 1px 0 rgba(0, 0, 0, 0.45);
+                background: rgba($netflix-red-hover-rgb, 0.7) !important;
+            }
+
+            &:focus {
+                box-shadow: 0 0 0 0.085em rgba(133, 5, 11, 1);
+            }
+
+            &:active {
+                box-shadow: 1px 0 rgba(0, 0, 0, 0.45);
+                background: rgba($netflix-red-hover-rgb, 0.8) !important;
+            }
+        }
+    }
+}
+
+.noscroll {
+    overflow: hidden !important;
+    width: 100% !important;
+    padding-right: 8px !important;
+}
+
+.scrollback {
+    scroll-behavior: auto !important;
+}
+
+@include lg-down {
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
+@include lg {
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+#app {
+    min-height: calc(100vh - 80px);
+}

@@ -1,13 +1,13 @@
 import App from "./App.svelte";
 
 
-import Dialog, { Position } from "../modules/components/dialog.mjs";
-import NoScroll from "../modules/components/noscroll.mjs";
-import emitter from "../modules/utils/emitter.mjs";
-import Router from "../modules/components/router.mjs";
+import Dialog, { Position } from "./components/dialog.mjs";
+import NoScroll from "./components/noscroll.mjs";
+import emitter from "./utils/emitter.mjs";
+import Router from "./components/router.mjs";
 
-import { routes } from "./App/config.mjs";
-import { isArray, noop } from "../modules/utils/utils.mjs";
+import { routes } from "../src/App/config.mjs";
+import { isArray, noop } from "./utils/utils.mjs";
 
 
 

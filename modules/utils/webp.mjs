@@ -1,5 +1,4 @@
 import ElementFinder from "../components/elementfinder.mjs";
-import dataset from "./dataset.mjs";
 import emitter from "./emitter.mjs";
 import { isBool } from "./utils.mjs";
 

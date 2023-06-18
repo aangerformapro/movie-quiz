@@ -1,0 +1,145 @@
+<script>
+    import { links, useLocation } from "svelte-navigator";
+
+    import Dialog, { Position } from "../../modules/components/dialog.mjs";
+    import NoScroll from "../../modules/components/noscroll.mjs";
+
+    export const regles = new Dialog(
+        `<p class="text-center">Le joueur doit deviner les noms de films et de séries à partir d'images grisées<br>
+                    en tappant le nom dans la zone dédiée.</p>`,
+        `Comment Jouer`
+    );
+
+    regles.canCancel = false;
+    regles.position = Position.TOP;
+
+    function showModal() {
+        regles.showModal();
+    }
+
+    let burger;
+
+    function handleBurgerChange() {
+        if (burger.checked) {
+            NoScroll.enable();
+        } else {
+            NoScroll.disable();
+        }
+    }
+
+    /**
+     * Resize listener
+     */
+    const breakpoint = matchMedia("(max-width: 992px)");
+
+    breakpoint.addEventListener("change", (e) => {
+        if (!e.matches) {
+            burger.checked = false;
+
+            if (!regles?.open) {
+                NoScroll.disable();
+            }
+        }
+    });
+
+    NoScroll.on("disabled", (e) => {
+        if (burger.checked && breakpoint.matches) {
+            NoScroll.enable();
+        }
+    });
+
+    function navClick(e) {
+        let a = e.target.closest("a");
+
+        if (a && breakpoint.matches) {
+            burger.checked = false;
+        }
+    }
+
+    const loc = useLocation();
+</script>
+
+<header class="user-select-none">
+    <div
+        class="nav-container w-100 d-flex align-items-center px-2 px-md-5"
+        id="top"
+    >
+        <a class="logo" href="./" title="Movie Quiz">
+            <img
+                src="./assets/pictures/m.webp"
+                width="32"
+                height="32"
+                alt="Movie Quiz Logo Mini"
+                class="d-md-none"
+            />
+            <img
+                src="./assets/pictures/moviequiz.webp"
+                height="32"
+                width="126"
+                alt="Movie Quiz Logo"
+                class="d-none d-md-inline-block"
+            />
+        </a>
+        <input
+            type="checkbox"
+            id="burger-btn"
+            name="burger-btn"
+            title="Burger Button Checkbox"
+            class=""
+            on:change={handleBurgerChange}
+            bind:this={burger}
+        />
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <nav
+            class="nav flex-column flex-lg-row justify-content-center"
+            on:click={navClick}
+        >
+            <a
+                class="nav-link{$loc.pathname.endsWith('/') ? ' active' : ''}"
+                href="./"
+                use:links
+            >
+                Accueil
+            </a>
+            <a
+                href="tv"
+                class="nav-link{$loc.pathname.startsWith('/tv')
+                    ? ' active'
+                    : ''}"
+                use:links
+            >
+                Séries
+            </a>
+            <a
+                href="movies"
+                class="nav-link{$loc.pathname.startsWith('/movies')
+                    ? ' active'
+                    : ''}"
+                use:links>Films</a
+            >
+            <a
+                href="all"
+                class="nav-link{$loc.pathname.startsWith('/all')
+                    ? ' active'
+                    : ''}"
+                use:links
+            >
+                Tous les films et séries
+            </a>
+        </nav>
+
+        <!-- svelte-ignore a11y-invalid-attribute -->
+        <a
+            class="info-btn ms-auto my-2 d-flex align-items-center"
+            href="#"
+            on:click|preventDefault={showModal}
+        >
+            <i class="ng-help" size="24" />
+            <span class="hide-on-mobile ms-1">Comment Jouer</span>
+        </a>
+
+        <label for="burger-btn" class="burger-btn ms-3 mobile-only">
+            <div class="burger" />
+        </label>
+    </div>
+</header>

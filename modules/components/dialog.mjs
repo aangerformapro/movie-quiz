@@ -3,7 +3,7 @@
  * @link https://getmdl.io/components/index.html#dialog-section
  */
 
-import "./_dialog.scss";
+// import "./_dialog.scss";
 
 
 import { isElement, createElement, decode, encode, isEmpty, isString, isArray, BackedEnum } from '../utils/utils.mjs';
@@ -45,13 +45,9 @@ function createDialogBox({
 
 
     let dialog, form, cancel, ok, close, titleEl, contentEl,
-        closeIcon = icons.close.generate(),
-        validIcon = icons.done.generate(),
-        dismissIcon = icons.backspace.generate();
-
-
-    [closeIcon, validIcon, dismissIcon]
-        .forEach(item => item.setAttributes({ width: "20px", height: "20px" }));
+        closeIcon = icons.ng_close.generate(20),
+        validIcon = icons.ng_check_circle.generate(20),
+        dismissIcon = icons.ng_cancel.generate(20);
 
 
     dialog = createElement('dialog', {
@@ -79,7 +75,7 @@ function createDialogBox({
                     id: idTitle,
                 }, title),
                 close = createElement('<button type="button" title="Close" value="close"/>', {
-                }, closeIcon.element),
+                }, closeIcon),
             ]),
             contentEl = createElement('<div class="ng-dialog--contents"/>', {
                 id: idDesc,
@@ -87,12 +83,12 @@ function createDialogBox({
             createElement('<div class="ng-dialog--footer"/>', [
 
                 cancel = createElement('<button value="close" title="Cancel" type="reset"/>', [
-                    dismissIcon.element,
+                    dismissIcon,
                 ]),
 
 
                 ok = createElement('<button value="ok" title="Ok" type="submit" />', [
-                    validIcon.element,
+                    validIcon,
                 ]),
 
             ])
