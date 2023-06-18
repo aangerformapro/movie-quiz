@@ -652,32 +652,32 @@ class EventManager
     static on(type, listener, once = false)
     {
 
-        return instance$8.on(type, listener, once);
+        return instance$9.on(type, listener, once);
     }
 
     static one(type, listener)
     {
 
-        return instance$8.one(type, listener);
+        return instance$9.one(type, listener);
     }
 
     static off(type, listener)
     {
 
-        return instance$8.off(type, listener);
+        return instance$9.off(type, listener);
     }
 
     static trigger(type, data = null, async = null)
     {
 
-        return instance$8.trigger(type, data, async);
+        return instance$9.trigger(type, data, async);
     }
 
 }
 
 
 
-const instance$8 = new EventManager();
+const instance$9 = new EventManager();
 
 const
     isEventTarget = obj => obj instanceof Object && isFunction$1(obj.addEventListener) && isFunction$1(obj.dispatchEvent),
@@ -904,7 +904,7 @@ class EventEmitter
      */
     static on(type, listener, options)
     {
-        return instance$7.on(type, listener, options);
+        return instance$8.on(type, listener, options);
     }
 
     /**
@@ -917,7 +917,7 @@ class EventEmitter
      */
     static one(type, listener, options)
     {
-        return instance$7.one(type, listener, options);
+        return instance$8.one(type, listener, options);
     }
     /**
      * Removes a global event listener(s)
@@ -929,7 +929,7 @@ class EventEmitter
      */
     static off(type, listener, capture)
     {
-        return instance$7.off(type, listener, capture);
+        return instance$8.off(type, listener, capture);
     }
     /**
      * Dispatches a global event
@@ -940,7 +940,7 @@ class EventEmitter
      */
     static trigger(type, data = null)
     {
-        return instance$7.trigger(type, data);
+        return instance$8.trigger(type, data);
     }
 
 
@@ -977,7 +977,7 @@ class EventEmitter
 }
 
 
-const instance$7 = new EventEmitter();
+const instance$8 = new EventEmitter();
 
 /**
  * @param {String|EventTarget} root 
@@ -988,8 +988,8 @@ function emitter(root)
     return new EventEmitter(root);
 }
 
-instance$7.mixin(emitter);
-emitter.mixin = instance$7.mixin.bind(instance$7);
+instance$8.mixin(emitter);
+emitter.mixin = instance$8.mixin.bind(instance$8);
 
 class RouterEvent extends BackedEnum
 {
@@ -1083,6 +1083,8 @@ const attachReplaceState = (/** @type {function} */ fn) =>
 };
 
 
+const unsetEvents = new Set();
+
 function attachEvents(events = RouterEvent.ALL)
 {
     if (!attachedOnce)
@@ -1092,43 +1094,64 @@ function attachEvents(events = RouterEvent.ALL)
 
         if (events === RouterEvent.ALL || events === RouterEvent.PUSH)
         {
-            attachPushState((url, state) =>
-            {
-                EventListeners.trigger(RouterEvent.PUSH.first + ' change', { url, state });
-            });
+            unsetEvents.add(
+                attachPushState((url, state) =>
+                {
+                    EventListeners.trigger(RouterEvent.PUSH.first + ' change', { url, state });
+                })
+            );
         }
         if (events === RouterEvent.ALL || events === RouterEvent.REPLACE)
         {
-            attachReplaceState((url, state) =>
-            {
-                EventListeners.trigger(RouterEvent.REPLACE.first + ' change', { url, state });
-            });
+            unsetEvents.add(
+                attachReplaceState((url, state) =>
+                {
+                    EventListeners.trigger(RouterEvent.REPLACE.first + ' change', { url, state });
+                })
+            );
         }
 
 
         if (events.value.includes('pop') || events === RouterEvent.ALL)
         {
-            emitter.on('popstate', e =>
+
+            const listener = e =>
             {
                 EventListeners.trigger('pop change', {
                     state: e.state,
                     url: getUrl(location.href)
                 });
-            });
+            };
+
+            emitter.on('popstate', listener);
+
+            unsetEvents.add(() => emitter.off('popstate', listener));
         }
 
         if (events === RouterEvent.HASH || events === RouterEvent.ALL)
         {
-            emitter.on('hashchange', e =>
+
+            const listener = e =>
             {
                 EventListeners.trigger('hash change', {
                     state: history.state,
                     url: getUrl(location.href)
                 });
-            });
+            };
+
+            emitter.on('hashchange', listener);
+
+            unsetEvents.add(() => emitter.off('hashchange', listener));
         }
 
     }
+
+    return () =>
+    {
+
+        unsetEvents.forEach(fn => fn());
+        unsetEvents.clear();
+    };
 }
 
 
@@ -1197,7 +1220,7 @@ class History
 
     static start(events = RouterEvent.default)
     {
-        attachEvents(events);
+        return attachEvents(events);
     }
 
 }
@@ -1762,6 +1785,10 @@ function compute_rest_props(props, keys) {
         if (!keys.has(k) && k[0] !== '$')
             rest[k] = props[k];
     return rest;
+}
+function set_store_value(store, ret, value) {
+    store.set(value);
+    return ret;
 }
 function action_destroyer(action_result) {
     return action_result && is_function(action_result.destroy) ? action_result.destroy : noop;
@@ -3388,7 +3415,7 @@ const visuallyHiddenStyle =
 
 /* node_modules\svelte-navigator\src\Router.svelte generated by Svelte v3.59.1 */
 
-const file$6 = "node_modules\\svelte-navigator\\src\\Router.svelte";
+const file$7 = "node_modules\\svelte-navigator\\src\\Router.svelte";
 
 // (204:0) {#if isTopLevelRouter && manageFocus && a11yConfig.announcements}
 function create_if_block$1(ctx) {
@@ -3414,7 +3441,7 @@ function create_if_block$1(ctx) {
 			div = element("div");
 			t = text(/*$announcementText*/ ctx[0]);
 			set_attributes(div, div_data);
-			add_location(div, file$6, 204, 1, 6149);
+			add_location(div, file$7, 204, 1, 6149);
 		},
 		m: function mount(target, anchor) {
 			insert_dev(target, div, anchor);
@@ -3439,7 +3466,7 @@ function create_if_block$1(ctx) {
 	return block;
 }
 
-function create_fragment$6(ctx) {
+function create_fragment$7(ctx) {
 	let div;
 	let t0;
 	let t1;
@@ -3470,7 +3497,7 @@ function create_fragment$6(ctx) {
 			if (if_block) if_block.c();
 			if_block_anchor = empty();
 			set_attributes(div, div_data);
-			add_location(div, file$6, 196, 0, 5982);
+			add_location(div, file$7, 196, 0, 5982);
 		},
 		l: function claim(nodes) {
 			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3527,7 +3554,7 @@ function create_fragment$6(ctx) {
 
 	dispatch_dev("SvelteRegisterBlock", {
 		block,
-		id: create_fragment$6.name,
+		id: create_fragment$7.name,
 		type: "component",
 		source: "",
 		ctx
@@ -3539,7 +3566,7 @@ function create_fragment$6(ctx) {
 const createId$1 = createCounter();
 const defaultBasepath = "/";
 
-function instance$6($$self, $$props, $$invalidate) {
+function instance$7($$self, $$props, $$invalidate) {
 	let $location;
 	let $activeRoute;
 	let $prevLocation;
@@ -3845,8 +3872,8 @@ class Router extends SvelteComponentDev {
 		init(
 			this,
 			options,
-			instance$6,
-			create_fragment$6,
+			instance$7,
+			create_fragment$7,
 			safe_not_equal,
 			{
 				basepath: 11,
@@ -3864,56 +3891,62 @@ class Router extends SvelteComponentDev {
 			component: this,
 			tagName: "Router",
 			options,
-			id: create_fragment$6.name
+			id: create_fragment$7.name
 		});
 	}
 
 	get basepath() {
-		throw new Error("<Router>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[11];
 	}
 
-	set basepath(value) {
-		throw new Error("<Router>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set basepath(basepath) {
+		this.$$set({ basepath });
+		flush();
 	}
 
 	get url() {
-		throw new Error("<Router>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[12];
 	}
 
-	set url(value) {
-		throw new Error("<Router>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set url(url) {
+		this.$$set({ url });
+		flush();
 	}
 
 	get history() {
-		throw new Error("<Router>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[13];
 	}
 
-	set history(value) {
-		throw new Error("<Router>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set history(history) {
+		this.$$set({ history });
+		flush();
 	}
 
 	get primary() {
-		throw new Error("<Router>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[14];
 	}
 
-	set primary(value) {
-		throw new Error("<Router>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set primary(primary) {
+		this.$$set({ primary });
+		flush();
 	}
 
 	get a11y() {
-		throw new Error("<Router>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[15];
 	}
 
-	set a11y(value) {
-		throw new Error("<Router>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set a11y(a11y) {
+		this.$$set({ a11y });
+		flush();
 	}
 
 	get disableInlineStyles() {
-		throw new Error("<Router>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[16];
 	}
 
-	set disableInlineStyles(value) {
-		throw new Error("<Router>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set disableInlineStyles(disableInlineStyles) {
+		this.$$set({ disableInlineStyles });
+		flush();
 	}
 }
 
@@ -4135,7 +4168,7 @@ function useNavigate() {
 }
 
 /* node_modules\svelte-navigator\src\Route.svelte generated by Svelte v3.59.1 */
-const file$5 = "node_modules\\svelte-navigator\\src\\Route.svelte";
+const file$6 = "node_modules\\svelte-navigator\\src\\Route.svelte";
 
 const get_default_slot_changes = dirty => ({
 	params: dirty & /*$params*/ 16,
@@ -4445,7 +4478,7 @@ function create_default_slot$1(ctx) {
 	return block;
 }
 
-function create_fragment$5(ctx) {
+function create_fragment$6(ctx) {
 	let div0;
 	let t0;
 	let t1;
@@ -4484,9 +4517,9 @@ function create_fragment$5(ctx) {
 			t1 = space();
 			div1 = element("div");
 			set_attributes(div0, div_data_1);
-			add_location(div0, file$5, 96, 0, 2664);
+			add_location(div0, file$6, 96, 0, 2664);
 			set_attributes(div1, div_data);
-			add_location(div1, file$5, 122, 0, 3340);
+			add_location(div1, file$6, 122, 0, 3340);
 		},
 		l: function claim(nodes) {
 			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4543,7 +4576,7 @@ function create_fragment$5(ctx) {
 
 	dispatch_dev("SvelteRegisterBlock", {
 		block,
-		id: create_fragment$5.name,
+		id: create_fragment$6.name,
 		type: "component",
 		source: "",
 		ctx
@@ -4554,7 +4587,7 @@ function create_fragment$5(ctx) {
 
 const createId = createCounter();
 
-function instance$5($$self, $$props, $$invalidate) {
+function instance$6($$self, $$props, $$invalidate) {
 	let isActive;
 	const omit_props_names = ["path","component","meta","primary"];
 	let $$restProps = compute_rest_props($$props, omit_props_names);
@@ -4745,7 +4778,7 @@ class Route extends SvelteComponentDev {
 	constructor(options) {
 		super(options);
 
-		init(this, options, instance$5, create_fragment$5, safe_not_equal, {
+		init(this, options, instance$6, create_fragment$6, safe_not_equal, {
 			path: 13,
 			component: 0,
 			meta: 14,
@@ -4756,49 +4789,53 @@ class Route extends SvelteComponentDev {
 			component: this,
 			tagName: "Route",
 			options,
-			id: create_fragment$5.name
+			id: create_fragment$6.name
 		});
 	}
 
 	get path() {
-		throw new Error("<Route>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[13];
 	}
 
-	set path(value) {
-		throw new Error("<Route>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set path(path) {
+		this.$$set({ path });
+		flush();
 	}
 
 	get component() {
-		throw new Error("<Route>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[0];
 	}
 
-	set component(value) {
-		throw new Error("<Route>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set component(component) {
+		this.$$set({ component });
+		flush();
 	}
 
 	get meta() {
-		throw new Error("<Route>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[14];
 	}
 
-	set meta(value) {
-		throw new Error("<Route>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set meta(meta) {
+		this.$$set({ meta });
+		flush();
 	}
 
 	get primary() {
-		throw new Error("<Route>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[1];
 	}
 
-	set primary(value) {
-		throw new Error("<Route>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set primary(primary) {
+		this.$$set({ primary });
+		flush();
 	}
 }
 
 var Route$1 = Route;
 
 /* node_modules\svelte-navigator\src\Link.svelte generated by Svelte v3.59.1 */
-const file$4 = "node_modules\\svelte-navigator\\src\\Link.svelte";
+const file$5 = "node_modules\\svelte-navigator\\src\\Link.svelte";
 
-function create_fragment$4(ctx) {
+function create_fragment$5(ctx) {
 	let a;
 	let current;
 	let mounted;
@@ -4817,7 +4854,7 @@ function create_fragment$4(ctx) {
 			a = element("a");
 			if (default_slot) default_slot.c();
 			set_attributes(a, a_data);
-			add_location(a, file$4, 65, 0, 1861);
+			add_location(a, file$5, 65, 0, 1861);
 		},
 		l: function claim(nodes) {
 			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4877,7 +4914,7 @@ function create_fragment$4(ctx) {
 
 	dispatch_dev("SvelteRegisterBlock", {
 		block,
-		id: create_fragment$4.name,
+		id: create_fragment$5.name,
 		type: "component",
 		source: "",
 		ctx
@@ -4886,7 +4923,7 @@ function create_fragment$4(ctx) {
 	return block;
 }
 
-function instance$4($$self, $$props, $$invalidate) {
+function instance$5($$self, $$props, $$invalidate) {
 	let href;
 	let isPartiallyCurrent;
 	let isCurrent;
@@ -5051,46 +5088,50 @@ function instance$4($$self, $$props, $$invalidate) {
 class Link extends SvelteComponentDev {
 	constructor(options) {
 		super(options);
-		init(this, options, instance$4, create_fragment$4, safe_not_equal, { to: 5, replace: 6, state: 7, getProps: 8 });
+		init(this, options, instance$5, create_fragment$5, safe_not_equal, { to: 5, replace: 6, state: 7, getProps: 8 });
 
 		dispatch_dev("SvelteRegisterComponent", {
 			component: this,
 			tagName: "Link",
 			options,
-			id: create_fragment$4.name
+			id: create_fragment$5.name
 		});
 	}
 
 	get to() {
-		throw new Error("<Link>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[5];
 	}
 
-	set to(value) {
-		throw new Error("<Link>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set to(to) {
+		this.$$set({ to });
+		flush();
 	}
 
 	get replace() {
-		throw new Error("<Link>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[6];
 	}
 
-	set replace(value) {
-		throw new Error("<Link>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set replace(replace) {
+		this.$$set({ replace });
+		flush();
 	}
 
 	get state() {
-		throw new Error("<Link>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[7];
 	}
 
-	set state(value) {
-		throw new Error("<Link>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set state(state) {
+		this.$$set({ state });
+		flush();
 	}
 
 	get getProps() {
-		throw new Error("<Link>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[8];
 	}
 
-	set getProps(value) {
-		throw new Error("<Link>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set getProps(getProps) {
+		this.$$set({ getProps });
+		flush();
 	}
 }
 
@@ -5147,6 +5188,8 @@ const links = /*#__PURE__*/createAction(event => { // eslint-disable-line spaced
   }
   return null;
 });
+
+const loading = writable(true);
 
 // import "./noscroll.css";
 
@@ -5759,9 +5802,9 @@ class Dialog extends HtmlComponent
 }
 
 /* src\components\Header.svelte generated by Svelte v3.59.1 */
-const file$3 = "src\\components\\Header.svelte";
+const file$4 = "src\\components\\Header.svelte";
 
-function create_fragment$3(ctx) {
+function create_fragment$4(ctx) {
 	let header;
 	let div1;
 	let a0;
@@ -5837,67 +5880,67 @@ function create_fragment$3(ctx) {
 			attr_dev(img0, "height", "32");
 			attr_dev(img0, "alt", "Movie Quiz Logo Mini");
 			attr_dev(img0, "class", "d-md-none");
-			add_location(img0, file$3, 67, 12, 1632);
+			add_location(img0, file$4, 67, 12, 1632);
 			if (!src_url_equal(img1.src, img1_src_value = "./assets/pictures/moviequiz.webp")) attr_dev(img1, "src", img1_src_value);
 			attr_dev(img1, "height", "32");
 			attr_dev(img1, "width", "126");
 			attr_dev(img1, "alt", "Movie Quiz Logo");
 			attr_dev(img1, "class", "d-none d-md-inline-block");
-			add_location(img1, file$3, 74, 12, 1843);
+			add_location(img1, file$4, 74, 12, 1843);
 			attr_dev(a0, "class", "logo");
 			attr_dev(a0, "href", "./");
 			attr_dev(a0, "title", "Movie Quiz");
-			add_location(a0, file$3, 66, 8, 1574);
+			add_location(a0, file$4, 66, 8, 1574);
 			attr_dev(input, "type", "checkbox");
 			attr_dev(input, "id", "burger-btn");
 			attr_dev(input, "name", "burger-btn");
 			attr_dev(input, "title", "Burger Button Checkbox");
 			attr_dev(input, "class", "");
-			add_location(input, file$3, 82, 8, 2082);
+			add_location(input, file$4, 82, 8, 2082);
 			attr_dev(a1, "class", a1_class_value = "nav-link" + (/*$loc*/ ctx[1].pathname.endsWith('/') ? ' active' : ''));
 			attr_dev(a1, "href", "./");
-			add_location(a1, file$3, 96, 12, 2527);
+			add_location(a1, file$4, 96, 12, 2527);
 			attr_dev(a2, "href", "tv");
 
 			attr_dev(a2, "class", a2_class_value = "nav-link" + (/*$loc*/ ctx[1].pathname.startsWith('/tv')
 			? ' active'
 			: ''));
 
-			add_location(a2, file$3, 103, 12, 2728);
+			add_location(a2, file$4, 103, 12, 2728);
 			attr_dev(a3, "href", "movies");
 
 			attr_dev(a3, "class", a3_class_value = "nav-link" + (/*$loc*/ ctx[1].pathname.startsWith('/movies')
 			? ' active'
 			: ''));
 
-			add_location(a3, file$3, 112, 12, 2972);
+			add_location(a3, file$4, 112, 12, 2972);
 			attr_dev(a4, "href", "all");
 
 			attr_dev(a4, "class", a4_class_value = "nav-link" + (/*$loc*/ ctx[1].pathname.startsWith('/all')
 			? ' active'
 			: ''));
 
-			add_location(a4, file$3, 119, 12, 3193);
+			add_location(a4, file$4, 119, 12, 3193);
 			attr_dev(nav, "class", "nav flex-column flex-lg-row justify-content-center");
-			add_location(nav, file$3, 92, 8, 2397);
+			add_location(nav, file$4, 92, 8, 2397);
 			attr_dev(i, "class", "ng-help");
 			attr_dev(i, "size", "24");
-			add_location(i, file$3, 136, 12, 3685);
+			add_location(i, file$4, 136, 12, 3685);
 			attr_dev(span, "class", "hide-on-mobile ms-1");
-			add_location(span, file$3, 137, 12, 3729);
+			add_location(span, file$4, 137, 12, 3729);
 			attr_dev(a5, "class", "info-btn ms-auto my-2 d-flex align-items-center");
 			attr_dev(a5, "href", "#");
-			add_location(a5, file$3, 131, 8, 3523);
+			add_location(a5, file$4, 131, 8, 3523);
 			attr_dev(div0, "class", "burger");
-			add_location(div0, file$3, 141, 12, 3879);
+			add_location(div0, file$4, 141, 12, 3879);
 			attr_dev(label, "for", "burger-btn");
 			attr_dev(label, "class", "burger-btn ms-3 mobile-only");
-			add_location(label, file$3, 140, 8, 3806);
+			add_location(label, file$4, 140, 8, 3806);
 			attr_dev(div1, "class", "nav-container w-100 d-flex align-items-center px-2 px-md-5");
 			attr_dev(div1, "id", "top");
-			add_location(div1, file$3, 62, 4, 1463);
+			add_location(div1, file$4, 62, 4, 1463);
 			attr_dev(header, "class", "user-select-none");
-			add_location(header, file$3, 61, 0, 1425);
+			add_location(header, file$4, 61, 0, 1425);
 		},
 		l: function claim(nodes) {
 			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5983,7 +6026,7 @@ function create_fragment$3(ctx) {
 
 	dispatch_dev("SvelteRegisterBlock", {
 		block,
-		id: create_fragment$3.name,
+		id: create_fragment$4.name,
 		type: "component",
 		source: "",
 		ctx
@@ -5992,7 +6035,7 @@ function create_fragment$3(ctx) {
 	return block;
 }
 
-function instance$3($$self, $$props, $$invalidate) {
+function instance$4($$self, $$props, $$invalidate) {
 	let $loc;
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots('Header', slots, []);
@@ -6102,13 +6145,13 @@ function instance$3($$self, $$props, $$invalidate) {
 class Header extends SvelteComponentDev {
 	constructor(options) {
 		super(options);
-		init(this, options, instance$3, create_fragment$3, safe_not_equal, { regles: 6 });
+		init(this, options, instance$4, create_fragment$4, safe_not_equal, { regles: 6 });
 
 		dispatch_dev("SvelteRegisterComponent", {
 			component: this,
 			tagName: "Header",
 			options,
-			id: create_fragment$3.name
+			id: create_fragment$4.name
 		});
 	}
 
@@ -6117,14 +6160,14 @@ class Header extends SvelteComponentDev {
 	}
 
 	set regles(value) {
-		throw new Error("<Header>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		throw new Error("<Header>: Cannot set read-only property 'regles'");
 	}
 }
 
 /* src\components\Footer.svelte generated by Svelte v3.59.1 */
-const file$2 = "src\\components\\Footer.svelte";
+const file$3 = "src\\components\\Footer.svelte";
 
-function create_fragment$2(ctx) {
+function create_fragment$3(ctx) {
 	let footer;
 	let t0;
 	let br;
@@ -6141,12 +6184,12 @@ function create_fragment$2(ctx) {
 			t1 = space();
 			a = element("a");
 			a.textContent = "Crédits";
-			add_location(br, file$2, 19, 65, 613);
+			add_location(br, file$3, 19, 65, 613);
 			attr_dev(a, "href", "#credits");
 			attr_dev(a, "title", "Crédits");
-			add_location(a, file$2, 20, 4, 624);
+			add_location(a, file$3, 20, 4, 624);
 			attr_dev(footer, "class", "text-center p-3 mt-3");
-			add_location(footer, file$2, 18, 0, 510);
+			add_location(footer, file$3, 18, 0, 510);
 		},
 		l: function claim(nodes) {
 			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6175,7 +6218,7 @@ function create_fragment$2(ctx) {
 
 	dispatch_dev("SvelteRegisterBlock", {
 		block,
-		id: create_fragment$2.name,
+		id: create_fragment$3.name,
 		type: "component",
 		source: "",
 		ctx
@@ -6184,7 +6227,7 @@ function create_fragment$2(ctx) {
 	return block;
 }
 
-function instance$2($$self, $$props, $$invalidate) {
+function instance$3($$self, $$props, $$invalidate) {
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots('Footer', slots, []);
 
@@ -6213,13 +6256,13 @@ function instance$2($$self, $$props, $$invalidate) {
 class Footer extends SvelteComponentDev {
 	constructor(options) {
 		super(options);
-		init(this, options, instance$2, create_fragment$2, safe_not_equal, { credits: 1 });
+		init(this, options, instance$3, create_fragment$3, safe_not_equal, { credits: 1 });
 
 		dispatch_dev("SvelteRegisterComponent", {
 			component: this,
 			tagName: "Footer",
 			options,
-			id: create_fragment$2.name
+			id: create_fragment$3.name
 		});
 	}
 
@@ -6228,101 +6271,437 @@ class Footer extends SvelteComponentDev {
 	}
 
 	set credits(value) {
-		throw new Error("<Footer>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		throw new Error("<Footer>: Cannot set read-only property 'credits'");
 	}
 }
 
-function t(){return t=Object.assign?Object.assign.bind():function(t){for(var s=1;s<arguments.length;s++){var e=arguments[s];for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(t[n]=e[n]);}return t},t.apply(this,arguments)}var s={strings:["These are the default values...","You know what you should do?","Use your own!","Have a great day!"],stringsElement:null,typeSpeed:0,startDelay:0,backSpeed:0,smartBackspace:!0,shuffle:!1,backDelay:700,fadeOut:!1,fadeOutClass:"typed-fade-out",fadeOutDelay:500,loop:!1,loopCount:Infinity,showCursor:!0,cursorChar:"|",autoInsertCss:!0,attr:null,bindInputFocusEvents:!1,contentType:"html",onBegin:function(t){},onComplete:function(t){},preStringTyped:function(t,s){},onStringTyped:function(t,s){},onLastStringBackspaced:function(t){},onTypingPaused:function(t,s){},onTypingResumed:function(t,s){},onReset:function(t){},onStop:function(t,s){},onStart:function(t,s){},onDestroy:function(t){}},e=new(/*#__PURE__*/function(){function e(){}var n=e.prototype;return n.load=function(e,n,i){if(e.el="string"==typeof i?document.querySelector(i):i,e.options=t({},s,n),e.isInput="input"===e.el.tagName.toLowerCase(),e.attr=e.options.attr,e.bindInputFocusEvents=e.options.bindInputFocusEvents,e.showCursor=!e.isInput&&e.options.showCursor,e.cursorChar=e.options.cursorChar,e.cursorBlinking=!0,e.elContent=e.attr?e.el.getAttribute(e.attr):e.el.textContent,e.contentType=e.options.contentType,e.typeSpeed=e.options.typeSpeed,e.startDelay=e.options.startDelay,e.backSpeed=e.options.backSpeed,e.smartBackspace=e.options.smartBackspace,e.backDelay=e.options.backDelay,e.fadeOut=e.options.fadeOut,e.fadeOutClass=e.options.fadeOutClass,e.fadeOutDelay=e.options.fadeOutDelay,e.isPaused=!1,e.strings=e.options.strings.map(function(t){return t.trim()}),e.stringsElement="string"==typeof e.options.stringsElement?document.querySelector(e.options.stringsElement):e.options.stringsElement,e.stringsElement){e.strings=[],e.stringsElement.style.cssText="clip: rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px;";var r=Array.prototype.slice.apply(e.stringsElement.children),o=r.length;if(o)for(var a=0;a<o;a+=1)e.strings.push(r[a].innerHTML.trim());}for(var u in e.strPos=0,e.currentElContent=this.getCurrentElContent(e),e.currentElContent&&e.currentElContent.length>0&&(e.strPos=e.currentElContent.length-1,e.strings.unshift(e.currentElContent)),e.sequence=[],e.strings)e.sequence[u]=u;e.arrayPos=0,e.stopNum=0,e.loop=e.options.loop,e.loopCount=e.options.loopCount,e.curLoop=0,e.shuffle=e.options.shuffle,e.pause={status:!1,typewrite:!0,curString:"",curStrPos:0},e.typingComplete=!1,e.autoInsertCss=e.options.autoInsertCss,e.autoInsertCss&&(this.appendCursorAnimationCss(e),this.appendFadeOutAnimationCss(e));},n.getCurrentElContent=function(t){return t.attr?t.el.getAttribute(t.attr):t.isInput?t.el.value:"html"===t.contentType?t.el.innerHTML:t.el.textContent},n.appendCursorAnimationCss=function(t){var s="data-typed-js-cursor-css";if(t.showCursor&&!document.querySelector("["+s+"]")){var e=document.createElement("style");e.setAttribute(s,"true"),e.innerHTML="\n        .typed-cursor{\n          opacity: 1;\n        }\n        .typed-cursor.typed-cursor--blink{\n          animation: typedjsBlink 0.7s infinite;\n          -webkit-animation: typedjsBlink 0.7s infinite;\n                  animation: typedjsBlink 0.7s infinite;\n        }\n        @keyframes typedjsBlink{\n          50% { opacity: 0.0; }\n        }\n        @-webkit-keyframes typedjsBlink{\n          0% { opacity: 1; }\n          50% { opacity: 0.0; }\n          100% { opacity: 1; }\n        }\n      ",document.body.appendChild(e);}},n.appendFadeOutAnimationCss=function(t){var s="data-typed-fadeout-js-css";if(t.fadeOut&&!document.querySelector("["+s+"]")){var e=document.createElement("style");e.setAttribute(s,"true"),e.innerHTML="\n        .typed-fade-out{\n          opacity: 0;\n          transition: opacity .25s;\n        }\n        .typed-cursor.typed-cursor--blink.typed-fade-out{\n          -webkit-animation: 0;\n          animation: 0;\n        }\n      ",document.body.appendChild(e);}},e}()),n=new(/*#__PURE__*/function(){function t(){}var s=t.prototype;return s.typeHtmlChars=function(t,s,e){if("html"!==e.contentType)return s;var n=t.substring(s).charAt(0);if("<"===n||"&"===n){var i;for(i="<"===n?">":";";t.substring(s+1).charAt(0)!==i&&!(1+ ++s>t.length););s++;}return s},s.backSpaceHtmlChars=function(t,s,e){if("html"!==e.contentType)return s;var n=t.substring(s).charAt(0);if(">"===n||";"===n){var i;for(i=">"===n?"<":"&";t.substring(s-1).charAt(0)!==i&&!(--s<0););s--;}return s},t}()),i=/*#__PURE__*/function(){function t(t,s){e.load(this,s,t),this.begin();}var s=t.prototype;return s.toggle=function(){this.pause.status?this.start():this.stop();},s.stop=function(){this.typingComplete||this.pause.status||(this.toggleBlinking(!0),this.pause.status=!0,this.options.onStop(this.arrayPos,this));},s.start=function(){this.typingComplete||this.pause.status&&(this.pause.status=!1,this.pause.typewrite?this.typewrite(this.pause.curString,this.pause.curStrPos):this.backspace(this.pause.curString,this.pause.curStrPos),this.options.onStart(this.arrayPos,this));},s.destroy=function(){this.reset(!1),this.options.onDestroy(this);},s.reset=function(t){void 0===t&&(t=!0),clearInterval(this.timeout),this.replaceText(""),this.cursor&&this.cursor.parentNode&&(this.cursor.parentNode.removeChild(this.cursor),this.cursor=null),this.strPos=0,this.arrayPos=0,this.curLoop=0,t&&(this.insertCursor(),this.options.onReset(this),this.begin());},s.begin=function(){var t=this;this.options.onBegin(this),this.typingComplete=!1,this.shuffleStringsIfNeeded(this),this.insertCursor(),this.bindInputFocusEvents&&this.bindFocusEvents(),this.timeout=setTimeout(function(){0===t.strPos?t.typewrite(t.strings[t.sequence[t.arrayPos]],t.strPos):t.backspace(t.strings[t.sequence[t.arrayPos]],t.strPos);},this.startDelay);},s.typewrite=function(t,s){var e=this;this.fadeOut&&this.el.classList.contains(this.fadeOutClass)&&(this.el.classList.remove(this.fadeOutClass),this.cursor&&this.cursor.classList.remove(this.fadeOutClass));var i=this.humanizer(this.typeSpeed),r=1;!0!==this.pause.status?this.timeout=setTimeout(function(){s=n.typeHtmlChars(t,s,e);var i=0,o=t.substring(s);if("^"===o.charAt(0)&&/^\^\d+/.test(o)){var a=1;a+=(o=/\d+/.exec(o)[0]).length,i=parseInt(o),e.temporaryPause=!0,e.options.onTypingPaused(e.arrayPos,e),t=t.substring(0,s)+t.substring(s+a),e.toggleBlinking(!0);}if("`"===o.charAt(0)){for(;"`"!==t.substring(s+r).charAt(0)&&(r++,!(s+r>t.length)););var u=t.substring(0,s),p=t.substring(u.length+1,s+r),c=t.substring(s+r+1);t=u+p+c,r--;}e.timeout=setTimeout(function(){e.toggleBlinking(!1),s>=t.length?e.doneTyping(t,s):e.keepTyping(t,s,r),e.temporaryPause&&(e.temporaryPause=!1,e.options.onTypingResumed(e.arrayPos,e));},i);},i):this.setPauseStatus(t,s,!0);},s.keepTyping=function(t,s,e){0===s&&(this.toggleBlinking(!1),this.options.preStringTyped(this.arrayPos,this));var n=t.substring(0,s+=e);this.replaceText(n),this.typewrite(t,s);},s.doneTyping=function(t,s){var e=this;this.options.onStringTyped(this.arrayPos,this),this.toggleBlinking(!0),this.arrayPos===this.strings.length-1&&(this.complete(),!1===this.loop||this.curLoop===this.loopCount)||(this.timeout=setTimeout(function(){e.backspace(t,s);},this.backDelay));},s.backspace=function(t,s){var e=this;if(!0!==this.pause.status){if(this.fadeOut)return this.initFadeOut();this.toggleBlinking(!1);var i=this.humanizer(this.backSpeed);this.timeout=setTimeout(function(){s=n.backSpaceHtmlChars(t,s,e);var i=t.substring(0,s);if(e.replaceText(i),e.smartBackspace){var r=e.strings[e.arrayPos+1];e.stopNum=r&&i===r.substring(0,s)?s:0;}s>e.stopNum?(s--,e.backspace(t,s)):s<=e.stopNum&&(e.arrayPos++,e.arrayPos===e.strings.length?(e.arrayPos=0,e.options.onLastStringBackspaced(),e.shuffleStringsIfNeeded(),e.begin()):e.typewrite(e.strings[e.sequence[e.arrayPos]],s));},i);}else this.setPauseStatus(t,s,!1);},s.complete=function(){this.options.onComplete(this),this.loop?this.curLoop++:this.typingComplete=!0;},s.setPauseStatus=function(t,s,e){this.pause.typewrite=e,this.pause.curString=t,this.pause.curStrPos=s;},s.toggleBlinking=function(t){this.cursor&&(this.pause.status||this.cursorBlinking!==t&&(this.cursorBlinking=t,t?this.cursor.classList.add("typed-cursor--blink"):this.cursor.classList.remove("typed-cursor--blink")));},s.humanizer=function(t){return Math.round(Math.random()*t/2)+t},s.shuffleStringsIfNeeded=function(){this.shuffle&&(this.sequence=this.sequence.sort(function(){return Math.random()-.5}));},s.initFadeOut=function(){var t=this;return this.el.className+=" "+this.fadeOutClass,this.cursor&&(this.cursor.className+=" "+this.fadeOutClass),setTimeout(function(){t.arrayPos++,t.replaceText(""),t.strings.length>t.arrayPos?t.typewrite(t.strings[t.sequence[t.arrayPos]],0):(t.typewrite(t.strings[0],0),t.arrayPos=0);},this.fadeOutDelay)},s.replaceText=function(t){this.attr?this.el.setAttribute(this.attr,t):this.isInput?this.el.value=t:"html"===this.contentType?this.el.innerHTML=t:this.el.textContent=t;},s.bindFocusEvents=function(){var t=this;this.isInput&&(this.el.addEventListener("focus",function(s){t.stop();}),this.el.addEventListener("blur",function(s){t.el.value&&0!==t.el.value.length||t.start();}));},s.insertCursor=function(){this.showCursor&&(this.cursor||(this.cursor=document.createElement("span"),this.cursor.className="typed-cursor",this.cursor.setAttribute("aria-hidden",!0),this.cursor.innerHTML=this.cursorChar,this.el.parentNode&&this.el.parentNode.insertBefore(this.cursor,this.el.nextSibling)));},t}();
+/* src\components\Loader.svelte generated by Svelte v3.59.1 */
 
-/* src\components\MainLoader.svelte generated by Svelte v3.59.1 */
-const file$1 = "src\\components\\MainLoader.svelte";
+const file$2 = "src\\components\\Loader.svelte";
 
-function create_fragment$1(ctx) {
-	let div3;
-	let div0;
-	let img;
-	let img_src_value;
-	let t0;
-	let div1;
+function create_fragment$2(ctx) {
+	let div;
 	let span0;
-	let t1;
+	let t0;
 	let span1;
-	let t2;
+	let t1;
 	let span2;
-	let t3;
+	let t2;
 	let span3;
-	let t4;
-	let div2;
-	let span4;
-	let div3_class_value;
 
 	const block = {
 		c: function create() {
-			div3 = element("div");
-			div0 = element("div");
-			img = element("img");
-			t0 = space();
-			div1 = element("div");
+			div = element("div");
 			span0 = element("span");
-			t1 = space();
+			t0 = space();
 			span1 = element("span");
-			t2 = space();
+			t1 = space();
 			span2 = element("span");
-			t3 = space();
+			t2 = space();
 			span3 = element("span");
-			t4 = space();
-			div2 = element("div");
-			span4 = element("span");
-			span4.textContent = "Veuillez patienter un instant ...";
-			if (!src_url_equal(img.src, img_src_value = "./assets/pictures/moviequiz.webp")) attr_dev(img, "src", img_src_value);
-			attr_dev(img, "alt", "");
-			add_location(img, file$1, 36, 8, 851);
-			attr_dev(div0, "class", "background");
-			add_location(div0, file$1, 35, 4, 818);
-			add_location(span0, file$1, 39, 8, 947);
-			add_location(span1, file$1, 40, 8, 964);
-			add_location(span2, file$1, 41, 8, 981);
-			add_location(span3, file$1, 42, 8, 998);
-			attr_dev(div1, "class", "fluo");
-			add_location(div1, file$1, 38, 4, 920);
-			attr_dev(span4, "class", "typed");
-			add_location(span4, file$1, 45, 8, 1045);
-			attr_dev(div2, "class", "");
-			add_location(div2, file$1, 44, 4, 1022);
-			attr_dev(div3, "class", div3_class_value = "main-loader justify-content-evenly " + (/*visible*/ ctx[0] ? '' : 'd-none'));
-			add_location(div3, file$1, 34, 0, 739);
+			add_location(span0, file$2, 1, 4, 23);
+			add_location(span1, file$2, 2, 4, 36);
+			add_location(span2, file$2, 3, 4, 49);
+			add_location(span3, file$2, 4, 4, 62);
+			attr_dev(div, "class", "fluo");
+			add_location(div, file$2, 0, 0, 0);
 		},
 		l: function claim(nodes) {
 			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div3, anchor);
-			append_dev(div3, div0);
-			append_dev(div0, img);
-			append_dev(div3, t0);
-			append_dev(div3, div1);
-			append_dev(div1, span0);
-			append_dev(div1, t1);
-			append_dev(div1, span1);
-			append_dev(div1, t2);
-			append_dev(div1, span2);
-			append_dev(div1, t3);
-			append_dev(div1, span3);
-			append_dev(div3, t4);
-			append_dev(div3, div2);
-			append_dev(div2, span4);
-			/*span4_binding*/ ctx[5](span4);
+			insert_dev(target, div, anchor);
+			append_dev(div, span0);
+			append_dev(div, t0);
+			append_dev(div, span1);
+			append_dev(div, t1);
+			append_dev(div, span2);
+			append_dev(div, t2);
+			append_dev(div, span3);
 		},
-		p: function update(ctx, [dirty]) {
-			if (dirty & /*visible*/ 1 && div3_class_value !== (div3_class_value = "main-loader justify-content-evenly " + (/*visible*/ ctx[0] ? '' : 'd-none'))) {
-				attr_dev(div3, "class", div3_class_value);
-			}
-		},
+		p: noop,
 		i: noop,
 		o: noop,
 		d: function destroy(detaching) {
-			if (detaching) detach_dev(div3);
-			/*span4_binding*/ ctx[5](null);
+			if (detaching) detach_dev(div);
+		}
+	};
+
+	dispatch_dev("SvelteRegisterBlock", {
+		block,
+		id: create_fragment$2.name,
+		type: "component",
+		source: "",
+		ctx
+	});
+
+	return block;
+}
+
+function instance$2($$self, $$props) {
+	let { $$slots: slots = {}, $$scope } = $$props;
+	validate_slots('Loader', slots, []);
+	const writable_props = [];
+
+	Object.keys($$props).forEach(key => {
+		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Loader> was created with unknown prop '${key}'`);
+	});
+
+	return [];
+}
+
+class Loader extends SvelteComponentDev {
+	constructor(options) {
+		super(options);
+		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+
+		dispatch_dev("SvelteRegisterComponent", {
+			component: this,
+			tagName: "Loader",
+			options,
+			id: create_fragment$2.name
+		});
+	}
+}
+
+function t(){return t=Object.assign?Object.assign.bind():function(t){for(var s=1;s<arguments.length;s++){var e=arguments[s];for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(t[n]=e[n]);}return t},t.apply(this,arguments)}var s={strings:["These are the default values...","You know what you should do?","Use your own!","Have a great day!"],stringsElement:null,typeSpeed:0,startDelay:0,backSpeed:0,smartBackspace:!0,shuffle:!1,backDelay:700,fadeOut:!1,fadeOutClass:"typed-fade-out",fadeOutDelay:500,loop:!1,loopCount:Infinity,showCursor:!0,cursorChar:"|",autoInsertCss:!0,attr:null,bindInputFocusEvents:!1,contentType:"html",onBegin:function(t){},onComplete:function(t){},preStringTyped:function(t,s){},onStringTyped:function(t,s){},onLastStringBackspaced:function(t){},onTypingPaused:function(t,s){},onTypingResumed:function(t,s){},onReset:function(t){},onStop:function(t,s){},onStart:function(t,s){},onDestroy:function(t){}},e=new(/*#__PURE__*/function(){function e(){}var n=e.prototype;return n.load=function(e,n,i){if(e.el="string"==typeof i?document.querySelector(i):i,e.options=t({},s,n),e.isInput="input"===e.el.tagName.toLowerCase(),e.attr=e.options.attr,e.bindInputFocusEvents=e.options.bindInputFocusEvents,e.showCursor=!e.isInput&&e.options.showCursor,e.cursorChar=e.options.cursorChar,e.cursorBlinking=!0,e.elContent=e.attr?e.el.getAttribute(e.attr):e.el.textContent,e.contentType=e.options.contentType,e.typeSpeed=e.options.typeSpeed,e.startDelay=e.options.startDelay,e.backSpeed=e.options.backSpeed,e.smartBackspace=e.options.smartBackspace,e.backDelay=e.options.backDelay,e.fadeOut=e.options.fadeOut,e.fadeOutClass=e.options.fadeOutClass,e.fadeOutDelay=e.options.fadeOutDelay,e.isPaused=!1,e.strings=e.options.strings.map(function(t){return t.trim()}),e.stringsElement="string"==typeof e.options.stringsElement?document.querySelector(e.options.stringsElement):e.options.stringsElement,e.stringsElement){e.strings=[],e.stringsElement.style.cssText="clip: rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px;";var r=Array.prototype.slice.apply(e.stringsElement.children),o=r.length;if(o)for(var a=0;a<o;a+=1)e.strings.push(r[a].innerHTML.trim());}for(var u in e.strPos=0,e.currentElContent=this.getCurrentElContent(e),e.currentElContent&&e.currentElContent.length>0&&(e.strPos=e.currentElContent.length-1,e.strings.unshift(e.currentElContent)),e.sequence=[],e.strings)e.sequence[u]=u;e.arrayPos=0,e.stopNum=0,e.loop=e.options.loop,e.loopCount=e.options.loopCount,e.curLoop=0,e.shuffle=e.options.shuffle,e.pause={status:!1,typewrite:!0,curString:"",curStrPos:0},e.typingComplete=!1,e.autoInsertCss=e.options.autoInsertCss,e.autoInsertCss&&(this.appendCursorAnimationCss(e),this.appendFadeOutAnimationCss(e));},n.getCurrentElContent=function(t){return t.attr?t.el.getAttribute(t.attr):t.isInput?t.el.value:"html"===t.contentType?t.el.innerHTML:t.el.textContent},n.appendCursorAnimationCss=function(t){var s="data-typed-js-cursor-css";if(t.showCursor&&!document.querySelector("["+s+"]")){var e=document.createElement("style");e.setAttribute(s,"true"),e.innerHTML="\n        .typed-cursor{\n          opacity: 1;\n        }\n        .typed-cursor.typed-cursor--blink{\n          animation: typedjsBlink 0.7s infinite;\n          -webkit-animation: typedjsBlink 0.7s infinite;\n                  animation: typedjsBlink 0.7s infinite;\n        }\n        @keyframes typedjsBlink{\n          50% { opacity: 0.0; }\n        }\n        @-webkit-keyframes typedjsBlink{\n          0% { opacity: 1; }\n          50% { opacity: 0.0; }\n          100% { opacity: 1; }\n        }\n      ",document.body.appendChild(e);}},n.appendFadeOutAnimationCss=function(t){var s="data-typed-fadeout-js-css";if(t.fadeOut&&!document.querySelector("["+s+"]")){var e=document.createElement("style");e.setAttribute(s,"true"),e.innerHTML="\n        .typed-fade-out{\n          opacity: 0;\n          transition: opacity .25s;\n        }\n        .typed-cursor.typed-cursor--blink.typed-fade-out{\n          -webkit-animation: 0;\n          animation: 0;\n        }\n      ",document.body.appendChild(e);}},e}()),n=new(/*#__PURE__*/function(){function t(){}var s=t.prototype;return s.typeHtmlChars=function(t,s,e){if("html"!==e.contentType)return s;var n=t.substring(s).charAt(0);if("<"===n||"&"===n){var i;for(i="<"===n?">":";";t.substring(s+1).charAt(0)!==i&&!(1+ ++s>t.length););s++;}return s},s.backSpaceHtmlChars=function(t,s,e){if("html"!==e.contentType)return s;var n=t.substring(s).charAt(0);if(">"===n||";"===n){var i;for(i=">"===n?"<":"&";t.substring(s-1).charAt(0)!==i&&!(--s<0););s--;}return s},t}()),i=/*#__PURE__*/function(){function t(t,s){e.load(this,s,t),this.begin();}var s=t.prototype;return s.toggle=function(){this.pause.status?this.start():this.stop();},s.stop=function(){this.typingComplete||this.pause.status||(this.toggleBlinking(!0),this.pause.status=!0,this.options.onStop(this.arrayPos,this));},s.start=function(){this.typingComplete||this.pause.status&&(this.pause.status=!1,this.pause.typewrite?this.typewrite(this.pause.curString,this.pause.curStrPos):this.backspace(this.pause.curString,this.pause.curStrPos),this.options.onStart(this.arrayPos,this));},s.destroy=function(){this.reset(!1),this.options.onDestroy(this);},s.reset=function(t){void 0===t&&(t=!0),clearInterval(this.timeout),this.replaceText(""),this.cursor&&this.cursor.parentNode&&(this.cursor.parentNode.removeChild(this.cursor),this.cursor=null),this.strPos=0,this.arrayPos=0,this.curLoop=0,t&&(this.insertCursor(),this.options.onReset(this),this.begin());},s.begin=function(){var t=this;this.options.onBegin(this),this.typingComplete=!1,this.shuffleStringsIfNeeded(this),this.insertCursor(),this.bindInputFocusEvents&&this.bindFocusEvents(),this.timeout=setTimeout(function(){0===t.strPos?t.typewrite(t.strings[t.sequence[t.arrayPos]],t.strPos):t.backspace(t.strings[t.sequence[t.arrayPos]],t.strPos);},this.startDelay);},s.typewrite=function(t,s){var e=this;this.fadeOut&&this.el.classList.contains(this.fadeOutClass)&&(this.el.classList.remove(this.fadeOutClass),this.cursor&&this.cursor.classList.remove(this.fadeOutClass));var i=this.humanizer(this.typeSpeed),r=1;!0!==this.pause.status?this.timeout=setTimeout(function(){s=n.typeHtmlChars(t,s,e);var i=0,o=t.substring(s);if("^"===o.charAt(0)&&/^\^\d+/.test(o)){var a=1;a+=(o=/\d+/.exec(o)[0]).length,i=parseInt(o),e.temporaryPause=!0,e.options.onTypingPaused(e.arrayPos,e),t=t.substring(0,s)+t.substring(s+a),e.toggleBlinking(!0);}if("`"===o.charAt(0)){for(;"`"!==t.substring(s+r).charAt(0)&&(r++,!(s+r>t.length)););var u=t.substring(0,s),p=t.substring(u.length+1,s+r),c=t.substring(s+r+1);t=u+p+c,r--;}e.timeout=setTimeout(function(){e.toggleBlinking(!1),s>=t.length?e.doneTyping(t,s):e.keepTyping(t,s,r),e.temporaryPause&&(e.temporaryPause=!1,e.options.onTypingResumed(e.arrayPos,e));},i);},i):this.setPauseStatus(t,s,!0);},s.keepTyping=function(t,s,e){0===s&&(this.toggleBlinking(!1),this.options.preStringTyped(this.arrayPos,this));var n=t.substring(0,s+=e);this.replaceText(n),this.typewrite(t,s);},s.doneTyping=function(t,s){var e=this;this.options.onStringTyped(this.arrayPos,this),this.toggleBlinking(!0),this.arrayPos===this.strings.length-1&&(this.complete(),!1===this.loop||this.curLoop===this.loopCount)||(this.timeout=setTimeout(function(){e.backspace(t,s);},this.backDelay));},s.backspace=function(t,s){var e=this;if(!0!==this.pause.status){if(this.fadeOut)return this.initFadeOut();this.toggleBlinking(!1);var i=this.humanizer(this.backSpeed);this.timeout=setTimeout(function(){s=n.backSpaceHtmlChars(t,s,e);var i=t.substring(0,s);if(e.replaceText(i),e.smartBackspace){var r=e.strings[e.arrayPos+1];e.stopNum=r&&i===r.substring(0,s)?s:0;}s>e.stopNum?(s--,e.backspace(t,s)):s<=e.stopNum&&(e.arrayPos++,e.arrayPos===e.strings.length?(e.arrayPos=0,e.options.onLastStringBackspaced(),e.shuffleStringsIfNeeded(),e.begin()):e.typewrite(e.strings[e.sequence[e.arrayPos]],s));},i);}else this.setPauseStatus(t,s,!1);},s.complete=function(){this.options.onComplete(this),this.loop?this.curLoop++:this.typingComplete=!0;},s.setPauseStatus=function(t,s,e){this.pause.typewrite=e,this.pause.curString=t,this.pause.curStrPos=s;},s.toggleBlinking=function(t){this.cursor&&(this.pause.status||this.cursorBlinking!==t&&(this.cursorBlinking=t,t?this.cursor.classList.add("typed-cursor--blink"):this.cursor.classList.remove("typed-cursor--blink")));},s.humanizer=function(t){return Math.round(Math.random()*t/2)+t},s.shuffleStringsIfNeeded=function(){this.shuffle&&(this.sequence=this.sequence.sort(function(){return Math.random()-.5}));},s.initFadeOut=function(){var t=this;return this.el.className+=" "+this.fadeOutClass,this.cursor&&(this.cursor.className+=" "+this.fadeOutClass),setTimeout(function(){t.arrayPos++,t.replaceText(""),t.strings.length>t.arrayPos?t.typewrite(t.strings[t.sequence[t.arrayPos]],0):(t.typewrite(t.strings[0],0),t.arrayPos=0);},this.fadeOutDelay)},s.replaceText=function(t){this.attr?this.el.setAttribute(this.attr,t):this.isInput?this.el.value=t:"html"===this.contentType?this.el.innerHTML=t:this.el.textContent=t;},s.bindFocusEvents=function(){var t=this;this.isInput&&(this.el.addEventListener("focus",function(s){t.stop();}),this.el.addEventListener("blur",function(s){t.el.value&&0!==t.el.value.length||t.start();}));},s.insertCursor=function(){this.showCursor&&(this.cursor||(this.cursor=document.createElement("span"),this.cursor.className="typed-cursor",this.cursor.setAttribute("aria-hidden",!0),this.cursor.innerHTML=this.cursorChar,this.el.parentNode&&this.el.parentNode.insertBefore(this.cursor,this.el.nextSibling)));},t}();
+
+var messages = [
+    "Reticulating splines...",
+    "Generating witty dialog...",
+    "Swapping time and space...",
+    "Spinning violently around the y-axis...",
+    "Tokenizing real life...",
+    "Bending the spoon...",
+    "Filtering morale...",
+    "Don't think of purple hippos...",
+    "We need a new fuse...",
+    "Have a good day.",
+    "Upgrading Windows, your PC will restart several times. Sit back and relax.",
+    "640K ought to be enough for anybody",
+    "The architects are still drafting",
+    "The bits are breeding",
+    "We're building the buildings as fast as we can",
+    "Would you prefer chicken, steak, or tofu?",
+    "(Pay no attention to the man behind the curtain)",
+    "...and enjoy the elevator music...",
+    "Please wait while the little elves draw your map",
+    "Don't worry - a few bits tried to escape, but we caught them",
+    "Would you like fries with that?",
+    "Checking the gravitational constant in your locale...",
+    "Go ahead -- hold your breath!",
+    "...at least you're not on hold...",
+    "Hum something loud while others stare",
+    "You're not in Kansas any more",
+    "The server is powered by a lemon and two electrodes.",
+    "Please wait while a larger software vendor in Seattle takes over the world",
+    "We're testing your patience",
+    "As if you had any other choice",
+    "Follow the white rabbit",
+    "Why don't you order a sandwich?",
+    "While the satellite moves into position",
+    "keep calm and npm install",
+    "The bits are flowing slowly today",
+    "Dig on the 'X' for buried treasure... ARRR!",
+    "It's still faster than you could draw it",
+    "The last time I tried this the monkey didn't survive. Let's hope it works better this time.",
+    "I should have had a V8 this morning.",
+    "My other loading screen is much faster.",
+    "Testing on Timmy... We're going to need another Timmy.",
+    "Reconfoobling energymotron...",
+    "(Insert quarter)",
+    "Are we there yet?",
+    "Have you lost weight?",
+    "Just count to 10",
+    "Why so serious?",
+    "It's not you. It's me.",
+    "Counting backwards from Infinity",
+    "Don't panic...",
+    "Embiggening Prototypes",
+    "Do not run! We are your friends!",
+    "Do you come here often?",
+    "Warning: Don't set yourself on fire.",
+    "We're making you a cookie.",
+    "Creating time-loop inversion field",
+    "Spinning the wheel of fortune...",
+    "Loading the enchanted bunny...",
+    "Computing chance of success",
+    "I'm sorry Dave, I can't do that.",
+    "Looking for exact change",
+    "All your web browser are belong to us",
+    "All I really need is a kilobit.",
+    "I feel like im supposed to be loading something. . .",
+    "What do you call 8 Hobbits? A Hobbyte.",
+    "Should have used a compiled language...",
+    "Is this Windows?",
+    "Adjusting flux capacitor...",
+    "Please wait until the sloth starts moving.",
+    "Don't break your screen yet!",
+    "I swear it's almost done.",
+    "Let's take a mindfulness minute...",
+    "Unicorns are at the end of this road, I promise.",
+    "Listening for the sound of one hand clapping...",
+    "Keeping all the 1's and removing all the 0's...",
+    "Putting the icing on the cake. The cake is not a lie...",
+    "Cleaning off the cobwebs...",
+    "Making sure all the i's have dots...",
+    "We need more dilithium crystals",
+    "Where did all the internets go",
+    "Connecting Neurotoxin Storage Tank...",
+    "Granting wishes...",
+    "Time flies when you’re having fun.",
+    "Get some coffee and come back in ten minutes..",
+    "Spinning the hamster…",
+    "99 bottles of beer on the wall..",
+    "Stay awhile and listen..",
+    "Be careful not to step in the git-gui",
+    "You edhall not pass! yet..",
+    "Load it and they will come",
+    "Convincing AI not to turn evil..",
+    "There is no spoon. Because we are not done loading it",
+    "Your left thumb points to the right and your right thumb points to the left.",
+    "How did you get here?",
+    "Wait, do you smell something burning?",
+    "Computing the secret to life, the universe, and everything.",
+    "When nothing is going right, go left!!...",
+    "I love my job only when I'm on vacation...",
+    "i'm not lazy, I'm just relaxed!!",
+    "Never steal. The government hates competition....",
+    "Why are they called apartments if they are all stuck together?",
+    "Life is Short – Talk Fast!!!!",
+    "Optimism – is a lack of information.....",
+    "Save water and shower together",
+    "Whenever I find the key to success, someone changes the lock.",
+    "Sometimes I think war is God’s way of teaching us geography.",
+    "I’ve got problem for your solution…..",
+    "Where there’s a will, there’s a relative.",
+    "User: the word computer professionals use when they mean !!idiot!!",
+    "Adults are just kids with money.",
+    "I think I am, therefore, I am. I think.",
+    "A kiss is like a fight, with mouths.",
+    "You don’t pay taxes—they take taxes.",
+    "Coffee, Chocolate, Men. The richer the better!",
+    "I am free of all prejudices. I hate everyone equally.",
+    "git happens",
+    "May the forks be with you",
+    "A commit a day keeps the mobs away",
+    "This is not a joke, it's a commit.",
+    "Constructing additional pylons...",
+    "Roping some seaturtles...",
+    "Locating Jebediah Kerman...",
+    "We are not liable for any broken screens as a result of waiting.",
+    "Hello IT, have you tried turning it off and on again?",
+    "If you type Google into Google you can break the internet",
+    "Well, this is embarrassing.",
+    "What is the airspeed velocity of an unladen swallow?",
+    "Hello, IT... Have you tried forcing an unexpected reboot?",
+    "They just toss us away like yesterday's jam.",
+    "They're fairly regular, the beatings, yes. I'd say we're on a bi-weekly beating.",
+    "The Elders of the Internet would never stand for it.",
+    "Space is invisible mind dust, and stars are but wishes.",
+    "Didn't know paint dried so quickly.",
+    "Everything sounds the same",
+    "I'm going to walk the dog",
+    "I didn't choose the engineering life. The engineering life chose me.",
+    "Dividing by zero...",
+    "Spawn more Overlord!",
+    "If I’m not back in five minutes, just wait longer.",
+    "Some days, you just can’t get rid of a bug!",
+    "We’re going to need a bigger boat.",
+    "Chuck Norris never git push. The repo pulls before.",
+    "Web developers do it with <style>",
+    "I need to git pull --my-life-together",
+    "Java developers never RIP. They just get Garbage Collected.",
+    "Cracking military-grade encryption...",
+    "Simulating traveling salesman...",
+    "Proving P=NP...",
+    "Entangling superstrings...",
+    "Twiddling thumbs...",
+    "Searching for plot device...",
+    "Trying to sort in O(n)...",
+    "Laughing at your pictures-i mean, loading...",
+    "Sending data to NS-i mean, our servers.",
+    "Looking for sense of humour, please hold on.",
+    "Please wait while the intern refills his coffee.",
+    "A different error message? Finally, some progress!",
+    "Hold on while we wrap up our git together...sorry",
+    "Please hold on as we reheat our coffee",
+    "Kindly hold on as we convert this bug to a feature...",
+    "Kindly hold on as our intern quits vim...",
+    "Winter is coming...",
+    "Installing dependencies",
+    "Switching to the latest JS framework...",
+    "Distracted by cat gifs",
+    "Finding someone to hold my beer",
+    "BRB, working on my side project",
+    "@todo Insert witty loading message",
+    "Let's hope it's worth the wait",
+    "Aw, snap! Not..",
+    "Ordering 1s and 0s...",
+    "Updating dependencies...",
+    "Whatever you do, don't look behind you...",
+    "Please wait... Consulting the manual...",
+    "It is dark. You're likely to be eaten by a grue.",
+    "Loading funny message...",
+    "It's 10:00pm. Do you know where your children are?",
+    "Waiting Daenerys say all her titles...",
+    "Feel free to spin in your chair",
+    "What the what?",
+    "format C: ...",
+    "Forget you saw that password I just typed into the IM ...",
+    "What's under there?",
+    "Your computer has a virus, its name is Windows!",
+    "Go ahead, hold your breath and do an ironman plank till loading complete",
+    "Bored of slow loading spinner, buy more RAM!",
+    "Help, I'm trapped in a loader!",
+    "What is the difference btwn a hippo and a zippo? One is really heavy, the other is a little lighter",
+    "Please wait, while we purge the Decepticons for you. Yes, You can thanks us later!",
+    "Chuck Norris once urinated in a semi truck's gas tank as a joke....that truck is now known as Optimus Prime.",
+    "Chuck Norris doesn’t wear a watch. HE decides what time it is.",
+    "Mining some bitcoins...",
+    "Downloading more RAM..",
+    "Updating to Windows Vista...",
+    "Deleting System32 folder",
+    "Hiding all ;'s in your code",
+    "Alt-F4 speeds things up.",
+    "Initializing the initializer...",
+    "When was the last time you dusted around here?",
+    "Optimizing the optimizer...",
+    "Last call for the data bus! All aboard!",
+    "Running swag sticker detection...",
+    "Never let a computer know you're in a hurry.",
+    "A computer will do what you tell it to do, but that may be much different from what you had in mind.",
+    "Some things man was never meant to know. For everything else, there's Google.",
+    "Unix is user-friendly. It's just very selective about who its friends are.",
+    "Shovelling coal into the server",
+    "Pushing pixels...",
+    "How about this weather, eh?",
+    "Building a wall...",
+    "Everything in this universe is either a potato or not a potato",
+    "The severity of your issue is always lower than you expected.",
+    "Updating Updater...",
+    "Downloading Downloader...",
+    "Debugging Debugger...",
+    "Reading Terms and Conditions for you.",
+    "Digested cookies being baked again.",
+    "Live long and prosper.",
+    "There is no cow level, but there's a goat one!",
+    "Deleting all your hidden porn...",
+    "Running with scissors...",
+    "Definitely not a virus...",
+    "You may call me Steve.",
+    "You seem like a nice person...",
+    "Coffee at my place, tommorow at 10A.M. - don't be late!",
+    "Work, work...",
+    "Patience! This is difficult, you know...",
+    "Discovering new ways of making you wait...",
+    "Your time is very important to us. Please wait while we ignore you...",
+    "Time flies like an arrow; fruit flies like a banana",
+    "Two men walked into a bar; the third ducked...",
+    "Sooooo... Have you seen my vacation photos yet?",
+    "Sorry we are busy catching em' all, we're done soon",
+    "TODO: Insert elevator music",
+    "Still faster than Windows update",
+    "Composer hack: Waiting for reqs to be fetched is less frustrating if you add -vvv to your command.",
+    "Please wait while the minions do their work",
+    "Grabbing extra minions",
+    "Doing the heavy lifting",
+    "We're working very Hard .... Really",
+    "Waking up the minions",
+    "You are number 2843684714 in the queue",
+    "Please wait while we serve other customers...",
+    "Our premium plan is faster",
+    "Feeding unicorns...",
+    "Rupturing the subspace barrier",
+    "Creating an anti-time reaction",
+    "Converging tachyon pulses",
+    "Bypassing control of the matter-antimatter integrator",
+    "Adjusting the dilithium crystal converter assembly",
+    "Reversing the shield polarity",
+    "Disrupting warp fields with an inverse graviton burst",
+    "Up, Up, Down, Down, Left, Right, Left, Right, B, A.",
+    "Do you like my loading animation? I made it myself",
+    "Whoah, look at it go!",
+    "No, I'm awake. I was just resting my eyes.",
+    "One mississippi, two mississippi...",
+    "Don't panic... AHHHHH!",
+    "Ensuring Gnomes are still short.",
+    "Baking ice cream...",
+];
+
+/* src\components\MainLoader.svelte generated by Svelte v3.59.1 */
+const file$1 = "src\\components\\MainLoader.svelte";
+
+function create_fragment$1(ctx) {
+	let div2;
+	let div0;
+	let img;
+	let img_src_value;
+	let t0;
+	let loader;
+	let t1;
+	let div1;
+	let span;
+	let div2_class_value;
+	let current;
+	loader = new Loader({ $$inline: true });
+
+	const block = {
+		c: function create() {
+			div2 = element("div");
+			div0 = element("div");
+			img = element("img");
+			t0 = space();
+			create_component(loader.$$.fragment);
+			t1 = space();
+			div1 = element("div");
+			span = element("span");
+			span.textContent = "Veuillez patienter un instant ...";
+			if (!src_url_equal(img.src, img_src_value = "./assets/pictures/moviequiz.webp")) attr_dev(img, "src", img_src_value);
+			attr_dev(img, "alt", "");
+			add_location(img, file$1, 55, 8, 1359);
+			attr_dev(div0, "class", "background");
+			add_location(div0, file$1, 54, 4, 1326);
+			attr_dev(span, "class", "typed");
+			add_location(span, file$1, 59, 8, 1466);
+			attr_dev(div1, "class", "");
+			add_location(div1, file$1, 58, 4, 1443);
+			attr_dev(div2, "class", div2_class_value = "main-loader justify-content-evenly " + (/*$loading*/ ctx[1] ? '' : 'd-none'));
+			add_location(div2, file$1, 53, 0, 1246);
+		},
+		l: function claim(nodes) {
+			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+		},
+		m: function mount(target, anchor) {
+			insert_dev(target, div2, anchor);
+			append_dev(div2, div0);
+			append_dev(div0, img);
+			append_dev(div2, t0);
+			mount_component(loader, div2, null);
+			append_dev(div2, t1);
+			append_dev(div2, div1);
+			append_dev(div1, span);
+			/*span_binding*/ ctx[5](span);
+			current = true;
+		},
+		p: function update(ctx, [dirty]) {
+			if (!current || dirty & /*$loading*/ 2 && div2_class_value !== (div2_class_value = "main-loader justify-content-evenly " + (/*$loading*/ ctx[1] ? '' : 'd-none'))) {
+				attr_dev(div2, "class", div2_class_value);
+			}
+		},
+		i: function intro(local) {
+			if (current) return;
+			transition_in(loader.$$.fragment, local);
+			current = true;
+		},
+		o: function outro(local) {
+			transition_out(loader.$$.fragment, local);
+			current = false;
+		},
+		d: function destroy(detaching) {
+			if (detaching) detach_dev(div2);
+			destroy_component(loader);
+			/*span_binding*/ ctx[5](null);
 		}
 	};
 
@@ -6338,40 +6717,60 @@ function create_fragment$1(ctx) {
 }
 
 function instance$1($$self, $$props, $$invalidate) {
+	let $loading;
+	validate_store(loading, 'loading');
+	component_subscribe($$self, loading, $$value => $$invalidate(1, $loading = $$value));
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots('MainLoader', slots, []);
-	let { phrase = [`Veuillez patienter un instant ...`, `Chargement des médias ...`], loop = false, speed = 30, visible = true } = $$props;
-	let toType;
+	let { phrase = [], loop = false, speed = 20 } = $$props;
+	let toType, typed, unsub;
 
 	onMount(() => {
 		if (!isArray(phrase)) {
 			$$invalidate(2, phrase = [phrase]);
 		}
 
-		new i(toType,
+		if (isEmpty(phrase)) {
+			for (let i = 0; i < 4; i++) {
+				phrase.push(messages[Math.floor(Math.random() * messages.length)]);
+			}
+
+			phrase.push(toType.innerText);
+		}
+
+		typed = new i(toType,
 		{
 				strings: phrase,
 				typeSpeed: speed,
-				backSpeed: Math.round(speed / 2),
+				backSpeed: Math.round(speed / 6),
 				loop,
-				loopCount: 2
+				loopCount: 5
 			});
+
+		unsub = loading.subscribe(value => {
+			if (value === false) {
+				typed.stop();
+			} else {
+				typed.start();
+			}
+		});
 	});
 
 	onDestroy(() => {
+		unsub();
 		typed.onDestroy();
 	});
 
-	const writable_props = ['phrase', 'loop', 'speed', 'visible'];
+	const writable_props = ['phrase', 'loop', 'speed'];
 
 	Object.keys($$props).forEach(key => {
 		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<MainLoader> was created with unknown prop '${key}'`);
 	});
 
-	function span4_binding($$value) {
+	function span_binding($$value) {
 		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
 			toType = $$value;
-			$$invalidate(1, toType);
+			$$invalidate(0, toType);
 		});
 	}
 
@@ -6379,40 +6778,46 @@ function instance$1($$self, $$props, $$invalidate) {
 		if ('phrase' in $$props) $$invalidate(2, phrase = $$props.phrase);
 		if ('loop' in $$props) $$invalidate(3, loop = $$props.loop);
 		if ('speed' in $$props) $$invalidate(4, speed = $$props.speed);
-		if ('visible' in $$props) $$invalidate(0, visible = $$props.visible);
 	};
 
 	$$self.$capture_state = () => ({
+		Loader,
 		onDestroy,
 		onMount,
 		Typed: i,
 		isArray,
+		isEmpty,
+		loading,
+		messages,
 		phrase,
 		loop,
 		speed,
-		visible,
-		toType
+		toType,
+		typed,
+		unsub,
+		$loading
 	});
 
 	$$self.$inject_state = $$props => {
 		if ('phrase' in $$props) $$invalidate(2, phrase = $$props.phrase);
 		if ('loop' in $$props) $$invalidate(3, loop = $$props.loop);
 		if ('speed' in $$props) $$invalidate(4, speed = $$props.speed);
-		if ('visible' in $$props) $$invalidate(0, visible = $$props.visible);
-		if ('toType' in $$props) $$invalidate(1, toType = $$props.toType);
+		if ('toType' in $$props) $$invalidate(0, toType = $$props.toType);
+		if ('typed' in $$props) typed = $$props.typed;
+		if ('unsub' in $$props) unsub = $$props.unsub;
 	};
 
 	if ($$props && "$$inject" in $$props) {
 		$$self.$inject_state($$props.$$inject);
 	}
 
-	return [visible, toType, phrase, loop, speed, span4_binding];
+	return [toType, $loading, phrase, loop, speed, span_binding];
 }
 
 class MainLoader extends SvelteComponentDev {
 	constructor(options) {
 		super(options);
-		init(this, options, instance$1, create_fragment$1, safe_not_equal, { phrase: 2, loop: 3, speed: 4, visible: 0 });
+		init(this, options, instance$1, create_fragment$1, safe_not_equal, { phrase: 2, loop: 3, speed: 4 });
 
 		dispatch_dev("SvelteRegisterComponent", {
 			component: this,
@@ -6423,42 +6828,37 @@ class MainLoader extends SvelteComponentDev {
 	}
 
 	get phrase() {
-		throw new Error("<MainLoader>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[2];
 	}
 
-	set phrase(value) {
-		throw new Error("<MainLoader>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set phrase(phrase) {
+		this.$$set({ phrase });
+		flush();
 	}
 
 	get loop() {
-		throw new Error("<MainLoader>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[3];
 	}
 
-	set loop(value) {
-		throw new Error("<MainLoader>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set loop(loop) {
+		this.$$set({ loop });
+		flush();
 	}
 
 	get speed() {
-		throw new Error("<MainLoader>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+		return this.$$.ctx[4];
 	}
 
-	set speed(value) {
-		throw new Error("<MainLoader>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-	}
-
-	get visible() {
-		throw new Error("<MainLoader>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-	}
-
-	set visible(value) {
-		throw new Error("<MainLoader>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+	set speed(speed) {
+		this.$$set({ speed });
+		flush();
 	}
 }
 
 /* src\App.svelte generated by Svelte v3.59.1 */
 const file = "src\\App.svelte";
 
-// (32:0) <Router>
+// (34:0) <Router>
 function create_default_slot(ctx) {
 	let header;
 	let t0;
@@ -6469,12 +6869,7 @@ function create_default_slot(ctx) {
 	let footer;
 	let current;
 	header = new Header({ $$inline: true });
-
-	mainloader = new MainLoader({
-			props: { visible: /*visible*/ ctx[0] },
-			$$inline: true
-		});
-
+	mainloader = new MainLoader({ $$inline: true });
 	footer = new Footer({ $$inline: true });
 
 	const block = {
@@ -6487,7 +6882,7 @@ function create_default_slot(ctx) {
 			t2 = space();
 			create_component(footer.$$.fragment);
 			attr_dev(main, "id", "app");
-			add_location(main, file, 33, 4, 808);
+			add_location(main, file, 35, 4, 887);
 		},
 		m: function mount(target, anchor) {
 			mount_component(header, target, anchor);
@@ -6499,11 +6894,7 @@ function create_default_slot(ctx) {
 			mount_component(footer, target, anchor);
 			current = true;
 		},
-		p: function update(ctx, dirty) {
-			const mainloader_changes = {};
-			if (dirty & /*visible*/ 1) mainloader_changes.visible = /*visible*/ ctx[0];
-			mainloader.$set(mainloader_changes);
-		},
+		p: noop,
 		i: function intro(local) {
 			if (current) return;
 			transition_in(header.$$.fragment, local);
@@ -6532,7 +6923,7 @@ function create_default_slot(ctx) {
 		block,
 		id: create_default_slot.name,
 		type: "slot",
-		source: "(32:0) <Router>",
+		source: "(34:0) <Router>",
 		ctx
 	});
 
@@ -6565,7 +6956,7 @@ function create_fragment(ctx) {
 		p: function update(ctx, [dirty]) {
 			const router_changes = {};
 
-			if (dirty & /*$$scope, visible*/ 5) {
+			if (dirty & /*$$scope*/ 4) {
 				router_changes.$$scope = { dirty, ctx };
 			}
 
@@ -6597,30 +6988,34 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
+	let $loading;
+	validate_store(loading, 'loading');
+	component_subscribe($$self, loading, $$value => $$invalidate(0, $loading = $$value));
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots('App', slots, []);
-	let visible = true;
-
-	// to be replaced by load events
-	setTimeout(
-		() => {
-			$$invalidate(0, visible = false);
-		},
-		5000
-	);
 
 	const unlisten = History.onPush(e => {
 		if (e.type === "push") {
-			$$invalidate(0, visible = true);
+			set_store_value(loading, $loading = true, $loading);
 
 			// to be replaced by load events
 			setTimeout(
 				() => {
-					$$invalidate(0, visible = false);
+					set_store_value(loading, $loading = false, $loading);
 				},
-				500
+				1500
 			);
 		}
+	});
+
+	onMount(() => {
+		// to be replaced by load events
+		setTimeout(
+			() => {
+				set_store_value(loading, $loading = false, $loading);
+			},
+			5000
+		);
 	});
 
 	onDestroy(() => {
@@ -6638,23 +7033,17 @@ function instance($$self, $$props, $$invalidate) {
 		Route: Route$1,
 		Link: Link$1,
 		onDestroy,
+		onMount,
+		loading,
 		Header,
 		Footer,
 		MainLoader,
 		History,
-		visible,
-		unlisten
+		unlisten,
+		$loading
 	});
 
-	$$self.$inject_state = $$props => {
-		if ('visible' in $$props) $$invalidate(0, visible = $$props.visible);
-	};
-
-	if ($$props && "$$inject" in $$props) {
-		$$self.$inject_state($$props.$$inject);
-	}
-
-	return [visible];
+	return [];
 }
 
 class App extends SvelteComponentDev {

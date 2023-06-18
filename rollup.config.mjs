@@ -18,7 +18,9 @@ const
         json(),
         svelte({
             compilerOptions: {
-                dev: !prod
+                dev: !prod,
+                accessors: true,
+                // hydratable: true,
             }
         }),
         postcss({

@@ -97,6 +97,8 @@ export const attachReplaceState = (/** @type {function} */ fn) =>
 };
 
 
+const unsetEvents = new Set();
+
 function attachEvents(events = RouterEvent.ALL)
 {
     if (!attachedOnce)
@@ -106,43 +108,64 @@ function attachEvents(events = RouterEvent.ALL)
 
         if (events === RouterEvent.ALL || events === RouterEvent.PUSH)
         {
-            attachPushState((url, state) =>
-            {
-                EventListeners.trigger(RouterEvent.PUSH.first + ' change', { url, state });
-            });
+            unsetEvents.add(
+                attachPushState((url, state) =>
+                {
+                    EventListeners.trigger(RouterEvent.PUSH.first + ' change', { url, state });
+                })
+            );
         }
         if (events === RouterEvent.ALL || events === RouterEvent.REPLACE)
         {
-            attachReplaceState((url, state) =>
-            {
-                EventListeners.trigger(RouterEvent.REPLACE.first + ' change', { url, state });
-            });
+            unsetEvents.add(
+                attachReplaceState((url, state) =>
+                {
+                    EventListeners.trigger(RouterEvent.REPLACE.first + ' change', { url, state });
+                })
+            );
         }
 
 
         if (events.value.includes('pop') || events === RouterEvent.ALL)
         {
-            emitter.on('popstate', e =>
+
+            const listener = e =>
             {
                 EventListeners.trigger('pop change', {
                     state: e.state,
                     url: getUrl(location.href)
                 });
-            });
+            };
+
+            emitter.on('popstate', listener);
+
+            unsetEvents.add(() => emitter.off('popstate', listener));
         }
 
         if (events === RouterEvent.HASH || events === RouterEvent.ALL)
         {
-            emitter.on('hashchange', e =>
+
+            const listener = e =>
             {
                 EventListeners.trigger('hash change', {
                     state: history.state,
                     url: getUrl(location.href)
                 });
-            });
+            };
+
+            emitter.on('hashchange', listener);
+
+            unsetEvents.add(() => emitter.off('hashchange', listener));
         }
 
     }
+
+    return () =>
+    {
+
+        unsetEvents.forEach(fn => fn());
+        unsetEvents.clear();
+    };
 }
 
 
@@ -211,7 +234,7 @@ export default class History
 
     static start(events = RouterEvent.default)
     {
-        attachEvents(events);
+        return attachEvents(events);
     }
 
 }

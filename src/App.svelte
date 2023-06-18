@@ -1,27 +1,29 @@
 <script>
     import { Router, Route, Link } from "svelte-navigator";
-    import { onDestroy } from "svelte";
+    import { onDestroy, onMount } from "svelte";
+
+    import { loading } from "./App/vars.mjs";
 
     import Header from "./components/Header.svelte";
     import Footer from "./components/Footer.svelte";
     import MainLoader from "./components/MainLoader.svelte";
     import History from "../modules/components/history.mjs";
 
-    let visible = true;
-
-    // to be replaced by load events
-    setTimeout(() => {
-        visible = false;
-    }, 5000);
-
     const unlisten = History.onPush((e) => {
         if (e.type === "push") {
-            visible = true;
+            $loading = true;
             // to be replaced by load events
             setTimeout(() => {
-                visible = false;
-            }, 500);
+                $loading = false;
+            }, 1500);
         }
+    });
+
+    onMount(() => {
+        // to be replaced by load events
+        setTimeout(() => {
+            $loading = false;
+        }, 5000);
     });
 
     onDestroy(() => {
@@ -32,6 +34,6 @@
 <Router>
     <Header />
     <main id="app" />
-    <MainLoader {visible} />
+    <MainLoader />
     <Footer />
 </Router>

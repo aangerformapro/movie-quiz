@@ -511,7 +511,7 @@ body {
   --fluo-outer-size: 15vmin;
   --fluo-wheel-size: 15%;
   --fluo-inner-bg: rgba(24, 24, 24, 0.2);
-  --fluo-text-color: transparent;
+  --fluo-text-color: var(--netflix-white);
   --fluo-wheel-gradient: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   position: relative;
   width: 15vmin;
@@ -527,7 +527,7 @@ body {
   border-radius: 50%;
   background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   background: var(--fluo-wheel-gradient);
-  color: transparent;
+  color: rgb(254, 252, 248);
   color: var(--fluo-text-color);
 }
 
