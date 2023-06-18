@@ -1,4 +1,6 @@
+import ElementFinder from "../components/elementfinder.mjs";
 import dataset from "./dataset.mjs";
+import emitter from "./emitter.mjs";
 import { isBool } from "./utils.mjs";
 
 let cache;
@@ -26,14 +28,44 @@ export function checkWebpSupport()
     });
 };
 
-
-export const WEBP_SUPPORTED = await checkWebpSupport().then(x =>
-{
-    dataset(document.documentElement, 'webp', x);
-    return x;
-});
-
 export default checkWebpSupport;
+
+
+export function autoLoadAlternatives(extension = '.png')
+{
+    if (!extension.startsWith("."))
+    {
+        extension = '.' + extension;
+    }
+
+
+    ElementFinder('img[src$=".webp"]', img =>
+    {
+        emitter(img).on('load', () =>
+        {
+            img.classList.remove('img-loading');
+        }).one('error', () =>
+        {
+
+            img.classList.add('img-loading');
+
+            if (img.dataset.src)
+            {
+                img.src = img.dataset.src;
+            } else
+            {
+                img.src = img.src.replace(/\.webp$/, extension);
+            }
+
+        });
+    });
+}
+
+
+
+
+
+
 
 
 
