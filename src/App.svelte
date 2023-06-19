@@ -51,6 +51,10 @@
         <Route path="all/*">
             <h1>All</h1>
         </Route>
+
+        <Route path="details/:id">
+            <h1>Details</h1>
+        </Route>
     </main>
     <MainLoader />
     <Footer />

@@ -1,5 +1,6 @@
 import { readable, get, writable } from 'svelte/store';
 import LocalStore from './../../modules/stores/webstore';
+import { isInt } from '../../modules/utils/utils.mjs';
 
 
 const MOVIE_SETTINGS = ['movies', '/api/1/movies.json'];
@@ -58,7 +59,7 @@ export const movies = readable([], (set) =>
                 set(LocalStore.setItem(MOVIE_SETTINGS[0], value));
                 if (!current.get())
                 {
-                    current.set(value[0]);
+                    current.set(value[Math.floor(Math.random() * value.length)]);
                 }
             });
     }
@@ -98,5 +99,30 @@ export const found = LocalStore.hook('found', []);
 
 export function isFound(item)
 {
-    return found.get().includes(item.id);
+    return get(found).includes(item.id);
+}
+
+
+export function setFound(item)
+{
+    found.update(value =>
+    {
+        value.push(
+            isInt(item) ? item : item.id
+        );
+
+        return value;
+    });
+}
+
+
+export function getFound(items)
+{
+    return items.filter(item => isFound(item));
+}
+
+
+export function getNotFound(items)
+{
+    return items.filter(item => !isFound(item));
 }
