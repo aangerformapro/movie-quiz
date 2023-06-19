@@ -5,6 +5,7 @@
         coverIsLoaded,
         createLoadObserver,
     } from "./cover.mjs";
+    import { current } from "../App/game.mjs";
 
     const unsub = src.subscribe(() => ($coverIsLoaded = false));
 
@@ -15,6 +16,8 @@
     onDestroy(() => {
         unsub();
     });
+
+    $: $src = $current.cover[0].w1280;
 </script>
 
 <!-- Charge l'image du jeu -->

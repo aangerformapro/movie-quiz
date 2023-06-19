@@ -6,7 +6,7 @@ import { writable } from "svelte/store";
  * Change image url
  */
 
-export const cover = writable('./assets/pictures/heading.webp');
+export const cover = writable('');
 export const coverIsLoaded = writable(false);
 
 

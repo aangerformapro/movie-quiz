@@ -93,3 +93,10 @@ export const tv = readable([], (set) =>
 
 
 export const current = LocalStore.hook('current');
+export const found = LocalStore.hook('found', []);
+
+
+export function isFound(item)
+{
+    return found.get().includes(item.id);
+}
