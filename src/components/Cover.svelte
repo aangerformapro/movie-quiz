@@ -1,10 +1,10 @@
 <script>
-    import { onMount, onDestroy } from "svelte";
+    import { onDestroy } from "svelte";
     import {
         cover as src,
         coverIsLoaded,
         createLoadObserver,
-    } from "../App/vars.mjs";
+    } from "./cover.mjs";
 
     const unsub = src.subscribe(() => ($coverIsLoaded = false));
 

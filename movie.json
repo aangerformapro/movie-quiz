@@ -1,0 +1,100 @@
+{
+    "id": 385687,
+    "original_title": "Fast X",
+    "title": "Fast X",
+    "alt": [
+        "Форсаж 10",
+        "Szybcy i wściekli 10",
+        "Szybcy i wsciekli X",
+        "玩命关头 10",
+        "狂野时速 10",
+        "Velozes & Furiosos 10",
+        "Fast 10",
+        "ファスト X",
+        "Fast Ten",
+        "분노의 질주 10",
+        "ワイルド・スピード10",
+        "ワイルド・スピード ファイヤーブースト",
+        "Velocidade Furiosa X",
+        "Fast & Furious: Ride or Die",
+        "The Fast and the Furious 10: Fast X",
+        "분노의 질주: 라이드 오어 다이",
+        "Quá Nhanh Quá Nguy Hiểm 10",
+        "فست ایکس",
+        "فست اکس",
+        "Fast X",
+        "F&F10 - Fast X"
+    ],
+    "poster": [
+        {
+            "w92": "//image.tmdb.org/t/p/w92/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+            "w154": "//image.tmdb.org/t/p/w154/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+            "w185": "//image.tmdb.org/t/p/w185/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+            "w342": "//image.tmdb.org/t/p/w342/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+            "w500": "//image.tmdb.org/t/p/w500/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+            "w780": "//image.tmdb.org/t/p/w780/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+            "original": "//image.tmdb.org/t/p/original/fiVW06jE7z9YnO4trhaMEdclSiC.jpg"
+        }
+    ],
+    "cover": [
+        {
+            "w300": "//image.tmdb.org/t/p/w300/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg",
+            "w780": "//image.tmdb.org/t/p/w780/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg",
+            "w1280": "//image.tmdb.org/t/p/w1280/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg",
+            "original": "//image.tmdb.org/t/p/original/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg"
+        }
+    ],
+    "overview": {
+        "en": "Over many missions and against impossible odds, Dom Toretto and his family have outsmarted, out-nerved and outdriven every foe in their path. Now, they confront the most lethal opponent they've ever faced: A terrifying threat emerging from the shadows of the past who's fueled by blood revenge, and who is determined to shatter this family and destroy everything—and everyone—that Dom loves, forever."
+    },
+    "videos": [
+        {
+            "iso_639_1": "en",
+            "iso_3166_1": "US",
+            "name": "Final Trailer",
+            "key": "eoOaKN4qCKw",
+            "site": "YouTube",
+            "size": 1080,
+            "type": "Trailer",
+            "official": true,
+            "published_at": "2023-05-15T16:08:35.000Z",
+            "id": "64626469a67254012212d915"
+        },
+        {
+            "iso_639_1": "en",
+            "iso_3166_1": "US",
+            "name": "Open Road",
+            "key": "vvazj_Ycw_w",
+            "site": "YouTube",
+            "size": 1080,
+            "type": "Trailer",
+            "official": true,
+            "published_at": "2023-05-02T18:33:21.000Z",
+            "id": "645cc0fc77d23b0119e2b881"
+        },
+        {
+            "iso_639_1": "en",
+            "iso_3166_1": "US",
+            "name": "Official Trailer 2",
+            "key": "aOb15GVFZxU",
+            "site": "YouTube",
+            "size": 1080,
+            "type": "Trailer",
+            "official": true,
+            "published_at": "2023-04-19T21:00:53.000Z",
+            "id": "64405cc504863802fb116479"
+        },
+        {
+            "iso_639_1": "en",
+            "iso_3166_1": "US",
+            "name": "Official Trailer",
+            "key": "32RAq6JzY-w",
+            "site": "YouTube",
+            "size": 1080,
+            "type": "Trailer",
+            "official": true,
+            "published_at": "2023-02-10T15:44:35.000Z",
+            "id": "63e6690a9512e1009309fd23"
+        }
+    ]
+}

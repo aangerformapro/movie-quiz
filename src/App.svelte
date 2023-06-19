@@ -2,7 +2,7 @@
     import { Router, Route, Link } from "svelte-navigator";
     import { onDestroy, onMount } from "svelte";
 
-    import { loading } from "./App/vars.mjs";
+    import { loading } from "./components/mainloader.mjs";
 
     import Header from "./components/Header.svelte";
     import Footer from "./components/Footer.svelte";

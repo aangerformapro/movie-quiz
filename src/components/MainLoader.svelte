@@ -3,7 +3,7 @@
     import { onDestroy, onMount } from "svelte";
     import Typed from "typed.js";
     import { isArray, isEmpty } from "../../modules/utils/utils.mjs";
-    import { loading } from "../App/vars.mjs";
+    import { loading } from "./mainloader.mjs";
 
     import messages from "./loading-messages.mjs";
 
