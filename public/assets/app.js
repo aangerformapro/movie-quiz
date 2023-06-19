@@ -5192,7 +5192,7 @@ const links = /*#__PURE__*/createAction(event => { // eslint-disable-line spaced
 /**
  * Toggle loading screen
  */
-const loading = writable(false);
+const loading = writable(true);
 
 // import "./noscroll.css";
 
