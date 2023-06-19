@@ -3,8 +3,9 @@
 
 
 const IS_UNSAFE = typeof unsafeWindow !== 'undefined',
-    global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
-    { JSON, document: document$1 } = global,
+    noop$1 = () => { },
+    global$1 = IS_UNSAFE ? unsafeWindow : globalThis ?? window,
+    { JSON, document: document$1 } = global$1,
     isPlainObject = (param) => param instanceof Object && Object.getPrototypeOf(param) === Object.prototype,
     isUndef = (param) => typeof param === 'undefined',
     isString = (param) => typeof param === 'string',
@@ -79,6 +80,22 @@ function isValidSelector(selector)
         return false;
     }
 
+}
+
+
+function uuidv4()
+{
+    let uuid = "", i, random;
+    for (i = 0; i < 32; i++)
+    {
+        random = Math.random() * 16 | 0;
+        if (i == 8 || i == 12 || i == 16 || i == 20)
+        {
+            uuid += "-";
+        }
+        uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+    }
+    return uuid;
 }
 
 
@@ -706,7 +723,7 @@ class EventEmitter
     constructor(target)
     {
 
-        target ??= global;
+        target ??= global$1;
 
         if (isValidSelector(target))
         {
@@ -1794,6 +1811,12 @@ function action_destroyer(action_result) {
     return action_result && is_function(action_result.destroy) ? action_result.destroy : noop;
 }
 const contenteditable_truthy_values = ['', true, 1, 'true', 'contenteditable'];
+
+const globals = (typeof window !== 'undefined'
+    ? window
+    : typeof globalThis !== 'undefined'
+        ? globalThis
+        : global);
 function append(target, node) {
     target.appendChild(node);
 }
@@ -5192,7 +5215,7 @@ const links = /*#__PURE__*/createAction(event => { // eslint-disable-line spaced
 /**
  * Toggle loading screen
  */
-const loading = writable(true);
+const loading = writable(false);
 
 // import "./noscroll.css";
 
@@ -6859,6 +6882,488 @@ class MainLoader extends SvelteComponentDev {
 }
 
 /**
+ * Private properties
+ */
+const
+    SEP$1 = ':',
+    _prefixes = new Map(),
+    _hooks = new Map(),
+    _queue = [];
+
+
+class DataStoreType extends BackedEnum
+{
+    static SYNC = new DataStoreType('sync');
+    static ASYNC = new DataStoreType('async');
+}
+
+
+function safeNotEqual(value, newValue)
+{
+    return value != value ? newValue == newValue : value !== newValue || ((value && typeof value === 'object') || typeof value === 'function');
+}
+
+
+function GetDataStoreHook(
+    /** @type {DataStore} */ store,
+    /** @type {string} */ name,
+    /** @type {function} */ init = noop$1
+)
+{
+
+    let $that;
+
+    if ($that = _hooks.get(store).get(name))
+    {
+        return $that;
+    }
+
+    let stop, value = null;
+
+    const
+        subscribers = new Set(),
+        set = (newValue) =>
+        {
+            if (safeNotEqual(value, newValue))
+            {
+                value = newValue;
+
+                const canRun = !_queue.length;
+
+                for (let sub of subscribers)
+                {
+                    sub[1]();
+                    _queue.push([sub[0], value]);
+                }
+
+                if (canRun)
+                {
+                    store.setItem(name, value);
+
+                    for (let item of _queue)
+                    {
+                        item[0](item[1]);
+                    }
+                    _queue.length = 0;
+                }
+            }
+
+        },
+        update = (fn) =>
+        {
+            if (isFunction$1(fn))
+            {
+                set(fn(value));
+            }
+        },
+        subscribe = (subscriber, notifier = noop$1) =>
+        {
+            if (isFunction$1(subscriber))
+            {
+                const obj = [subscriber, notifier];
+
+                subscribers.add(obj);
+
+                if (subscribers.size === 1)
+                {
+                    stop = init(set) ?? noop$1;
+                }
+
+                subscriber(value);
+
+                return () =>
+                {
+                    subscribers.delete(obj);
+                    if (0 === subscribers.size && stop)
+                    {
+                        stop();
+                        stop = null;
+                    }
+                };
+
+            }
+
+        },
+        get = (defaultValue = null) =>
+        {
+            return store.getItem(name, defaultValue);
+        };
+
+    $that = {
+        subscribe, set, update, get
+    };
+    Object.defineProperty($that, 'length', { configurable: true, get: () => subscribers.size });
+    _hooks.get(store).set(name, $that);
+    return $that;
+}
+
+
+
+
+class DataStore
+{
+
+    get type()
+    {
+        return DataStoreType.SYNC;
+    }
+
+    constructor(prefix = '')
+    {
+
+        if (prefix && !prefix.endsWith(SEP$1))
+        {
+            prefix += SEP$1;
+        }
+
+        _prefixes.set(this, prefix);
+        _hooks.set(this, new Map());
+    }
+
+
+    // ---------------- Helper Methods ----------------
+
+
+    static get type()
+    {
+        return this.prototype.type;
+    }
+
+    key(/** @type {string} */name)
+    {
+        return _prefixes.get(this) + name;
+    }
+
+
+
+    // ---------------- Subscriptions ----------------
+
+    subscribe(/** @type {string} */name, /** @type {function} */subscriber, /** @type {function} */ notifier = noop$1)
+    {
+        return this.hook(name).subscribe(subscriber, notifier);
+    }
+
+
+    // ---------------- Common Methods ----------------
+
+
+    hasItem(/** @type {string} */name)
+    {
+        return this.getItem(name) !== null;
+    }
+
+    removeItem(name)
+    {
+        this.setItem(name, null);
+    }
+
+    setMany(items = {})
+    {
+        const result = new Map();
+        for (let name in items)
+        {
+            const value = items[name];
+            result.set(name, this.setItem(name, value));
+        }
+
+        return result;
+    }
+
+    getMany(keys = [], defaultValue = null)
+    {
+        return keys.map(key => [key, this.getItem(key, defaultValue)]);
+    }
+
+
+    hook(/** @type {string} */name, defaultValue = null)
+    {
+        return GetDataStoreHook(this, name, set =>
+        {
+            set(this.getItem(name, defaultValue));
+
+        });
+    }
+
+
+    clear()
+    {
+
+        const keys = this.keys;
+
+        for (let key of keys)
+        {
+            this.removeItem(key);
+        }
+
+        return keys;
+    }
+
+
+
+    // ---------------- Abstract Methods ----------------
+
+
+    get keys()
+    {
+        throw new Error(getClass(this) + '.keys not implemented.');
+    }
+
+
+
+    getItem(/** @type {string} */name, defaultValue = null)
+    {
+
+        if (isFunction$1(defaultValue))
+        {
+
+            defaultValue = defaultValue();
+            if (defaultValue instanceof Promise)
+            {
+                defaultValue.then(value => this.setItem(name, value));
+            }
+            else
+            {
+                this.setItem(name, defaultValue);
+            }
+
+        }
+
+        return defaultValue;
+    }
+
+    setItem(/** @type {string} */name, value)
+    {
+        throw new Error(getClass(this) + '.setItem() not implemented.');
+    }
+}
+
+const VENDOR_KEY = 'NGSOFT:UUID', SEP = ':';
+
+
+function getDefaultPrefix()
+{
+
+    let prefix = '';
+
+
+    if (!IS_UNSAFE)
+    {
+        return prefix;
+    }
+
+    if (null === (prefix = localStorage.getItem(VENDOR_KEY)))
+    {
+        localStorage.setItem(VENDOR_KEY, prefix = uuidv4() + SEP);
+    }
+
+    return prefix;
+}
+
+
+
+
+class WebStore extends DataStore
+{
+
+
+    #store;
+
+    get store()
+    {
+        return this.#store;
+    }
+
+
+    constructor( /** @type {Storage} */   storage, prefix = getDefaultPrefix())
+    {
+
+        storage ??= localStorage;
+        if (storage instanceof Storage === false)
+        {
+            throw new TypeError('storage not an instance of Storage');
+        }
+        super(prefix);
+        this.#store = storage;
+    }
+
+    get keys()
+    {
+
+        const result = [], prefix = this.key(''), { store } = this;
+
+        for (let i = 0; i < store.length; i++)
+        {
+
+            let key = store.key(i);
+            if (key.startsWith(prefix))
+            {
+                result.push(key.slice(prefix.length));
+            }
+
+        }
+
+        return result;
+    }
+
+
+
+    getItem(/** @type {string} */name, defaultValue = null)
+    {
+
+        let value = this.store.getItem(this.key(name));
+
+        if (!isString(value))
+        {
+            return super.getItem(name, defaultValue);
+        }
+
+        return super.getItem(name, decode(value));
+    }
+
+    setItem(/** @type {string} */name, value)
+    {
+
+        if (value === null)
+        {
+            this.store.removeItem(this.key(name));
+        }
+        else
+        {
+            this.store.setItem(this.key(name), encode(value));
+        }
+
+        return value;
+    }
+
+
+
+    hook(/** @type {string} */name, defaultValue = null)
+    {
+        return GetDataStoreHook(this, name, set =>
+        {
+
+            const listener = e =>
+            {
+
+                if (e.storageArea === this.store)
+                {
+                    if (e.key === this.key(name))
+                    {
+                        set(decode(e.newValue));
+                    }
+                }
+            };
+
+            emitter.on('storage', listener);
+
+            set(this.getItem(name, defaultValue));
+
+            return () =>
+            {
+                emitter.off('storage', listener);
+            };
+
+        });
+    }
+
+}
+
+
+const LocalStore = new WebStore(); new WebStore(sessionStorage);
+
+const MOVIE_SETTINGS = ['movies', '/api/1/movies.json'];
+const TV_SETTINGS = ['tv', '/api/1/tv.json'];
+
+
+const ready = writable(false, set =>
+{
+
+
+    let timer;
+
+    const listener = () =>
+    {
+
+        let value = LocalStore.hasItem(MOVIE_SETTINGS[0]) && LocalStore.hasItem(TV_SETTINGS[0]);
+
+        if (value)
+        {
+            set(value);
+        }
+        else
+        {
+
+            get_store_value(tv);
+            get_store_value(movies);
+            timer = setTimeout(() =>
+            {
+                listener();
+            }, 20);
+        }
+
+    };
+
+    listener();
+
+    return () =>
+    {
+        if (timer)
+        {
+            clearTimeout(timer);
+        }
+    };
+
+});
+
+
+const movies = readable([], (set) =>
+{
+
+    if (!LocalStore.hasItem(MOVIE_SETTINGS[0]))
+    {
+        fetch(MOVIE_SETTINGS[1])
+            .then(resp => resp.json()).then(value =>
+            {
+                set(LocalStore.setItem(MOVIE_SETTINGS[0], value));
+                if (!current.get())
+                {
+                    current.set(value[0]);
+                }
+            });
+    }
+    else
+    {
+        set(LocalStore.getItem(MOVIE_SETTINGS[0]));
+    }
+
+
+});
+
+
+const tv = readable([], (set) =>
+{
+
+    if (!LocalStore.hasItem(TV_SETTINGS[0]))
+    {
+
+        fetch(TV_SETTINGS[1])
+            .then(resp => resp.json())
+            .then(value =>
+            {
+                set(LocalStore.setItem(TV_SETTINGS[0], value));
+            });
+
+    }
+    else
+    {
+        set(LocalStore.getItem(TV_SETTINGS[0]));
+    }
+});
+
+
+const current = LocalStore.hook('current');
+
+/**
  * Change image url
  */
 
@@ -7115,7 +7620,7 @@ function instance$1($$self, $$props, $$invalidate) {
 		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Home> was created with unknown prop '${key}'`);
 	});
 
-	$$self.$capture_state = () => ({ Cover });
+	$$self.$capture_state = () => ({ movies, Cover });
 	return [];
 }
 
@@ -7134,9 +7639,11 @@ class Home extends SvelteComponentDev {
 }
 
 /* src\App.svelte generated by Svelte v3.59.1 */
+
+const { console: console_1 } = globals;
 const file = "src\\App.svelte";
 
-// (38:8) <Route path="/">
+// (42:8) <Route path="/">
 function create_default_slot_4(ctx) {
 	let home;
 	let current;
@@ -7168,14 +7675,14 @@ function create_default_slot_4(ctx) {
 		block,
 		id: create_default_slot_4.name,
 		type: "slot",
-		source: "(38:8) <Route path=\\\"/\\\">",
+		source: "(42:8) <Route path=\\\"/\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (41:8) <Route path="tv/*">
+// (45:8) <Route path="tv/*">
 function create_default_slot_3(ctx) {
 	let h1;
 
@@ -7183,7 +7690,7 @@ function create_default_slot_3(ctx) {
 		c: function create() {
 			h1 = element("h1");
 			h1.textContent = "Séries";
-			add_location(h1, file, 41, 12, 1063);
+			add_location(h1, file, 45, 12, 1208);
 		},
 		m: function mount(target, anchor) {
 			insert_dev(target, h1, anchor);
@@ -7198,14 +7705,14 @@ function create_default_slot_3(ctx) {
 		block,
 		id: create_default_slot_3.name,
 		type: "slot",
-		source: "(41:8) <Route path=\\\"tv/*\\\">",
+		source: "(45:8) <Route path=\\\"tv/*\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (44:8) <Route path="movies/*">
+// (48:8) <Route path="movies/*">
 function create_default_slot_2(ctx) {
 	let h1;
 
@@ -7213,7 +7720,7 @@ function create_default_slot_2(ctx) {
 		c: function create() {
 			h1 = element("h1");
 			h1.textContent = "Movies";
-			add_location(h1, file, 44, 12, 1140);
+			add_location(h1, file, 48, 12, 1285);
 		},
 		m: function mount(target, anchor) {
 			insert_dev(target, h1, anchor);
@@ -7228,14 +7735,14 @@ function create_default_slot_2(ctx) {
 		block,
 		id: create_default_slot_2.name,
 		type: "slot",
-		source: "(44:8) <Route path=\\\"movies/*\\\">",
+		source: "(48:8) <Route path=\\\"movies/*\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (47:8) <Route path="all/*">
+// (51:8) <Route path="all/*">
 function create_default_slot_1(ctx) {
 	let h1;
 
@@ -7243,7 +7750,7 @@ function create_default_slot_1(ctx) {
 		c: function create() {
 			h1 = element("h1");
 			h1.textContent = "All";
-			add_location(h1, file, 47, 12, 1214);
+			add_location(h1, file, 51, 12, 1359);
 		},
 		m: function mount(target, anchor) {
 			insert_dev(target, h1, anchor);
@@ -7258,14 +7765,14 @@ function create_default_slot_1(ctx) {
 		block,
 		id: create_default_slot_1.name,
 		type: "slot",
-		source: "(47:8) <Route path=\\\"all/*\\\">",
+		source: "(51:8) <Route path=\\\"all/*\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (35:0) <Router>
+// (39:0) <Router>
 function create_default_slot(ctx) {
 	let header;
 	let t0;
@@ -7340,7 +7847,7 @@ function create_default_slot(ctx) {
 			t5 = space();
 			create_component(footer.$$.fragment);
 			attr_dev(main, "id", "app");
-			add_location(main, file, 36, 4, 944);
+			add_location(main, file, 40, 4, 1089);
 		},
 		m: function mount(target, anchor) {
 			mount_component(header, target, anchor);
@@ -7362,28 +7869,28 @@ function create_default_slot(ctx) {
 		p: function update(ctx, dirty) {
 			const route0_changes = {};
 
-			if (dirty & /*$$scope*/ 4) {
+			if (dirty & /*$$scope*/ 16) {
 				route0_changes.$$scope = { dirty, ctx };
 			}
 
 			route0.$set(route0_changes);
 			const route1_changes = {};
 
-			if (dirty & /*$$scope*/ 4) {
+			if (dirty & /*$$scope*/ 16) {
 				route1_changes.$$scope = { dirty, ctx };
 			}
 
 			route1.$set(route1_changes);
 			const route2_changes = {};
 
-			if (dirty & /*$$scope*/ 4) {
+			if (dirty & /*$$scope*/ 16) {
 				route2_changes.$$scope = { dirty, ctx };
 			}
 
 			route2.$set(route2_changes);
 			const route3_changes = {};
 
-			if (dirty & /*$$scope*/ 4) {
+			if (dirty & /*$$scope*/ 16) {
 				route3_changes.$$scope = { dirty, ctx };
 			}
 
@@ -7429,7 +7936,7 @@ function create_default_slot(ctx) {
 		block,
 		id: create_default_slot.name,
 		type: "slot",
-		source: "(35:0) <Router>",
+		source: "(39:0) <Router>",
 		ctx
 	});
 
@@ -7462,7 +7969,7 @@ function create_fragment(ctx) {
 		p: function update(ctx, [dirty]) {
 			const router_changes = {};
 
-			if (dirty & /*$$scope*/ 4) {
+			if (dirty & /*$$scope*/ 16) {
 				router_changes.$$scope = { dirty, ctx };
 			}
 
@@ -7494,35 +8001,31 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
+	let $current;
+	let $ready;
 	let $loading;
+	validate_store(current, 'current');
+	component_subscribe($$self, current, $$value => $$invalidate(0, $current = $$value));
+	validate_store(ready, 'ready');
+	component_subscribe($$self, ready, $$value => $$invalidate(1, $ready = $$value));
 	validate_store(loading, 'loading');
-	component_subscribe($$self, loading, $$value => $$invalidate(0, $loading = $$value));
+	component_subscribe($$self, loading, $$value => $$invalidate(2, $loading = $$value));
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots('App', slots, []);
 
 	const unlisten = History.onPush(e => {
-		if (e.type === "push") {
-			set_store_value(loading, $loading = true, $loading);
-
-			// to be replaced by load events
-			setTimeout(
-				() => {
-					set_store_value(loading, $loading = false, $loading);
-				},
-				1500
-			);
-		}
-	});
+		if (e.type === "push") ; // $loading = true;
+		// to be replaced by load events
+	}); // setTimeout(() => {
+	//     $loading = false;
+	// }, 1500);
 
 	onMount(() => {
-		// to be replaced by load events
-		setTimeout(
-			() => {
-				set_store_value(loading, $loading = false, $loading);
-			},
-			5000
-		);
-	});
+		
+	}); // to be replaced by load events
+	// setTimeout(() => {
+	//     $loading = false;
+	// }, 5000);
 
 	onDestroy(() => {
 		unlisten();
@@ -7531,7 +8034,7 @@ function instance($$self, $$props, $$invalidate) {
 	const writable_props = [];
 
 	Object.keys($$props).forEach(key => {
-		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
+		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
 	});
 
 	$$self.$capture_state = () => ({
@@ -7546,11 +8049,25 @@ function instance($$self, $$props, $$invalidate) {
 		MainLoader,
 		History,
 		Home,
+		ready,
+		current,
 		unlisten,
+		$current,
+		$ready,
 		$loading
 	});
 
-	return [];
+	$$self.$$.update = () => {
+		if ($$self.$$.dirty & /*$ready*/ 2) {
+			set_store_value(loading, $loading = !$ready, $loading);
+		}
+
+		if ($$self.$$.dirty & /*$current*/ 1) {
+			console.debug("current", $current);
+		}
+	};
+
+	return [$current, $ready];
 }
 
 class App extends SvelteComponentDev {

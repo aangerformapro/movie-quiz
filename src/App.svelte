@@ -3,28 +3,32 @@
     import { onDestroy, onMount } from "svelte";
 
     import { loading } from "./components/mainloader.mjs";
-
     import Header from "./components/Header.svelte";
     import Footer from "./components/Footer.svelte";
     import MainLoader from "./components/MainLoader.svelte";
     import History from "../modules/components/history.mjs";
     import Home from "./pages/Home.svelte";
+    import { ready, current } from "./App/game.mjs";
 
     const unlisten = History.onPush((e) => {
         if (e.type === "push") {
-            $loading = true;
+            // $loading = true;
             // to be replaced by load events
-            setTimeout(() => {
-                $loading = false;
-            }, 1500);
+            // setTimeout(() => {
+            //     $loading = false;
+            // }, 1500);
         }
     });
 
+    $: $loading = !$ready;
+
+    $: console.debug("current", $current);
+
     onMount(() => {
         // to be replaced by load events
-        setTimeout(() => {
-            $loading = false;
-        }, 5000);
+        // setTimeout(() => {
+        //     $loading = false;
+        // }, 5000);
     });
 
     onDestroy(() => {
