@@ -18,11 +18,13 @@ function checkValid(el)
     }
 }
 
-
+/**
+ * Global Asset Loading Count
+ */
 export const loading = writable(0);
 
 
-export function createResourceLoader(fn, triggerChange = false)
+export default function createResourceLoader(fn, triggerChange = false)
 {
     if (!isFunction(fn))
     {
@@ -30,17 +32,16 @@ export function createResourceLoader(fn, triggerChange = false)
     }
 
 
-
-
     let count = 0;
 
-    const waiting = derived(loading, () => count);
+    const waiting = writable(0);
 
 
     function increment(value = 1)
     {
         count += value;
         loading.update(val => val + value);
+        waiting.update(val => val + value);
     }
 
 
@@ -48,7 +49,6 @@ export function createResourceLoader(fn, triggerChange = false)
     {
         increment(value * -1);
     }
-
 
 
     function onload(el)
@@ -70,7 +70,7 @@ export function createResourceLoader(fn, triggerChange = false)
                 {
                     emitter(el).trigger("change");
                 }
-                waiting.update(value => value + 1);
+                increment();
             }
         });
 
@@ -110,23 +110,3 @@ export function createResourceLoader(fn, triggerChange = false)
 
 
 
-export let waiting = 0;
-
-
-export const onload = (el) =>
-{
-    waiting++;
-
-    el.addEventListener("load", () =>
-    {
-        waiting--;
-
-
-
-    });
-
-
-
-
-
-};

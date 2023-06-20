@@ -1,14 +1,9 @@
-import { readable, get, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import LocalStore from './../../modules/stores/webstore.mjs';
-import { BackedEnum, isInt, isPlainObject } from '../../modules/utils/utils.mjs';
-
-
-const MOVIE_SETTINGS = ['movies', '/api/1/movies.json'];
-const TV_SETTINGS = ['tv', '/api/1/tv.json'];
+import { BackedEnum, isEmpty, isInt, isPlainObject } from '../../modules/utils/utils.mjs';
 
 
 const API_PATH = '/api/1';
-
 
 
 /**
@@ -17,9 +12,8 @@ const API_PATH = '/api/1';
 export class MediaType extends BackedEnum
 {
 
-
     static ALL = new MediaType("all");
-    static MOVIE = new MediaType("movie");
+    static MOVIE = new MediaType("movies");
     static TV = new MediaType("tv");
 
     get path()
@@ -43,9 +37,15 @@ export const ready = writable(false, set =>
     const listener = () =>
     {
 
-        let value = LocalStore.hasItem(MOVIE_SETTINGS[0]) && LocalStore.hasItem(TV_SETTINGS[0]);
+        let value = !isEmpty(movies.get()) && !isEmpty(tv.get());
+
         if (value)
         {
+            if (!current.get())
+            {
+                const list = getNotFound(movies.get());
+                current.set(list[Math.floor(Math.random() * list.length)]);
+            }
             set(value);
         }
         else
@@ -56,7 +56,7 @@ export const ready = writable(false, set =>
             {
                 listener();
                 timer = null;
-            }, 20);
+            }, 50);
         }
 
     };
@@ -74,58 +74,32 @@ export const ready = writable(false, set =>
 });
 
 
-export const movies = readable([], (set) =>
-{
+export const movies = LocalStore.hook(
+    MediaType.MOVIE.key,
+    () => fetch(MediaType.MOVIE.path).then(resp => resp.json())
+);
 
-    const { key, path } = MediaType.Movie;
-
-    if (!LocalStore.hasItem(key))
-    {
-        fetch(path)
-            .then(resp => resp.json()).then(value =>
-            {
-                set(LocalStore.setItem(key, value));
-                current.set(value[Math.floor(Math.random() * value.length)]);
-            });
-    }
-    else
-    {
-        set(LocalStore.getItem(key));
-    }
-
-
-});
-
-
-export const tv = readable([], (set) =>
-{
-
-    const { key, path } = MediaType.TV;
-
-    if (!LocalStore.hasItem(key))
-    {
-        fetch(path)
-            .then(resp => resp.json()).then(value =>
-            {
-                set(LocalStore.setItem(key, value));
-            });
-    }
-    else
-    {
-        set(LocalStore.getItem(key));
-    }
-});
-
-
+export const tv = LocalStore.hook(
+    MediaType.TV.key,
+    () => fetch(MediaType.TV.path).then(resp => resp.json())
+);
 
 
 export const current = LocalStore.hook('current');
 export const found = LocalStore.hook('found', []);
 
+/**
+ * Merged series and movies
+ */
+export const all = derived(
+    [movies, tv],
+    ([$movies, $tv]) => [...$movies, ...$tv]
+);
+
 
 export function isFound(item)
 {
-    item = getItem(item);
+    item = getEntry(item);
     return get(found).includes(item.id);
 }
 
@@ -154,19 +128,18 @@ export function getNotFound(items)
     return items.filter(item => !isFound(item));
 }
 
+/**
+ * Get item using id
+ */
 export function getEntry(id)
 {
-    if (!get(ready))
-    {
-        return null;
-    }
 
     if (isPlainObject(id))
     {
-        return item.id ? item : null;
+        return id.id ? id : null;
     }
 
-    return get(movies).find(item => item.id === id) ?? get(tv).find(item => item.id === id) ?? null;
+    return get(all).find(item => item.id === id) ?? null;
 }
 
 
@@ -191,3 +164,4 @@ export function getYoutubeUrl(item)
 
     return null;
 }
+

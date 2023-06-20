@@ -1,39 +1,21 @@
 <script>
     import { Router, Route, Link } from "svelte-navigator";
-    import { onDestroy, onMount } from "svelte";
-
     import { loading } from "./App/utils.mjs";
+    import { loading as rload } from "./App/loader.mjs";
+
     import Header from "./components/Header.svelte";
     import Footer from "./components/Footer.svelte";
     import MainLoader from "./components/MainLoader.svelte";
-    import History from "../modules/components/history.mjs";
     import Home from "./pages/Home.svelte";
     import { ready, current } from "./App/game.mjs";
+    // auto replace i.ng-* by their svgs
+    import { watch as watchIcons } from "../modules/components/sprite.mjs";
+    watchIcons();
 
-    const unlisten = History.onPush((e) => {
-        if (e.type === "push") {
-            // $loading = true;
-            // to be replaced by load events
-            // setTimeout(() => {
-            //     $loading = false;
-            // }, 1500);
-        }
-    });
-
-    $: $loading = !$ready;
+    // magic loading screen
+    $: $loading = !$ready || $rload > 0;
 
     $: console.debug("current", $current);
-
-    onMount(() => {
-        // to be replaced by load events
-        // setTimeout(() => {
-        //     $loading = false;
-        // }, 5000);
-    });
-
-    onDestroy(() => {
-        unlisten();
-    });
 </script>
 
 <Router>

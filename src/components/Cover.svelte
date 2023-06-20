@@ -1,39 +1,19 @@
 <script>
-    import { onDestroy } from "svelte";
-    import {
-        cover as src,
-        coverIsLoaded,
-        createLoadObserver,
-    } from "../App/utils.mjs";
-
-    // import { current } from "../App/game.mjs";
-
+    import { noop } from "svelte/internal";
+    import createResourceLoader, { loading } from "../App/loader.mjs";
     import Heading from "./Heading.svelte";
 
     export let item = {};
 
-    const unsub = src.subscribe(() => ($coverIsLoaded = false));
-
-    const onload = createLoadObserver(() => {
-        $coverIsLoaded = true;
-    });
-
-    onDestroy(() => {
-        unsub();
-    });
-
-    // $: $src = $current.cover.w1280;
+    const { onload } = createResourceLoader(noop);
 </script>
 
-<Heading force="true" item={$current} />
+<Heading force="true" {item} />
 
 <!-- Charge l'image du jeu -->
 <div class="cover">
     <div class="background-picture position-relative">
-        <img src={$src} use:onload alt="affiche du film" class="" />
-        {#if !$coverIsLoaded}
-            <div class="cover-loading" />
-        {/if}
+        <img src={item.cover.w1280} alt="affiche du film" class="" use:onload />
         <div class="blured" />
     </div>
 </div>

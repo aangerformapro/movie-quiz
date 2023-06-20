@@ -1,10 +1,14 @@
 <script>
     import { links } from "svelte-navigator";
     import { tv, getFound, getNotFound } from "../../App/game.mjs";
+    import createResourceLoader, { loading } from "../../App/loader.mjs";
     import swiper from "../../App/swiper.mjs";
+    import { noop } from "svelte/internal";
 
     let found = [],
         notfound = [];
+
+    const { onload } = createResourceLoader(noop);
 
     $: found = getFound($tv);
     $: notfound = getNotFound($tv);
@@ -25,6 +29,7 @@
                                     <img
                                         src={item.cover.w780}
                                         alt="Série à deviner"
+                                        use:onload
                                     />
                                 </a>
                             </div>
@@ -53,6 +58,7 @@
                                     <img
                                         src={item.poster.w342}
                                         alt="Poster de la série"
+                                        use:onload
                                     />
                                 </a>
                             </div>

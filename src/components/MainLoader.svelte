@@ -11,7 +11,7 @@
         loop = false,
         speed = 20;
 
-    let toType, typed, unsub;
+    let toType, typed, unsub, elem;
 
     onMount(() => {
         if (!isArray(phrase)) {
@@ -34,13 +34,22 @@
             backSpeed: Math.round(speed / 6),
             loop,
             loopCount: 5,
+            onStringTyped() {
+                if (pleaseStop) {
+                    typed.stop();
+                    setTimeout(() => {
+                        elem.classList.add("d-none");
+                    }, 200);
+                }
+            },
         });
 
+        let pleaseStop = false;
+
         unsub = loading.subscribe((value) => {
-            if (value === false) {
-                typed.stop();
-            } else {
+            if (false === (pleaseStop = !value)) {
                 typed.start();
+                elem.classList.remove("d-none");
             }
         });
     });
@@ -51,14 +60,14 @@
     });
 </script>
 
-<div class="main-loader justify-content-evenly {$loading ? '' : 'd-none'}">
+<div class="main-loader justify-content-evenly" bind:this={elem}>
     <div class="background">
         <img src="./assets/pictures/moviequiz.webp" alt="" />
     </div>
     <Loader />
     <div class="">
         <span class="typed" bind:this={toType}>
-            Veuillez patienter un instant ...
+            Veuillez patienter, ça charge ...
         </span>
     </div>
 </div>
