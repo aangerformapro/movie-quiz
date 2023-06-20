@@ -1,4 +1,4 @@
-import { BackedEnum, getClass, isFunction, isPlainObject, isUndef, noop, promisify } from "../utils/utils.mjs";
+import { BackedEnum, getClass, isFunction, isNull, isPlainObject, isUndef, noop, promisify } from "../utils/utils.mjs";
 
 
 
@@ -44,6 +44,13 @@ export function GetDataStoreHook(
 
     const
         subscribers = new Set(),
+        safeSet = (value) =>
+        {
+            if (!isUndef(value) && !isNull(value))
+            {
+                set(value);
+            }
+        },
         set = (newValue) =>
         {
             if (safeNotEqual(value, newValue))
@@ -108,7 +115,33 @@ export function GetDataStoreHook(
         },
         get = (defaultValue = null) =>
         {
-            return store.getItem(name, defaultValue);
+            let value = store.getItem(name);
+
+
+            if (null === value)
+            {
+                if (isFunction(defaultValue))
+                {
+                    defaultValue = defaultValue();
+
+                    if (defaultValue instanceof Promise)
+                    {
+                        defaultValue.then(newValue => safeSet(newValue));
+                    }
+                    else 
+                    {
+                        safeSet(defaultValue);
+                    }
+                }
+
+
+                return defaultValue;
+
+            }
+
+
+            return value;
+
         };
 
     $that = {

@@ -4,7 +4,7 @@
         cover as src,
         coverIsLoaded,
         createLoadObserver,
-    } from "./cover.mjs";
+    } from "../App/utils.mjs";
     import { current } from "../App/game.mjs";
 
     const unsub = src.subscribe(() => ($coverIsLoaded = false));

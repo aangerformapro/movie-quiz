@@ -3,9 +3,9 @@
     import { onDestroy, onMount } from "svelte";
     import Typed from "typed.js";
     import { isArray, isEmpty } from "../../modules/utils/utils.mjs";
-    import { loading } from "./mainloader.mjs";
+    import { loading } from "../App/utils.mjs";
 
-    import messages from "./loading-messages.mjs";
+    import messages from "../../modules/components/loading-messages.mjs";
 
     export let phrase = [],
         loop = false,

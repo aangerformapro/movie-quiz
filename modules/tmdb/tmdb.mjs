@@ -2,7 +2,7 @@
 import path from 'node:path';
 import fs, { writeFileSync } from 'node:fs';
 
-import { isArray, isNull } from "../utils/utils.mjs";
+import { isArray, isEmpty, isNull } from "../utils/utils.mjs";
 
 // const TMDB_API_SERVER = 'https://api.themoviedb.org';
 const TMDB_IMAGES = '//image.tmdb.org/t/p/';
@@ -48,7 +48,13 @@ const TMDB_CONFIGURATION = {
         "w500",
         "w780",
         "original"
-    ]
+    ],
+    "profile_path": [
+        "w45",
+        "w185",
+        "h632",
+        "original"
+    ],
 
 
 
@@ -140,24 +146,44 @@ const parseApiData = (data, item = {}) =>
             en: data.overview,
         },
         videos: [],
+        cast: [],
 
 
     };
 
-    for (let item of data.videos.results)
+    if (data.credits)
     {
-
-        if (item.type === 'Trailer')
+        for (let item of data.credits.cast)
         {
-            result.videos.push(item);
+            result.cast.push({
+                name: item.name,
+                character: item.character,
+                picture: createImageUrls(item.profile_path ?? null, 'profile_path'),
+            });
+
         }
     }
 
-    for (let item of data.alternative_titles.titles ?? data.alternative_titles.results)
+
+    if (data.videos)
     {
-        result.alt.push(item.title);
+        for (let item of data.videos.results)
+        {
+
+            if (item.type === 'Trailer')
+            {
+                result.videos.push(item);
+            }
+        }
     }
 
+    if (data.alternative_titles)
+    {
+        for (let item of data.alternative_titles.titles ?? data.alternative_titles.results)
+        {
+            result.alt.push(item.title);
+        }
+    }
 
     return result;
 
@@ -222,6 +248,7 @@ export default class TheMovieDatabase
             append_to_response: [
                 'alternative_titles',
                 'videos',
+                'credits'
                 // 'images',
             ].join(',')
         }), this.fetchApiParams).then(resp => resp.json());
@@ -246,6 +273,7 @@ export default class TheMovieDatabase
             append_to_response: [
                 'alternative_titles',
                 'videos',
+                'credits'
                 //  'images',
             ].join(',')
         }), this.fetchApiParams).then(resp => resp.json());
@@ -293,7 +321,7 @@ export default class TheMovieDatabase
     const dest = 'public/api/1/movies.json', entries = [];
 
 
-    for (let page = 1; page <= 4; page++)
+    for (let page = 1; page <= 5; page++)
     {
         const list = await TheMovieDatabase.discoverMovies(page);
 
@@ -304,11 +332,23 @@ export default class TheMovieDatabase
                 frData = await TheMovieDatabase.getMovieInfos(item.id, 'fr-FR');
 
             data.overview.fr = frData.overview;
-            entries.push(data);
+
+
+            if (!isEmpty(data.cover) && !isEmpty(data.poster))
+            {
+                entries.push(data);
+            }
+
+
 
         }
 
     }
+
+
+
+
+    // console.debug(entries[0]);
 
     writeFileSync(dest, JSON.stringify(entries));
 
@@ -322,7 +362,7 @@ export default class TheMovieDatabase
     const dest = 'public/api/1/tv.json', entries = [];
 
 
-    for (let page = 1; page <= 4; page++)
+    for (let page = 1; page <= 5; page++)
     {
         const list = await TheMovieDatabase.discoverSeries(page);
 
@@ -333,11 +373,17 @@ export default class TheMovieDatabase
                 frData = await TheMovieDatabase.getSeriesInfos(item.id, 'fr-FR');
 
             data.overview.fr = frData.overview;
-            entries.push(data);
+
+
+            if (!isEmpty(data.cover) && !isEmpty(data.poster))
+            {
+                entries.push(data);
+            }
 
         }
 
     }
+
 
     writeFileSync(dest, JSON.stringify(entries));
 

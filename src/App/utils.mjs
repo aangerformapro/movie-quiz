@@ -1,20 +1,16 @@
 import { writable } from "svelte/store";
-import emitter from "../../modules/utils/emitter.mjs";
 
 /**
  * Toggle loading screen
  */
-export const loading = writable(true);
-
-
-
+export const loading = writable(false);
 
 
 /**
- * Change image url
+ * Change Cover url
  */
 
-export const cover = writable('./assets/pictures/heading.webp');
+export const cover = writable('');
 export const coverIsLoaded = writable(false);
 
 
@@ -32,8 +28,11 @@ export const createLoadObserver = handler =>
         el.addEventListener('load', () =>
         {
             waiting--;
+
             // if loading same asset multiple times
-            if (waiting <= 0)
+            waiting = Math.max(0, waiting);
+
+            if (waiting === 0)
             {
                 handler();
             }

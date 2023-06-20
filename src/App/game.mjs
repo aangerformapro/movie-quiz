@@ -1,10 +1,27 @@
 import { readable, get, writable } from 'svelte/store';
-import LocalStore from './../../modules/stores/webstore';
-import { isInt } from '../../modules/utils/utils.mjs';
+import LocalStore from './../../modules/stores/webstore.mjs';
+import { BackedEnum, isInt } from '../../modules/utils/utils.mjs';
 
 
 const MOVIE_SETTINGS = ['movies', '/api/1/movies.json'];
 const TV_SETTINGS = ['tv', '/api/1/tv.json'];
+
+
+const API_PATH = '/api/1';
+
+
+export class MediaType extends BackedEnum
+{
+    static MOVIE = new MediaType("movie");
+    static TV = new MediaType("tv");
+
+
+
+    get path()
+    {
+        return API_PATH + '/' + this.value + '.json';
+    }
+}
 
 
 export const ready = writable(false, set =>
@@ -94,6 +111,8 @@ export const tv = readable([], (set) =>
 });
 
 
+
+
 export const current = LocalStore.hook('current');
 export const found = LocalStore.hook('found', []);
 
@@ -126,4 +145,12 @@ export function getFound(items)
 export function getNotFound(items)
 {
     return items.filter(item => !isFound(item));
+}
+
+export function getEntry(id)
+{
+
+
+
+
 }

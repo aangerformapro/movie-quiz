@@ -2,7 +2,7 @@
     import { links } from "svelte-navigator";
     import { movies, getFound, getNotFound } from "../../App/game.mjs";
 
-    import swiper from "./swiper.mjs";
+    import swiper from "../../App/swiper.mjs";
 
     let found = [],
         notfound = [];
@@ -41,7 +41,7 @@
     </div>
 {/if}
 {#if found.length}
-    <div class="section mx-auto mb-3">
+    <div class="section mx-auto mb-3 px-lg-3">
         <h3 class="my-3 px-0">Les Films - Trouvés</h3>
         <div class="d-flex align-items-center justify-content-between">
             <div class="swiper overflow-x-scroll" use:swiper>

@@ -12,6 +12,7 @@
             left: 0;
             right: 0;
             height: 32px;
+
             @include lg {
                 height: 96px;
             }
@@ -31,13 +32,18 @@
         max-height: $cover-max-height;
         margin: 0 auto;
 
+        display: flex;
+        justify-content: center;
+
         img {
             max-height: $cover-max-height;
+            @include margin-x(auto);
             width: 100%;
-            object-fit: cover;
+            object-fit: contain;
             object-position: top center;
             @include lg {
-                object-position: center center;
+                object-fit: cover;
+                // object-position: center center;
             }
         }
     }
