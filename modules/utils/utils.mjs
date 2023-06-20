@@ -215,7 +215,15 @@ export function decode(value)
     }
     if (isJSON(value))
     {
-        return JSON.parse(value);
+        try
+        {
+            return JSON.parse(value);
+        } catch (error)
+        {
+            // fallback for invalid json data
+            return value;
+        }
+
     }
 
     return value;

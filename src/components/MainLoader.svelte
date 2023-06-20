@@ -39,7 +39,7 @@
                     typed.stop();
                     setTimeout(() => {
                         elem.classList.add("d-none");
-                    }, 200);
+                    }, 500);
                 }
             },
         });

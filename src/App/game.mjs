@@ -1,6 +1,6 @@
 import { derived, get, writable, readable } from 'svelte/store';
 import LocalStore from './../../modules/stores/webstore.mjs';
-import { BackedEnum, isEmpty, isInt, isPlainObject } from '../../modules/utils/utils.mjs';
+import { BackedEnum, isArray, isEmpty, isInt, isPlainObject } from '../../modules/utils/utils.mjs';
 
 
 const API_PATH = '/api/1', BUILD_DATE = '[VI]{date}[/VI]';
@@ -38,8 +38,8 @@ export class MediaType extends BackedEnum
 {
     if (LocalStore.getItem('BuildDate') !== BUILD_DATE)
     {
-        LocalStore.removeItem(MediaType.MOVIE.value);
-        LocalStore.removeItem(MediaType.TV.value);
+        LocalStore.removeItem(MediaType.MOVIE.key);
+        LocalStore.removeItem(MediaType.TV.key);
         LocalStore.removeItem('current');
         LocalStore.setItem('BuildDate', BUILD_DATE);
         console.debug('Storage reset flowing base code update.');
@@ -58,30 +58,68 @@ export class MediaType extends BackedEnum
 export const ready = writable(false, set =>
 {
 
-    let timer;
+    let timer, fetchingMovies, fetchingSeries;
     const listener = () =>
     {
 
-        let value = !isEmpty(movies.get()) && !isEmpty(tv.get());
+
+        let value = true;
+
+
+
+        if (!isArray(get(movies)))
+        {
+            value = false;
+            if (!fetchingMovies)
+            {
+                console.debug("fetching movies");
+                fetchingMovies = true;
+                fetch(MediaType.MOVIE.path)
+                    .then(resp => resp.json())
+
+                    .then(data =>
+                    {
+                        fetchingMovies = false;
+                        movies.set(data);
+                    });
+            }
+        }
+
+        if (!isArray(get(tv)))
+        {
+
+            value = false;
+            if (!fetchingSeries)
+            {
+                console.debug("fetching series");
+                fetchingSeries = true;
+                fetch(MediaType.TV.path)
+                    .then(resp => resp.json())
+                    .then(data =>
+                    {
+                        fetchingSeries = false;
+                        tv.set(data);
+                    });
+            }
+        }
+
 
         if (value)
         {
-            if (!current.get())
+            if (!get(current))
             {
-                const list = getNotFound(movies.get());
+                const list = getNotFound(get(all));
                 current.set(list[Math.floor(Math.random() * list.length)]);
             }
             set(value);
         }
         else
         {
-            get(tv);
-            get(movies);
             timer = setTimeout(() =>
             {
                 listener();
                 timer = null;
-            }, 50);
+            }, 100);
         }
 
     };
@@ -102,15 +140,9 @@ export const ready = writable(false, set =>
 
 
 
-export const movies = LocalStore.hook(
-    MediaType.MOVIE.key,
-    () => fetch(MediaType.MOVIE.path).then(resp => resp.json())
-);
+export const movies = LocalStore.hook(MediaType.MOVIE.key);
 
-export const tv = LocalStore.hook(
-    MediaType.TV.key,
-    () => fetch(MediaType.TV.path).then(resp => resp.json())
-);
+export const tv = LocalStore.hook(MediaType.TV.key);
 
 
 export const current = LocalStore.hook('current');

@@ -1,4 +1,3 @@
-/* Version: 1.0.0 - June 20, 2023 21:37:59 */
 function noop$1() { }
 function assign(tar, src) {
     // @ts-ignore
@@ -3687,7 +3686,15 @@ function decode(value)
     }
     if (isJSON(value))
     {
-        return JSON.parse(value);
+        try
+        {
+            return JSON.parse(value);
+        } catch (error)
+        {
+            // fallback for invalid json data
+            return value;
+        }
+
     }
 
     return value;
@@ -6634,7 +6641,7 @@ function instance$6($$self, $$props, $$invalidate) {
 							() => {
 								elem.classList.add("d-none");
 							},
-							200
+							500
 						);
 					}
 				}
@@ -7181,7 +7188,7 @@ class WebStore extends DataStore
 
 const LocalStore = new WebStore(); new WebStore(sessionStorage);
 
-const API_PATH = '/api/1', BUILD_DATE = 'June 20, 2023 21:37:59';
+const API_PATH = '/api/1', BUILD_DATE = '[VI]{date}[/VI]';
 
 
 
@@ -7216,8 +7223,8 @@ class MediaType extends BackedEnum
 {
     if (LocalStore.getItem('BuildDate') !== BUILD_DATE)
     {
-        LocalStore.removeItem(MediaType.MOVIE.value);
-        LocalStore.removeItem(MediaType.TV.value);
+        LocalStore.removeItem(MediaType.MOVIE.key);
+        LocalStore.removeItem(MediaType.TV.key);
         LocalStore.removeItem('current');
         LocalStore.setItem('BuildDate', BUILD_DATE);
         console.debug('Storage reset flowing base code update.');
@@ -7236,30 +7243,68 @@ class MediaType extends BackedEnum
 const ready = writable(false, set =>
 {
 
-    let timer;
+    let timer, fetchingMovies, fetchingSeries;
     const listener = () =>
     {
 
-        let value = !isEmpty(movies.get()) && !isEmpty(tv.get());
+
+        let value = true;
+
+
+
+        if (!isArray(get_store_value(movies)))
+        {
+            value = false;
+            if (!fetchingMovies)
+            {
+                console.debug("fetching movies");
+                fetchingMovies = true;
+                fetch(MediaType.MOVIE.path)
+                    .then(resp => resp.json())
+
+                    .then(data =>
+                    {
+                        fetchingMovies = false;
+                        movies.set(data);
+                    });
+            }
+        }
+
+        if (!isArray(get_store_value(tv)))
+        {
+
+            value = false;
+            if (!fetchingSeries)
+            {
+                console.debug("fetching series");
+                fetchingSeries = true;
+                fetch(MediaType.TV.path)
+                    .then(resp => resp.json())
+                    .then(data =>
+                    {
+                        fetchingSeries = false;
+                        tv.set(data);
+                    });
+            }
+        }
+
 
         if (value)
         {
-            if (!current.get())
+            if (!get_store_value(current))
             {
-                const list = getNotFound(movies.get());
+                const list = getNotFound(get_store_value(all));
                 current.set(list[Math.floor(Math.random() * list.length)]);
             }
             set(value);
         }
         else
         {
-            get_store_value(tv);
-            get_store_value(movies);
             timer = setTimeout(() =>
             {
                 listener();
                 timer = null;
-            }, 50);
+            }, 100);
         }
 
     };
@@ -7280,15 +7325,9 @@ const ready = writable(false, set =>
 
 
 
-const movies = LocalStore.hook(
-    MediaType.MOVIE.key,
-    () => fetch(MediaType.MOVIE.path).then(resp => resp.json())
-);
+const movies = LocalStore.hook(MediaType.MOVIE.key);
 
-const tv = LocalStore.hook(
-    MediaType.TV.key,
-    () => fetch(MediaType.TV.path).then(resp => resp.json())
-);
+const tv = LocalStore.hook(MediaType.TV.key);
 
 
 const current = LocalStore.hook('current');

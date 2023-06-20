@@ -15,7 +15,7 @@ const
     USE_BABEL = false,
     inputdir = 'src', outputdir = 'public/assets',
     plugins = [
-        versionInjector(),
+        prod && versionInjector(),
         json(),
         svelte({
             compilerOptions: {
