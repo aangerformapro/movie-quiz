@@ -1,9 +1,10 @@
-import { derived, get, writable } from 'svelte/store';
+import { derived, get, writable, readable } from 'svelte/store';
 import LocalStore from './../../modules/stores/webstore.mjs';
 import { BackedEnum, isEmpty, isInt, isPlainObject } from '../../modules/utils/utils.mjs';
 
 
-const API_PATH = '/api/1';
+const API_PATH = '/api/1', BUILD_DATE = '[VI]{date}[/VI]';
+
 
 
 /**
@@ -26,6 +27,30 @@ export class MediaType extends BackedEnum
         return this.value;
     }
 }
+
+
+
+/**
+ * Version control api using (clears localstorage sync for code compatibility, but keep results found)
+ * @link https://www.npmjs.com/package/rollup-plugin-version-injector
+ */
+(() =>
+{
+    if (LocalStore.getItem('BuildDate') !== BUILD_DATE)
+    {
+        LocalStore.removeItem(MediaType.MOVIE.value);
+        LocalStore.removeItem(MediaType.TV.value);
+        LocalStore.removeItem('current');
+        LocalStore.setItem('BuildDate', BUILD_DATE);
+        console.debug('Storage reset flowing base code update.');
+    }
+
+})();
+
+
+
+
+
 
 /**
  * Data is Ready ?
@@ -61,6 +86,7 @@ export const ready = writable(false, set =>
 
     };
 
+
     listener();
 
     return () =>
@@ -72,6 +98,8 @@ export const ready = writable(false, set =>
     };
 
 });
+
+
 
 
 export const movies = LocalStore.hook(

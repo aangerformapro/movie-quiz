@@ -1,3 +1,4 @@
+/* Version: 1.0.0 - June 20, 2023 21:37:59 */
 function noop$1() { }
 function assign(tar, src) {
     // @ts-ignore
@@ -7180,7 +7181,8 @@ class WebStore extends DataStore
 
 const LocalStore = new WebStore(); new WebStore(sessionStorage);
 
-const API_PATH = '/api/1';
+const API_PATH = '/api/1', BUILD_DATE = 'June 20, 2023 21:37:59';
+
 
 
 /**
@@ -7203,6 +7205,30 @@ class MediaType extends BackedEnum
         return this.value;
     }
 }
+
+
+
+/**
+ * Version control api using (clears localstorage sync for code compatibility, but keep results found)
+ * @link https://www.npmjs.com/package/rollup-plugin-version-injector
+ */
+(() =>
+{
+    if (LocalStore.getItem('BuildDate') !== BUILD_DATE)
+    {
+        LocalStore.removeItem(MediaType.MOVIE.value);
+        LocalStore.removeItem(MediaType.TV.value);
+        LocalStore.removeItem('current');
+        LocalStore.setItem('BuildDate', BUILD_DATE);
+        console.debug('Storage reset flowing base code update.');
+    }
+
+})();
+
+
+
+
+
 
 /**
  * Data is Ready ?
@@ -7238,6 +7264,7 @@ const ready = writable(false, set =>
 
     };
 
+
     listener();
 
     return () =>
@@ -7249,6 +7276,8 @@ const ready = writable(false, set =>
     };
 
 });
+
+
 
 
 const movies = LocalStore.hook(

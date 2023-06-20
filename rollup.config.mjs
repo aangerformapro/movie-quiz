@@ -8,13 +8,14 @@ import { babel } from '@rollup/plugin-babel';
 import terser from "@rollup/plugin-terser";
 import svelte from 'rollup-plugin-svelte';
 import json from '@rollup/plugin-json';
-
+import versionInjector from 'rollup-plugin-version-injector';
 
 const
     prod = !process.env.ROLLUP_WATCH,
     USE_BABEL = false,
     inputdir = 'src', outputdir = 'public/assets',
     plugins = [
+        versionInjector(),
         json(),
         svelte({
             compilerOptions: {
