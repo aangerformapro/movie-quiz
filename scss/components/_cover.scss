@@ -24,7 +24,7 @@
         pointer-events: none;
         padding: 0;
 
-        aspect-ratio: 1280/720;
+        // aspect-ratio: 1280/720;
 
         width: 100vw;
         max-width: $cover-max-width;
@@ -32,9 +32,13 @@
         margin: 0 auto;
 
         img {
+            max-height: $cover-max-height;
             width: 100%;
-            object-fit: contain;
+            object-fit: cover;
             object-position: top center;
+            @include lg {
+                object-position: center center;
+            }
         }
     }
 

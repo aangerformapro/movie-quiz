@@ -1,6 +1,7 @@
 <script>
     import { links } from "svelte-navigator";
     import { tv, getFound, getNotFound } from "../../App/game.mjs";
+    import swiper from "./swiper.mjs";
 
     let found = [],
         notfound = [];
@@ -14,7 +15,7 @@
         <h3 class="my-3">Les Séries - A trouver</h3>
 
         <div class="d-flex align-items-center justify-content-between">
-            <div class="swiper overflow-x-scroll">
+            <div class="swiper overflow-x-scroll" use:swiper>
                 <div class="swiper-wrapper d-flex">
                     {#each notfound as item}
                         <div class="swiper-slide">
@@ -23,7 +24,7 @@
                                 <a href="/tv/{item.id}" use:links>
                                     <img
                                         src={item.cover.w780}
-                                        alt="Film à deviner"
+                                        alt="Série à deviner"
                                     />
                                 </a>
                             </div>
@@ -42,7 +43,7 @@
     <div class="section mx-auto mb-3">
         <h3 class="my-3 px-0">Les Séries - Trouvées</h3>
         <div class="d-flex align-items-center justify-content-between">
-            <div class="swiper overflow-x-scroll">
+            <div class="swiper overflow-x-scroll" use:swiper>
                 <div class="swiper-wrapper d-flex">
                     {#each found as item}
                         <div class="swiper-slide">
@@ -51,7 +52,7 @@
                                 <a href="/details/{item.id}">
                                     <img
                                         src={item.poster.w342}
-                                        alt="Poster du film"
+                                        alt="Poster de la série"
                                     />
                                 </a>
                             </div>

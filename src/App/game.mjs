@@ -30,6 +30,7 @@ export const ready = writable(false, set =>
             timer = setTimeout(() =>
             {
                 listener();
+                timer = null;
             }, 20);
         }
 

@@ -1,13 +1,12 @@
 @use '../helpers' as *;
 @use 'poster' as *;
-
 @use 'swiper';
 
 @mixin slides {
     .section {
         overflow: hidden;
         @include padding-y(2vh);
-        max-width: $cover-max-width;
+        max-width: $layout-max-width;
         h3 {
             @include font-size(25px, 900, 24px);
             text-transform: uppercase;
@@ -17,16 +16,28 @@
                 font-size: 28px;
             }
         }
-        .swiper-slide {
-            width: auto;
+
+        .swiper {
+            cursor: grab;
+            &.moving {
+                cursor: grabbing;
+                a {
+                    cursor: grabbing;
+                }
+            }
+            .swiper-slide {
+                width: auto;
+            }
         }
     }
 
     .chevron-next {
         display: none;
+        cursor: pointer;
 
         &.swiper-button-disabled {
             color: $netflix-gray;
+
             pointer-events: none;
         }
 
