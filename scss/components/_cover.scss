@@ -40,7 +40,7 @@
             @include margin-x(auto);
             width: 100%;
             object-fit: contain;
-            object-position: top center;
+            object-position: center center;
             @include lg {
                 object-fit: cover;
                 // object-position: center center;

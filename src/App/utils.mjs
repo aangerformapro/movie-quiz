@@ -30,7 +30,7 @@ export const createLoadObserver = handler =>
             waiting--;
 
             // if loading same asset multiple times
-            waiting = Math.max(0, waiting);
+            // waiting = Math.max(0, waiting);
 
             if (waiting === 0)
             {

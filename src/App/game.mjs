@@ -1,6 +1,6 @@
 import { readable, get, writable } from 'svelte/store';
 import LocalStore from './../../modules/stores/webstore.mjs';
-import { BackedEnum, isInt } from '../../modules/utils/utils.mjs';
+import { BackedEnum, isInt, isPlainObject } from '../../modules/utils/utils.mjs';
 
 
 const MOVIE_SETTINGS = ['movies', '/api/1/movies.json'];
@@ -10,38 +10,46 @@ const TV_SETTINGS = ['tv', '/api/1/tv.json'];
 const API_PATH = '/api/1';
 
 
+
+/**
+ * Enum for media type
+ */
 export class MediaType extends BackedEnum
 {
+
+
+    static ALL = new MediaType("all");
     static MOVIE = new MediaType("movie");
     static TV = new MediaType("tv");
-
-
 
     get path()
     {
         return API_PATH + '/' + this.value + '.json';
     }
+
+    get key()
+    {
+        return this.value;
+    }
 }
 
-
+/**
+ * Data is Ready ?
+ */
 export const ready = writable(false, set =>
 {
 
-
     let timer;
-
     const listener = () =>
     {
 
         let value = LocalStore.hasItem(MOVIE_SETTINGS[0]) && LocalStore.hasItem(TV_SETTINGS[0]);
-
         if (value)
         {
             set(value);
         }
         else
         {
-
             get(tv);
             get(movies);
             timer = setTimeout(() =>
@@ -69,21 +77,20 @@ export const ready = writable(false, set =>
 export const movies = readable([], (set) =>
 {
 
-    if (!LocalStore.hasItem(MOVIE_SETTINGS[0]))
+    const { key, path } = MediaType.Movie;
+
+    if (!LocalStore.hasItem(key))
     {
-        fetch(MOVIE_SETTINGS[1])
+        fetch(path)
             .then(resp => resp.json()).then(value =>
             {
-                set(LocalStore.setItem(MOVIE_SETTINGS[0], value));
-                if (!current.get())
-                {
-                    current.set(value[Math.floor(Math.random() * value.length)]);
-                }
+                set(LocalStore.setItem(key, value));
+                current.set(value[Math.floor(Math.random() * value.length)]);
             });
     }
     else
     {
-        set(LocalStore.getItem(MOVIE_SETTINGS[0]));
+        set(LocalStore.getItem(key));
     }
 
 
@@ -93,20 +100,19 @@ export const movies = readable([], (set) =>
 export const tv = readable([], (set) =>
 {
 
-    if (!LocalStore.hasItem(TV_SETTINGS[0]))
+    const { key, path } = MediaType.TV;
+
+    if (!LocalStore.hasItem(key))
     {
-
-        fetch(TV_SETTINGS[1])
-            .then(resp => resp.json())
-            .then(value =>
+        fetch(path)
+            .then(resp => resp.json()).then(value =>
             {
-                set(LocalStore.setItem(TV_SETTINGS[0], value));
+                set(LocalStore.setItem(key, value));
             });
-
     }
     else
     {
-        set(LocalStore.getItem(TV_SETTINGS[0]));
+        set(LocalStore.getItem(key));
     }
 });
 
@@ -119,6 +125,7 @@ export const found = LocalStore.hook('found', []);
 
 export function isFound(item)
 {
+    item = getItem(item);
     return get(found).includes(item.id);
 }
 
@@ -149,8 +156,38 @@ export function getNotFound(items)
 
 export function getEntry(id)
 {
+    if (!get(ready))
+    {
+        return null;
+    }
+
+    if (isPlainObject(id))
+    {
+        return item.id ? item : null;
+    }
+
+    return get(movies).find(item => item.id === id) ?? get(tv).find(item => item.id === id) ?? null;
+}
 
 
+export function getYoutubeUrl(item)
+{
+
+    if (isInt(item))
+    {
+        item = getEntry(item);
+    }
+    if (item && item.videos && item.videos.length)
+    {
+        for (let entry of item.videos)
+        {
+            if (entry.site.toLowerCase() === 'youtube')
+            {
+                return new URL('https://www.youtube.com/watch?v=' + entry.key);
+            }
+        }
+    }
 
 
+    return null;
 }

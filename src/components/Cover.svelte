@@ -5,7 +5,12 @@
         coverIsLoaded,
         createLoadObserver,
     } from "../App/utils.mjs";
-    import { current } from "../App/game.mjs";
+
+    // import { current } from "../App/game.mjs";
+
+    import Heading from "./Heading.svelte";
+
+    export let item = {};
 
     const unsub = src.subscribe(() => ($coverIsLoaded = false));
 
@@ -17,8 +22,10 @@
         unsub();
     });
 
-    $: $src = $current.cover.w1280;
+    // $: $src = $current.cover.w1280;
 </script>
+
+<Heading force="true" item={$current} />
 
 <!-- Charge l'image du jeu -->
 <div class="cover">

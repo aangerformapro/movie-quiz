@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
 
-    import { ready } from "../App/game.mjs";
+    import { current, ready } from "../App/game.mjs";
 
     import Cover from "../components/Cover.svelte";
     import Movies from "../components/sliders/Movies.svelte";
@@ -9,7 +9,7 @@
 </script>
 
 {#if $ready}
-    <Cover />
+    <Cover item={$current} />
 
     <Movies />
     <Series />
