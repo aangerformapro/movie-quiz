@@ -67,10 +67,7 @@ const TMDB_API_SERVER = 'http://localhost:1337';
 
 
 const TMDB_FETCH_OPTIONS = {
-    headers: {
-        accept: 'application/json',
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MWJkN2U3NDNlMDYwYWQzMGU2ODBlZjRiOGFmMjIyNSIsInN1YiI6IjY0ODA5OTExZDJiMjA5MDBjYTFjZWRiNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Q6FCh2KuPVfCg_YaSGwa2DqTA0wy0TKsMF9Rp1AUOOo'
-    }
+    // no nedd for that, using a proxy
 };
 
 

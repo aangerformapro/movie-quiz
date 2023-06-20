@@ -1,4 +1,5 @@
 <script>
+    import Details from "./pages/Details.svelte";
     import { Router, Route, Link } from "svelte-navigator";
     import { loading } from "./App/utils.mjs";
     import { loading as rload } from "./App/loader.mjs";
@@ -35,7 +36,14 @@
         </Route>
 
         <Route path="details/:id">
-            <h1>Details</h1>
+            <Details />
+        </Route>
+        <Route path="*">
+            <div
+                class="position-fixed top-0 left-0 w-100 h-100 d-flex justify-content-center align-items-center text-danger fs-1 fw-bolder user-select-none"
+            >
+                OOPS
+            </div>
         </Route>
     </main>
     <MainLoader />

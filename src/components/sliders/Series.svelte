@@ -1,6 +1,12 @@
 <script>
     import { links } from "svelte-navigator";
-    import { tv, getFound, getNotFound } from "../../App/game.mjs";
+    import {
+        tv,
+        getFound,
+        getNotFound,
+        getRandom,
+        settings,
+    } from "../../App/game.mjs";
     import createResourceLoader, { loading } from "../../App/loader.mjs";
     import swiper from "../../App/swiper.mjs";
     import { noop } from "svelte/internal";
@@ -11,13 +17,12 @@
     const { onload } = createResourceLoader(noop);
 
     $: found = getFound($tv);
-    $: notfound = getNotFound($tv);
+    $: notfound = getRandom(getNotFound($tv), $settings.notFoundToDisplay);
 </script>
 
 {#if notfound.length}
-    <div class="section mx-auto mb-3 px-lg-3">
+    <div class="section mx-auto mb-3 px-3">
         <h3 class="my-3">Les Séries - A trouver</h3>
-
         <div class="d-flex align-items-center justify-content-between">
             <div class="swiper overflow-x-scroll" use:swiper>
                 <div class="swiper-wrapper d-flex">
@@ -45,7 +50,7 @@
     </div>
 {/if}
 {#if found.length}
-    <div class="section mx-auto mb-3 px-lg-3">
+    <div class="section mx-auto mb-3 px-3">
         <h3 class="my-3 px-0">Les Séries - Trouvées</h3>
         <div class="d-flex align-items-center justify-content-between">
             <div class="swiper overflow-x-scroll" use:swiper>

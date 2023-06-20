@@ -17,7 +17,7 @@
 
 {#if found || force}
     <!-- S'affiche apres que le résultat ait été trouvé -->
-    <div class="heading p-lg-3">
+    <div class="heading p-5 p-lg-0">
         <h3 class="heading-title text-uppercase mb-3">
             {title}
         </h3>

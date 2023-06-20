@@ -43,7 +43,6 @@
             object-position: center center;
             @include lg {
                 object-fit: cover;
-                // object-position: center center;
             }
         }
     }
@@ -53,6 +52,38 @@
             margin-top: -96px;
             position: relative;
             z-index: 2;
+        }
+    }
+
+    .heading {
+        user-select: none;
+
+        @include lg {
+            position: absolute;
+            top: 300px;
+            left: 5vw;
+            max-width: 50vw;
+        }
+
+        &-title {
+            @include font-size(45px, 900, 48px);
+            max-width: 600px;
+            width: 80vw;
+            text-align: center;
+            @include lg {
+                text-align: left;
+                width: 50vw;
+                @include font-size(78px, 900, 78px);
+            }
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            @include font-size(23px, 500, 35px);
+            svg {
+                margin-right: 8px;
+            }
         }
     }
 }

@@ -4,8 +4,7 @@
     import Typed from "typed.js";
     import { isArray, isEmpty } from "../../modules/utils/utils.mjs";
     import { loading } from "../App/utils.mjs";
-
-    import messages from "../../modules/components/loading-messages.mjs";
+    import { fr as messages } from "../../modules/components/loading-messages.mjs";
     import NoScroll from "../../modules/components/noscroll.mjs";
 
     export let phrase = [],

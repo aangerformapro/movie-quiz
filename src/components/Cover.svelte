@@ -8,12 +8,12 @@
     const { onload } = createResourceLoader(noop);
 </script>
 
-<Heading force="true" {item} />
-
 <!-- Charge l'image du jeu -->
 <div class="cover">
     <div class="background-picture position-relative">
         <img src={item.cover.w1280} alt="affiche du film" class="" use:onload />
         <div class="blured" />
     </div>
+
+    <Heading force="true" {item} />
 </div>

@@ -30,6 +30,13 @@ export class MediaType extends BackedEnum
 
 
 
+export const settings = LocalStore.hook('settings', {
+    notFoundToDisplay: 20,
+});
+
+
+
+
 /**
  * Version control api using (clears localstorage sync for code compatibility, but keep results found)
  * @link https://www.npmjs.com/package/rollup-plugin-version-injector
@@ -61,18 +68,12 @@ export const ready = writable(false, set =>
     let timer, fetchingMovies, fetchingSeries;
     const listener = () =>
     {
-
-
         let value = true;
-
-
-
         if (!isArray(get(movies)))
         {
             value = false;
             if (!fetchingMovies)
             {
-                console.debug("fetching movies");
                 fetchingMovies = true;
                 fetch(MediaType.MOVIE.path)
                     .then(resp => resp.json())
@@ -84,14 +85,11 @@ export const ready = writable(false, set =>
                     });
             }
         }
-
         if (!isArray(get(tv)))
         {
-
             value = false;
             if (!fetchingSeries)
             {
-                console.debug("fetching series");
                 fetchingSeries = true;
                 fetch(MediaType.TV.path)
                     .then(resp => resp.json())
@@ -102,8 +100,6 @@ export const ready = writable(false, set =>
                     });
             }
         }
-
-
         if (value)
         {
             if (!get(current))
@@ -124,9 +120,7 @@ export const ready = writable(false, set =>
 
     };
 
-
     listener();
-
     return () =>
     {
         if (timer)
@@ -138,13 +132,12 @@ export const ready = writable(false, set =>
 });
 
 
-
+/**
+ * LocalStore data hooks
+ */
 
 export const movies = LocalStore.hook(MediaType.MOVIE.key);
-
 export const tv = LocalStore.hook(MediaType.TV.key);
-
-
 export const current = LocalStore.hook('current');
 export const found = LocalStore.hook('found', []);
 
@@ -176,6 +169,14 @@ export function setFound(item)
     });
 }
 
+/**
+ * Last Found / current if not
+ */
+export function getLastFound()
+{
+    let found = getFound(get(all));
+    return found[found.length - 1] ?? get(current);
+}
 
 export function getFound(items)
 {
@@ -186,6 +187,25 @@ export function getFound(items)
 export function getNotFound(items)
 {
     return items.filter(item => !isFound(item));
+}
+
+
+export function getRandom(list, howMuch)
+{
+    if (!howMuch || list.length < howMuch)
+    {
+        return list;
+    }
+    // do not destroy the original
+    const result = [], copy = [...list];
+
+    while (result.length < howMuch)
+    {
+        let index = Math.floor(Math.random() * copy.length);
+        result.push(copy[index]);
+        copy.splice(index, 1);
+    }
+    return result;
 }
 
 /**
