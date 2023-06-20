@@ -21,7 +21,7 @@ const
             compilerOptions: {
                 dev: !prod,
                 accessors: true,
-                // hydratable: true,
+                hydratable: true,
             }
         }),
         postcss({

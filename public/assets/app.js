@@ -131,11 +131,139 @@ const globals = (typeof window !== 'undefined'
     : typeof globalThis !== 'undefined'
         ? globalThis
         : global);
-function append(target, node) {
-    target.appendChild(node);
+
+// Track which nodes are claimed during hydration. Unclaimed nodes can then be removed from the DOM
+// at the end of hydration without touching the remaining nodes.
+let is_hydrating = false;
+function start_hydrating() {
+    is_hydrating = true;
 }
-function insert(target, node, anchor) {
-    target.insertBefore(node, anchor || null);
+function end_hydrating() {
+    is_hydrating = false;
+}
+function upper_bound(low, high, key, value) {
+    // Return first index of value larger than input value in the range [low, high)
+    while (low < high) {
+        const mid = low + ((high - low) >> 1);
+        if (key(mid) <= value) {
+            low = mid + 1;
+        }
+        else {
+            high = mid;
+        }
+    }
+    return low;
+}
+function init_hydrate(target) {
+    if (target.hydrate_init)
+        return;
+    target.hydrate_init = true;
+    // We know that all children have claim_order values since the unclaimed have been detached if target is not <head>
+    let children = target.childNodes;
+    // If target is <head>, there may be children without claim_order
+    if (target.nodeName === 'HEAD') {
+        const myChildren = [];
+        for (let i = 0; i < children.length; i++) {
+            const node = children[i];
+            if (node.claim_order !== undefined) {
+                myChildren.push(node);
+            }
+        }
+        children = myChildren;
+    }
+    /*
+    * Reorder claimed children optimally.
+    * We can reorder claimed children optimally by finding the longest subsequence of
+    * nodes that are already claimed in order and only moving the rest. The longest
+    * subsequence of nodes that are claimed in order can be found by
+    * computing the longest increasing subsequence of .claim_order values.
+    *
+    * This algorithm is optimal in generating the least amount of reorder operations
+    * possible.
+    *
+    * Proof:
+    * We know that, given a set of reordering operations, the nodes that do not move
+    * always form an increasing subsequence, since they do not move among each other
+    * meaning that they must be already ordered among each other. Thus, the maximal
+    * set of nodes that do not move form a longest increasing subsequence.
+    */
+    // Compute longest increasing subsequence
+    // m: subsequence length j => index k of smallest value that ends an increasing subsequence of length j
+    const m = new Int32Array(children.length + 1);
+    // Predecessor indices + 1
+    const p = new Int32Array(children.length);
+    m[0] = -1;
+    let longest = 0;
+    for (let i = 0; i < children.length; i++) {
+        const current = children[i].claim_order;
+        // Find the largest subsequence length such that it ends in a value less than our current value
+        // upper_bound returns first greater value, so we subtract one
+        // with fast path for when we are on the current longest subsequence
+        const seqLen = ((longest > 0 && children[m[longest]].claim_order <= current) ? longest + 1 : upper_bound(1, longest, idx => children[m[idx]].claim_order, current)) - 1;
+        p[i] = m[seqLen] + 1;
+        const newLen = seqLen + 1;
+        // We can guarantee that current is the smallest value. Otherwise, we would have generated a longer sequence.
+        m[newLen] = i;
+        longest = Math.max(newLen, longest);
+    }
+    // The longest increasing subsequence of nodes (initially reversed)
+    const lis = [];
+    // The rest of the nodes, nodes that will be moved
+    const toMove = [];
+    let last = children.length - 1;
+    for (let cur = m[longest] + 1; cur != 0; cur = p[cur - 1]) {
+        lis.push(children[cur - 1]);
+        for (; last >= cur; last--) {
+            toMove.push(children[last]);
+        }
+        last--;
+    }
+    for (; last >= 0; last--) {
+        toMove.push(children[last]);
+    }
+    lis.reverse();
+    // We sort the nodes being moved to guarantee that their insertion order matches the claim order
+    toMove.sort((a, b) => a.claim_order - b.claim_order);
+    // Finally, we move the nodes
+    for (let i = 0, j = 0; i < toMove.length; i++) {
+        while (j < lis.length && toMove[i].claim_order >= lis[j].claim_order) {
+            j++;
+        }
+        const anchor = j < lis.length ? lis[j] : null;
+        target.insertBefore(toMove[i], anchor);
+    }
+}
+function append_hydration(target, node) {
+    if (is_hydrating) {
+        init_hydrate(target);
+        if ((target.actual_end_child === undefined) || ((target.actual_end_child !== null) && (target.actual_end_child.parentNode !== target))) {
+            target.actual_end_child = target.firstChild;
+        }
+        // Skip nodes of undefined ordering
+        while ((target.actual_end_child !== null) && (target.actual_end_child.claim_order === undefined)) {
+            target.actual_end_child = target.actual_end_child.nextSibling;
+        }
+        if (node !== target.actual_end_child) {
+            // We only insert if the ordering of this node should be modified or the parent node is not target
+            if (node.claim_order !== undefined || node.parentNode !== target) {
+                target.insertBefore(node, target.actual_end_child);
+            }
+        }
+        else {
+            target.actual_end_child = node.nextSibling;
+        }
+    }
+    else if (node.parentNode !== target || node.nextSibling !== null) {
+        target.appendChild(node);
+    }
+}
+function insert_hydration(target, node, anchor) {
+    if (is_hydrating && !anchor) {
+        append_hydration(target, node);
+    }
+    else if (node.parentNode !== target || node.nextSibling != anchor) {
+        target.insertBefore(node, anchor || null);
+    }
 }
 function detach(node) {
     if (node.parentNode) {
@@ -208,6 +336,94 @@ function set_attributes(node, attributes) {
 }
 function children(element) {
     return Array.from(element.childNodes);
+}
+function init_claim_info(nodes) {
+    if (nodes.claim_info === undefined) {
+        nodes.claim_info = { last_index: 0, total_claimed: 0 };
+    }
+}
+function claim_node(nodes, predicate, processNode, createNode, dontUpdateLastIndex = false) {
+    // Try to find nodes in an order such that we lengthen the longest increasing subsequence
+    init_claim_info(nodes);
+    const resultNode = (() => {
+        // We first try to find an element after the previous one
+        for (let i = nodes.claim_info.last_index; i < nodes.length; i++) {
+            const node = nodes[i];
+            if (predicate(node)) {
+                const replacement = processNode(node);
+                if (replacement === undefined) {
+                    nodes.splice(i, 1);
+                }
+                else {
+                    nodes[i] = replacement;
+                }
+                if (!dontUpdateLastIndex) {
+                    nodes.claim_info.last_index = i;
+                }
+                return node;
+            }
+        }
+        // Otherwise, we try to find one before
+        // We iterate in reverse so that we don't go too far back
+        for (let i = nodes.claim_info.last_index - 1; i >= 0; i--) {
+            const node = nodes[i];
+            if (predicate(node)) {
+                const replacement = processNode(node);
+                if (replacement === undefined) {
+                    nodes.splice(i, 1);
+                }
+                else {
+                    nodes[i] = replacement;
+                }
+                if (!dontUpdateLastIndex) {
+                    nodes.claim_info.last_index = i;
+                }
+                else if (replacement === undefined) {
+                    // Since we spliced before the last_index, we decrease it
+                    nodes.claim_info.last_index--;
+                }
+                return node;
+            }
+        }
+        // If we can't find any matching node, we create a new one
+        return createNode();
+    })();
+    resultNode.claim_order = nodes.claim_info.total_claimed;
+    nodes.claim_info.total_claimed += 1;
+    return resultNode;
+}
+function claim_element_base(nodes, name, attributes, create_element) {
+    return claim_node(nodes, (node) => node.nodeName === name, (node) => {
+        const remove = [];
+        for (let j = 0; j < node.attributes.length; j++) {
+            const attribute = node.attributes[j];
+            if (!attributes[attribute.name]) {
+                remove.push(attribute.name);
+            }
+        }
+        remove.forEach(v => node.removeAttribute(v));
+        return undefined;
+    }, () => create_element(name));
+}
+function claim_element(nodes, name, attributes) {
+    return claim_element_base(nodes, name, attributes, element);
+}
+function claim_text(nodes, data) {
+    return claim_node(nodes, (node) => node.nodeType === 3, (node) => {
+        const dataStr = '' + data;
+        if (node.data.startsWith(dataStr)) {
+            if (node.data.length !== dataStr.length) {
+                return node.splitText(dataStr.length);
+            }
+        }
+        else {
+            node.data = dataStr;
+        }
+    }, () => text(data), true // Text nodes should not update last index since it is likely not worth it to eliminate an increasing subsequence of actual elements
+    );
+}
+function claim_space(nodes) {
+    return claim_text(nodes, ' ');
 }
 function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
     const e = document.createEvent('CustomEvent');
@@ -487,6 +703,9 @@ function get_spread_object(spread_props) {
 function create_component(block) {
     block && block.c();
 }
+function claim_component(block, parent_nodes) {
+    block && block.l(parent_nodes);
+}
 function mount_component(component, target, anchor, customElement) {
     const { fragment, after_update } = component.$$;
     fragment && fragment.m(target, anchor);
@@ -575,6 +794,7 @@ function init$1(component, options, instance, create_fragment, not_equal, props,
     $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
     if (options.target) {
         if (options.hydrate) {
+            start_hydrating();
             const nodes = children(options.target);
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             $$.fragment && $$.fragment.l(nodes);
@@ -587,6 +807,7 @@ function init$1(component, options, instance, create_fragment, not_equal, props,
         if (options.intro)
             transition_in(component.$$.fragment);
         mount_component(component, options.target, options.anchor, options.customElement);
+        end_hydrating();
         flush();
     }
     set_current_component(parent_component);
@@ -623,13 +844,13 @@ class SvelteComponent {
 function dispatch_dev(type, detail) {
     document.dispatchEvent(custom_event(type, Object.assign({ version: '3.59.1' }, detail), { bubbles: true }));
 }
-function append_dev(target, node) {
+function append_hydration_dev(target, node) {
     dispatch_dev('SvelteDOMInsert', { target, node });
-    append(target, node);
+    append_hydration(target, node);
 }
-function insert_dev(target, node, anchor) {
+function insert_hydration_dev(target, node, anchor) {
     dispatch_dev('SvelteDOMInsert', { target, node, anchor });
-    insert(target, node, anchor);
+    insert_hydration(target, node, anchor);
 }
 function detach_dev(node) {
     dispatch_dev('SvelteDOMRemove', { node });
@@ -1792,12 +2013,28 @@ function create_if_block$5(ctx) {
 		c: function create() {
 			div = element("div");
 			t = text(/*$announcementText*/ ctx[0]);
+			this.h();
+		},
+		l: function claim(nodes) {
+			div = claim_element(nodes, "DIV", {
+				role: true,
+				"aria-atomic": true,
+				"aria-live": true,
+				"data-svnav-announcer": true
+			});
+
+			var div_nodes = children(div);
+			t = claim_text(div_nodes, /*$announcementText*/ ctx[0]);
+			div_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			set_attributes(div, div_data);
 			add_location(div, file$b, 204, 1, 6149);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div, anchor);
-			append_dev(div, t);
+			insert_hydration_dev(target, div, anchor);
+			append_hydration_dev(div, t);
 		},
 		p: function update(ctx, dirty) {
 			if (dirty[0] & /*$announcementText*/ 1) set_data_maybe_contenteditable_dev(t, /*$announcementText*/ ctx[0], div_data['contenteditable']);
@@ -1848,23 +2085,33 @@ function create_fragment$c(ctx) {
 			t1 = space();
 			if (if_block) if_block.c();
 			if_block_anchor = empty();
+			this.h();
+		},
+		l: function claim(nodes) {
+			div = claim_element(nodes, "DIV", { "data-svnav-router": true });
+			children(div).forEach(detach_dev);
+			t0 = claim_space(nodes);
+			if (default_slot) default_slot.l(nodes);
+			t1 = claim_space(nodes);
+			if (if_block) if_block.l(nodes);
+			if_block_anchor = empty();
+			this.h();
+		},
+		h: function hydrate() {
 			set_attributes(div, div_data);
 			add_location(div, file$b, 196, 0, 5982);
 		},
-		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div, anchor);
-			insert_dev(target, t0, anchor);
+			insert_hydration_dev(target, div, anchor);
+			insert_hydration_dev(target, t0, anchor);
 
 			if (default_slot) {
 				default_slot.m(target, anchor);
 			}
 
-			insert_dev(target, t1, anchor);
+			insert_hydration_dev(target, t1, anchor);
 			if (if_block) if_block.m(target, anchor);
-			insert_dev(target, if_block_anchor, anchor);
+			insert_hydration_dev(target, if_block_anchor, anchor);
 			current = true;
 		},
 		p: function update(ctx, dirty) {
@@ -2551,6 +2798,9 @@ function create_if_block$4(ctx) {
 		c: function create() {
 			create_component(router.$$.fragment);
 		},
+		l: function claim(nodes) {
+			claim_component(router.$$.fragment, nodes);
+		},
 		m: function mount(target, anchor) {
 			mount_component(router, target, anchor);
 			current = true;
@@ -2599,6 +2849,9 @@ function create_else_block(ctx) {
 	const block = {
 		c: function create() {
 			if (default_slot) default_slot.c();
+		},
+		l: function claim(nodes) {
+			if (default_slot) default_slot.l(nodes);
 		},
 		m: function mount(target, anchor) {
 			if (default_slot) {
@@ -2685,9 +2938,13 @@ function create_if_block_1$3(ctx) {
 			if (switch_instance) create_component(switch_instance.$$.fragment);
 			switch_instance_anchor = empty();
 		},
+		l: function claim(nodes) {
+			if (switch_instance) claim_component(switch_instance.$$.fragment, nodes);
+			switch_instance_anchor = empty();
+		},
 		m: function mount(target, anchor) {
 			if (switch_instance) mount_component(switch_instance, target, anchor);
-			insert_dev(target, switch_instance_anchor, anchor);
+			insert_hydration_dev(target, switch_instance_anchor, anchor);
 			current = true;
 		},
 		p: function update(ctx, dirty) {
@@ -2772,9 +3029,13 @@ function create_default_slot$1(ctx) {
 			if_block.c();
 			if_block_anchor = empty();
 		},
+		l: function claim(nodes) {
+			if_block.l(nodes);
+			if_block_anchor = empty();
+		},
 		m: function mount(target, anchor) {
 			if_blocks[current_block_type_index].m(target, anchor);
-			insert_dev(target, if_block_anchor, anchor);
+			insert_hydration_dev(target, if_block_anchor, anchor);
 			current = true;
 		},
 		p: function update(ctx, dirty) {
@@ -2868,20 +3129,30 @@ function create_fragment$b(ctx) {
 			if (if_block) if_block.c();
 			t1 = space();
 			div1 = element("div");
+			this.h();
+		},
+		l: function claim(nodes) {
+			div0 = claim_element(nodes, "DIV", { "data-svnav-route-start": true });
+			children(div0).forEach(detach_dev);
+			t0 = claim_space(nodes);
+			if (if_block) if_block.l(nodes);
+			t1 = claim_space(nodes);
+			div1 = claim_element(nodes, "DIV", { "data-svnav-route-end": true });
+			children(div1).forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			set_attributes(div0, div_data_1);
 			add_location(div0, file$a, 96, 0, 2664);
 			set_attributes(div1, div_data);
 			add_location(div1, file$a, 122, 0, 3340);
 		},
-		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div0, anchor);
-			insert_dev(target, t0, anchor);
+			insert_hydration_dev(target, div0, anchor);
+			insert_hydration_dev(target, t0, anchor);
 			if (if_block) if_block.m(target, anchor);
-			insert_dev(target, t1, anchor);
-			insert_dev(target, div1, anchor);
+			insert_hydration_dev(target, t1, anchor);
+			insert_hydration_dev(target, div1, anchor);
 			current = true;
 		},
 		p: function update(ctx, [dirty]) {
@@ -3205,14 +3476,21 @@ function create_fragment$a(ctx) {
 		c: function create() {
 			a = element("a");
 			if (default_slot) default_slot.c();
+			this.h();
+		},
+		l: function claim(nodes) {
+			a = claim_element(nodes, "A", { href: true });
+			var a_nodes = children(a);
+			if (default_slot) default_slot.l(a_nodes);
+			a_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			set_attributes(a, a_data);
 			add_location(a, file$9, 65, 0, 1861);
 		},
-		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-		},
 		m: function mount(target, anchor) {
-			insert_dev(target, a, anchor);
+			insert_hydration_dev(target, a, anchor);
 
 			if (default_slot) {
 				default_slot.m(a, null);
@@ -5731,6 +6009,7 @@ function create_fragment$9(ctx) {
 	let i;
 	let t11;
 	let span;
+	let t12;
 	let t13;
 	let label;
 	let div0;
@@ -5765,10 +6044,94 @@ function create_fragment$9(ctx) {
 			i = element("i");
 			t11 = space();
 			span = element("span");
-			span.textContent = "Comment Jouer";
+			t12 = text("Comment Jouer");
 			t13 = space();
 			label = element("label");
 			div0 = element("div");
+			this.h();
+		},
+		l: function claim(nodes) {
+			header = claim_element(nodes, "HEADER", { class: true });
+			var header_nodes = children(header);
+			div1 = claim_element(header_nodes, "DIV", { class: true, id: true });
+			var div1_nodes = children(div1);
+			a0 = claim_element(div1_nodes, "A", { class: true, href: true, title: true });
+			var a0_nodes = children(a0);
+
+			img0 = claim_element(a0_nodes, "IMG", {
+				src: true,
+				width: true,
+				height: true,
+				alt: true,
+				class: true
+			});
+
+			t0 = claim_space(a0_nodes);
+
+			img1 = claim_element(a0_nodes, "IMG", {
+				src: true,
+				height: true,
+				width: true,
+				alt: true,
+				class: true
+			});
+
+			a0_nodes.forEach(detach_dev);
+			t1 = claim_space(div1_nodes);
+
+			input = claim_element(div1_nodes, "INPUT", {
+				type: true,
+				id: true,
+				name: true,
+				title: true,
+				class: true
+			});
+
+			t2 = claim_space(div1_nodes);
+			nav = claim_element(div1_nodes, "NAV", { class: true });
+			var nav_nodes = children(nav);
+			a1 = claim_element(nav_nodes, "A", { class: true, href: true });
+			var a1_nodes = children(a1);
+			t3 = claim_text(a1_nodes, "Accueil");
+			a1_nodes.forEach(detach_dev);
+			t4 = claim_space(nav_nodes);
+			a2 = claim_element(nav_nodes, "A", { href: true, class: true });
+			var a2_nodes = children(a2);
+			t5 = claim_text(a2_nodes, "Séries");
+			a2_nodes.forEach(detach_dev);
+			t6 = claim_space(nav_nodes);
+			a3 = claim_element(nav_nodes, "A", { href: true, class: true });
+			var a3_nodes = children(a3);
+			t7 = claim_text(a3_nodes, "Films");
+			a3_nodes.forEach(detach_dev);
+			t8 = claim_space(nav_nodes);
+			a4 = claim_element(nav_nodes, "A", { href: true, class: true });
+			var a4_nodes = children(a4);
+			t9 = claim_text(a4_nodes, "Tous les films et séries");
+			a4_nodes.forEach(detach_dev);
+			nav_nodes.forEach(detach_dev);
+			t10 = claim_space(div1_nodes);
+			a5 = claim_element(div1_nodes, "A", { class: true, href: true });
+			var a5_nodes = children(a5);
+			i = claim_element(a5_nodes, "I", { class: true, size: true });
+			children(i).forEach(detach_dev);
+			t11 = claim_space(a5_nodes);
+			span = claim_element(a5_nodes, "SPAN", { class: true });
+			var span_nodes = children(span);
+			t12 = claim_text(span_nodes, "Comment Jouer");
+			span_nodes.forEach(detach_dev);
+			a5_nodes.forEach(detach_dev);
+			t13 = claim_space(div1_nodes);
+			label = claim_element(div1_nodes, "LABEL", { for: true, class: true });
+			var label_nodes = children(label);
+			div0 = claim_element(label_nodes, "DIV", { class: true });
+			children(div0).forEach(detach_dev);
+			label_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			header_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			if (!src_url_equal(img0.src, img0_src_value = "./assets/pictures/m.webp")) attr_dev(img0, "src", img0_src_value);
 			attr_dev(img0, "width", "32");
 			attr_dev(img0, "height", "32");
@@ -5836,40 +6199,38 @@ function create_fragment$9(ctx) {
 			attr_dev(header, "class", "user-select-none");
 			add_location(header, file$8, 61, 0, 1425);
 		},
-		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-		},
 		m: function mount(target, anchor) {
-			insert_dev(target, header, anchor);
-			append_dev(header, div1);
-			append_dev(div1, a0);
-			append_dev(a0, img0);
-			append_dev(a0, t0);
-			append_dev(a0, img1);
-			append_dev(div1, t1);
-			append_dev(div1, input);
+			insert_hydration_dev(target, header, anchor);
+			append_hydration_dev(header, div1);
+			append_hydration_dev(div1, a0);
+			append_hydration_dev(a0, img0);
+			append_hydration_dev(a0, t0);
+			append_hydration_dev(a0, img1);
+			append_hydration_dev(div1, t1);
+			append_hydration_dev(div1, input);
 			/*input_binding*/ ctx[7](input);
-			append_dev(div1, t2);
-			append_dev(div1, nav);
-			append_dev(nav, a1);
-			append_dev(a1, t3);
-			append_dev(nav, t4);
-			append_dev(nav, a2);
-			append_dev(a2, t5);
-			append_dev(nav, t6);
-			append_dev(nav, a3);
-			append_dev(a3, t7);
-			append_dev(nav, t8);
-			append_dev(nav, a4);
-			append_dev(a4, t9);
-			append_dev(div1, t10);
-			append_dev(div1, a5);
-			append_dev(a5, i);
-			append_dev(a5, t11);
-			append_dev(a5, span);
-			append_dev(div1, t13);
-			append_dev(div1, label);
-			append_dev(label, div0);
+			append_hydration_dev(div1, t2);
+			append_hydration_dev(div1, nav);
+			append_hydration_dev(nav, a1);
+			append_hydration_dev(a1, t3);
+			append_hydration_dev(nav, t4);
+			append_hydration_dev(nav, a2);
+			append_hydration_dev(a2, t5);
+			append_hydration_dev(nav, t6);
+			append_hydration_dev(nav, a3);
+			append_hydration_dev(a3, t7);
+			append_hydration_dev(nav, t8);
+			append_hydration_dev(nav, a4);
+			append_hydration_dev(a4, t9);
+			append_hydration_dev(div1, t10);
+			append_hydration_dev(div1, a5);
+			append_hydration_dev(a5, i);
+			append_hydration_dev(a5, t11);
+			append_hydration_dev(a5, span);
+			append_hydration_dev(span, t12);
+			append_hydration_dev(div1, t13);
+			append_hydration_dev(div1, label);
+			append_hydration_dev(label, div0);
 
 			if (!mounted) {
 				dispose = [
@@ -6067,6 +6428,7 @@ function create_fragment$8(ctx) {
 	let br;
 	let t1;
 	let a;
+	let t2;
 	let mounted;
 	let dispose;
 
@@ -6077,7 +6439,23 @@ function create_fragment$8(ctx) {
 			br = element("br");
 			t1 = space();
 			a = element("a");
-			a.textContent = "Crédits";
+			t2 = text("Crédits");
+			this.h();
+		},
+		l: function claim(nodes) {
+			footer = claim_element(nodes, "FOOTER", { class: true });
+			var footer_nodes = children(footer);
+			t0 = claim_text(footer_nodes, "Une réalisation © ACS Lons-le-Saunier - Mentions légales");
+			br = claim_element(footer_nodes, "BR", {});
+			t1 = claim_space(footer_nodes);
+			a = claim_element(footer_nodes, "A", { href: true, title: true });
+			var a_nodes = children(a);
+			t2 = claim_text(a_nodes, "Crédits");
+			a_nodes.forEach(detach_dev);
+			footer_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			add_location(br, file$7, 19, 65, 613);
 			attr_dev(a, "href", "#credits");
 			attr_dev(a, "title", "Crédits");
@@ -6085,15 +6463,13 @@ function create_fragment$8(ctx) {
 			attr_dev(footer, "class", "text-center p-3 mt-3");
 			add_location(footer, file$7, 18, 0, 510);
 		},
-		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-		},
 		m: function mount(target, anchor) {
-			insert_dev(target, footer, anchor);
-			append_dev(footer, t0);
-			append_dev(footer, br);
-			append_dev(footer, t1);
-			append_dev(footer, a);
+			insert_hydration_dev(target, footer, anchor);
+			append_hydration_dev(footer, t0);
+			append_hydration_dev(footer, br);
+			append_hydration_dev(footer, t1);
+			append_hydration_dev(footer, a);
+			append_hydration_dev(a, t2);
 
 			if (!mounted) {
 				dispose = listen_dev(a, "click", prevent_default(/*handleClick*/ ctx[0]), false, true, false, false);
@@ -6193,6 +6569,26 @@ function create_fragment$7(ctx) {
 			span2 = element("span");
 			t2 = space();
 			span3 = element("span");
+			this.h();
+		},
+		l: function claim(nodes) {
+			div = claim_element(nodes, "DIV", { class: true });
+			var div_nodes = children(div);
+			span0 = claim_element(div_nodes, "SPAN", {});
+			children(span0).forEach(detach_dev);
+			t0 = claim_space(div_nodes);
+			span1 = claim_element(div_nodes, "SPAN", {});
+			children(span1).forEach(detach_dev);
+			t1 = claim_space(div_nodes);
+			span2 = claim_element(div_nodes, "SPAN", {});
+			children(span2).forEach(detach_dev);
+			t2 = claim_space(div_nodes);
+			span3 = claim_element(div_nodes, "SPAN", {});
+			children(span3).forEach(detach_dev);
+			div_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			add_location(span0, file$6, 1, 4, 23);
 			add_location(span1, file$6, 2, 4, 36);
 			add_location(span2, file$6, 3, 4, 49);
@@ -6200,18 +6596,15 @@ function create_fragment$7(ctx) {
 			attr_dev(div, "class", "fluo");
 			add_location(div, file$6, 0, 0, 0);
 		},
-		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div, anchor);
-			append_dev(div, span0);
-			append_dev(div, t0);
-			append_dev(div, span1);
-			append_dev(div, t1);
-			append_dev(div, span2);
-			append_dev(div, t2);
-			append_dev(div, span3);
+			insert_hydration_dev(target, div, anchor);
+			append_hydration_dev(div, span0);
+			append_hydration_dev(div, t0);
+			append_hydration_dev(div, span1);
+			append_hydration_dev(div, t1);
+			append_hydration_dev(div, span2);
+			append_hydration_dev(div, t2);
+			append_hydration_dev(div, span3);
 		},
 		p: noop$1,
 		i: noop$1,
@@ -6536,6 +6929,7 @@ function create_fragment$6(ctx) {
 	let t1;
 	let div1;
 	let span;
+	let t2;
 	let current;
 	loader = new Loader({ $$inline: true });
 
@@ -6549,31 +6943,52 @@ function create_fragment$6(ctx) {
 			t1 = space();
 			div1 = element("div");
 			span = element("span");
-			span.textContent = "Veuillez patienter, ça charge ...";
-			if (!src_url_equal(img.src, img_src_value = "./assets/pictures/moviequiz.webp")) attr_dev(img, "src", img_src_value);
-			attr_dev(img, "alt", "");
-			add_location(img, file$5, 64, 8, 1743);
-			attr_dev(div0, "class", "background");
-			add_location(div0, file$5, 63, 4, 1709);
-			attr_dev(span, "class", "typed");
-			add_location(span, file$5, 68, 8, 1854);
-			attr_dev(div1, "class", "");
-			add_location(div1, file$5, 67, 4, 1830);
-			attr_dev(div2, "class", "main-loader justify-content-evenly");
-			add_location(div2, file$5, 62, 0, 1638);
+			t2 = text("Veuillez patienter, ça charge ...");
+			this.h();
 		},
 		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+			div2 = claim_element(nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			div0 = claim_element(div2_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+			img = claim_element(div0_nodes, "IMG", { src: true, alt: true });
+			div0_nodes.forEach(detach_dev);
+			t0 = claim_space(div2_nodes);
+			claim_component(loader.$$.fragment, div2_nodes);
+			t1 = claim_space(div2_nodes);
+			div1 = claim_element(div2_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			span = claim_element(div1_nodes, "SPAN", { class: true });
+			var span_nodes = children(span);
+			t2 = claim_text(span_nodes, "Veuillez patienter, ça charge ...");
+			span_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			div2_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
+			if (!src_url_equal(img.src, img_src_value = "./assets/pictures/moviequiz.webp")) attr_dev(img, "src", img_src_value);
+			attr_dev(img, "alt", "");
+			add_location(img, file$5, 69, 8, 1986);
+			attr_dev(div0, "class", "background");
+			add_location(div0, file$5, 68, 4, 1952);
+			attr_dev(span, "class", "typed");
+			add_location(span, file$5, 73, 8, 2097);
+			attr_dev(div1, "class", "");
+			add_location(div1, file$5, 72, 4, 2073);
+			attr_dev(div2, "class", "main-loader justify-content-evenly");
+			add_location(div2, file$5, 67, 0, 1881);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div2, anchor);
-			append_dev(div2, div0);
-			append_dev(div0, img);
-			append_dev(div2, t0);
+			insert_hydration_dev(target, div2, anchor);
+			append_hydration_dev(div2, div0);
+			append_hydration_dev(div0, img);
+			append_hydration_dev(div2, t0);
 			mount_component(loader, div2, null);
-			append_dev(div2, t1);
-			append_dev(div2, div1);
-			append_dev(div1, span);
+			append_hydration_dev(div2, t1);
+			append_hydration_dev(div2, div1);
+			append_hydration_dev(div1, span);
+			append_hydration_dev(span, t2);
 			/*span_binding*/ ctx[5](span);
 			/*div2_binding*/ ctx[6](div2);
 			current = true;
@@ -6619,7 +7034,7 @@ function instance$6($$self, $$props, $$invalidate) {
 		}
 
 		if (isEmpty(phrase)) {
-			for (let i = 0; i < 4; i++) {
+			for (let i = 0; i < 10; i++) {
 				phrase.push(messages[Math.floor(Math.random() * messages.length)]);
 			}
 
@@ -6639,7 +7054,10 @@ function instance$6($$self, $$props, $$invalidate) {
 
 						setTimeout(
 							() => {
-								elem.classList.add("d-none");
+								NoScroll.disable().then(() => {
+									elem.classList.add("d-none");
+									pleaseStop = false;
+								});
 							},
 							500
 						);
@@ -6651,6 +7069,7 @@ function instance$6($$self, $$props, $$invalidate) {
 
 		unsub = loading$1.subscribe(value => {
 			if (false === (pleaseStop = !value)) {
+				NoScroll.enable();
 				typed.start();
 				elem.classList.remove("d-none");
 			}
@@ -6697,6 +7116,7 @@ function instance$6($$self, $$props, $$invalidate) {
 		isEmpty,
 		loading: loading$1,
 		messages,
+		NoScroll,
 		phrase,
 		loop,
 		speed,
@@ -7404,6 +7824,7 @@ const file$4 = "src\\components\\Heading.svelte";
 function create_if_block$3(ctx) {
 	let div1;
 	let h3;
+	let t0;
 	let t1;
 	let div0;
 	let t2;
@@ -7414,12 +7835,32 @@ function create_if_block$3(ctx) {
 		c: function create() {
 			div1 = element("div");
 			h3 = element("h3");
-			h3.textContent = `${/*title*/ ctx[3]}`;
+			t0 = text(/*title*/ ctx[3]);
 			t1 = space();
 			div0 = element("div");
 			if (if_block0) if_block0.c();
 			t2 = space();
 			if (if_block1) if_block1.c();
+			this.h();
+		},
+		l: function claim(nodes) {
+			div1 = claim_element(nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			h3 = claim_element(div1_nodes, "H3", { class: true });
+			var h3_nodes = children(h3);
+			t0 = claim_text(h3_nodes, /*title*/ ctx[3]);
+			h3_nodes.forEach(detach_dev);
+			t1 = claim_space(div1_nodes);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+			if (if_block0) if_block0.l(div0_nodes);
+			t2 = claim_space(div0_nodes);
+			if (if_block1) if_block1.l(div0_nodes);
+			div0_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(h3, "class", "heading-title text-uppercase mb-3");
 			add_location(h3, file$4, 20, 8, 545);
 			attr_dev(div0, "class", "d-flex flex-column flex-lg-row align-items-center");
@@ -7428,12 +7869,13 @@ function create_if_block$3(ctx) {
 			add_location(div1, file$4, 19, 4, 508);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div1, anchor);
-			append_dev(div1, h3);
-			append_dev(div1, t1);
-			append_dev(div1, div0);
+			insert_hydration_dev(target, div1, anchor);
+			append_hydration_dev(div1, h3);
+			append_hydration_dev(h3, t0);
+			append_hydration_dev(div1, t1);
+			append_hydration_dev(div1, div0);
 			if (if_block0) if_block0.m(div0, null);
-			append_dev(div0, t2);
+			append_hydration_dev(div0, t2);
 			if (if_block1) if_block1.m(div0, null);
 		},
 		p: function update(ctx, dirty) {
@@ -7464,6 +7906,7 @@ function create_if_block_2(ctx) {
 	let i;
 	let t0;
 	let span;
+	let t1;
 
 	const block = {
 		c: function create() {
@@ -7471,7 +7914,23 @@ function create_if_block_2(ctx) {
 			i = element("i");
 			t0 = space();
 			span = element("span");
-			span.textContent = "Voir la bande annonce";
+			t1 = text("Voir la bande annonce");
+			this.h();
+		},
+		l: function claim(nodes) {
+			a = claim_element(nodes, "A", { href: true, target: true, class: true });
+			var a_nodes = children(a);
+			i = claim_element(a_nodes, "I", { class: true, size: true });
+			children(i).forEach(detach_dev);
+			t0 = claim_space(a_nodes);
+			span = claim_element(a_nodes, "SPAN", {});
+			var span_nodes = children(span);
+			t1 = claim_text(span_nodes, "Voir la bande annonce");
+			span_nodes.forEach(detach_dev);
+			a_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(i, "class", "ng-play-arrow");
 			attr_dev(i, "size", "32");
 			add_location(i, file$4, 31, 20, 933);
@@ -7482,10 +7941,11 @@ function create_if_block_2(ctx) {
 			add_location(a, file$4, 26, 16, 741);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, a, anchor);
-			append_dev(a, i);
-			append_dev(a, t0);
-			append_dev(a, span);
+			insert_hydration_dev(target, a, anchor);
+			append_hydration_dev(a, i);
+			append_hydration_dev(a, t0);
+			append_hydration_dev(a, span);
+			append_hydration_dev(span, t1);
 		},
 		p: noop$1,
 		d: function destroy(detaching) {
@@ -7510,6 +7970,7 @@ function create_if_block_1$2(ctx) {
 	let i;
 	let t0;
 	let span;
+	let t1;
 	let mounted;
 	let dispose;
 
@@ -7519,7 +7980,23 @@ function create_if_block_1$2(ctx) {
 			i = element("i");
 			t0 = space();
 			span = element("span");
-			span.textContent = "Plus d'infos";
+			t1 = text("Plus d'infos");
+			this.h();
+		},
+		l: function claim(nodes) {
+			a = claim_element(nodes, "A", { href: true, class: true });
+			var a_nodes = children(a);
+			i = claim_element(a_nodes, "I", { class: true, size: true });
+			children(i).forEach(detach_dev);
+			t0 = claim_space(a_nodes);
+			span = claim_element(a_nodes, "SPAN", {});
+			var span_nodes = children(span);
+			t1 = claim_text(span_nodes, "Plus d'infos");
+			span_nodes.forEach(detach_dev);
+			a_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(i, "class", "ng-info");
 			attr_dev(i, "size", "32");
 			add_location(i, file$4, 41, 20, 1320);
@@ -7529,10 +8006,11 @@ function create_if_block_1$2(ctx) {
 			add_location(a, file$4, 36, 16, 1102);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, a, anchor);
-			append_dev(a, i);
-			append_dev(a, t0);
-			append_dev(a, span);
+			insert_hydration_dev(target, a, anchor);
+			append_hydration_dev(a, i);
+			append_hydration_dev(a, t0);
+			append_hydration_dev(a, span);
+			append_hydration_dev(span, t1);
 
 			if (!mounted) {
 				dispose = action_destroyer(links.call(null, a));
@@ -7568,11 +8046,12 @@ function create_fragment$5(ctx) {
 			if_block_anchor = empty();
 		},
 		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+			if (if_block) if_block.l(nodes);
+			if_block_anchor = empty();
 		},
 		m: function mount(target, anchor) {
 			if (if_block) if_block.m(target, anchor);
-			insert_dev(target, if_block_anchor, anchor);
+			insert_hydration_dev(target, if_block_anchor, anchor);
 		},
 		p: function update(ctx, [dirty]) {
 			if (/*found*/ ctx[4] || /*force*/ ctx[0]) {
@@ -7719,6 +8198,24 @@ function create_fragment$4(ctx) {
 			img = element("img");
 			t1 = space();
 			div0 = element("div");
+			this.h();
+		},
+		l: function claim(nodes) {
+			claim_component(heading.$$.fragment, nodes);
+			t0 = claim_space(nodes);
+			div2 = claim_element(nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			div1 = claim_element(div2_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			img = claim_element(div1_nodes, "IMG", { src: true, alt: true, class: true });
+			t1 = claim_space(div1_nodes);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			children(div0).forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			div2_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[0].cover.w1280)) attr_dev(img, "src", img_src_value);
 			attr_dev(img, "alt", "affiche du film");
 			attr_dev(img, "class", "");
@@ -7730,17 +8227,14 @@ function create_fragment$4(ctx) {
 			attr_dev(div2, "class", "cover");
 			add_location(div2, file$3, 13, 0, 335);
 		},
-		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-		},
 		m: function mount(target, anchor) {
 			mount_component(heading, target, anchor);
-			insert_dev(target, t0, anchor);
-			insert_dev(target, div2, anchor);
-			append_dev(div2, div1);
-			append_dev(div1, img);
-			append_dev(div1, t1);
-			append_dev(div1, div0);
+			insert_hydration_dev(target, t0, anchor);
+			insert_hydration_dev(target, div2, anchor);
+			append_hydration_dev(div2, div1);
+			append_hydration_dev(div1, img);
+			append_hydration_dev(div1, t1);
+			append_hydration_dev(div1, div0);
 			current = true;
 
 			if (!mounted) {
@@ -12586,6 +13080,7 @@ function get_each_context_1$1(ctx, list, i) {
 function create_if_block_1$1(ctx) {
 	let div4;
 	let h3;
+	let t0;
 	let t1;
 	let div3;
 	let div1;
@@ -12607,7 +13102,7 @@ function create_if_block_1$1(ctx) {
 		c: function create() {
 			div4 = element("div");
 			h3 = element("h3");
-			h3.textContent = "Les Films - A trouver";
+			t0 = text("Les Films - A trouver");
 			t1 = space();
 			div3 = element("div");
 			div1 = element("div");
@@ -12620,6 +13115,40 @@ function create_if_block_1$1(ctx) {
 			t2 = space();
 			div2 = element("div");
 			i = element("i");
+			this.h();
+		},
+		l: function claim(nodes) {
+			div4 = claim_element(nodes, "DIV", { class: true });
+			var div4_nodes = children(div4);
+			h3 = claim_element(div4_nodes, "H3", { class: true });
+			var h3_nodes = children(h3);
+			t0 = claim_text(h3_nodes, "Les Films - A trouver");
+			h3_nodes.forEach(detach_dev);
+			t1 = claim_space(div4_nodes);
+			div3 = claim_element(div4_nodes, "DIV", { class: true });
+			var div3_nodes = children(div3);
+			div1 = claim_element(div3_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].l(div0_nodes);
+			}
+
+			div0_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			t2 = claim_space(div3_nodes);
+			div2 = claim_element(div3_nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			i = claim_element(div2_nodes, "I", { class: true, size: true });
+			children(i).forEach(detach_dev);
+			div2_nodes.forEach(detach_dev);
+			div3_nodes.forEach(detach_dev);
+			div4_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(h3, "class", "my-3");
 			add_location(h3, file$2, 19, 8, 571);
 			attr_dev(div0, "class", "swiper-wrapper d-flex");
@@ -12637,12 +13166,13 @@ function create_if_block_1$1(ctx) {
 			add_location(div4, file$2, 18, 4, 519);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div4, anchor);
-			append_dev(div4, h3);
-			append_dev(div4, t1);
-			append_dev(div4, div3);
-			append_dev(div3, div1);
-			append_dev(div1, div0);
+			insert_hydration_dev(target, div4, anchor);
+			append_hydration_dev(div4, h3);
+			append_hydration_dev(h3, t0);
+			append_hydration_dev(div4, t1);
+			append_hydration_dev(div4, div3);
+			append_hydration_dev(div3, div1);
+			append_hydration_dev(div1, div0);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				if (each_blocks[i]) {
@@ -12650,9 +13180,9 @@ function create_if_block_1$1(ctx) {
 				}
 			}
 
-			append_dev(div3, t2);
-			append_dev(div3, div2);
-			append_dev(div2, i);
+			append_hydration_dev(div3, t2);
+			append_hydration_dev(div3, div2);
+			append_hydration_dev(div2, i);
 
 			if (!mounted) {
 				dispose = action_destroyer(initiateSwiper.call(null, div1));
@@ -12722,6 +13252,23 @@ function create_each_block_1$1(ctx) {
 			a = element("a");
 			img = element("img");
 			t = space();
+			this.h();
+		},
+		l: function claim(nodes) {
+			div1 = claim_element(nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+			a = claim_element(div0_nodes, "A", { href: true });
+			var a_nodes = children(a);
+			img = claim_element(a_nodes, "IMG", { src: true, alt: true });
+			a_nodes.forEach(detach_dev);
+			div0_nodes.forEach(detach_dev);
+			t = claim_space(div1_nodes);
+			div1_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[4].cover.w780)) attr_dev(img, "src", img_src_value);
 			attr_dev(img, "alt", "Film à deviner");
 			add_location(img, file$2, 29, 36, 1166);
@@ -12733,11 +13280,11 @@ function create_each_block_1$1(ctx) {
 			add_location(div1, file$2, 25, 24, 877);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div1, anchor);
-			append_dev(div1, div0);
-			append_dev(div0, a);
-			append_dev(a, img);
-			append_dev(div1, t);
+			insert_hydration_dev(target, div1, anchor);
+			append_hydration_dev(div1, div0);
+			append_hydration_dev(div0, a);
+			append_hydration_dev(a, img);
+			append_hydration_dev(div1, t);
 
 			if (!mounted) {
 				dispose = [
@@ -12779,6 +13326,7 @@ function create_each_block_1$1(ctx) {
 function create_if_block$2(ctx) {
 	let div4;
 	let h3;
+	let t0;
 	let t1;
 	let div3;
 	let div1;
@@ -12800,7 +13348,7 @@ function create_if_block$2(ctx) {
 		c: function create() {
 			div4 = element("div");
 			h3 = element("h3");
-			h3.textContent = "Les Films - Trouvés";
+			t0 = text("Les Films - Trouvés");
 			t1 = space();
 			div3 = element("div");
 			div1 = element("div");
@@ -12813,6 +13361,40 @@ function create_if_block$2(ctx) {
 			t2 = space();
 			div2 = element("div");
 			i = element("i");
+			this.h();
+		},
+		l: function claim(nodes) {
+			div4 = claim_element(nodes, "DIV", { class: true });
+			var div4_nodes = children(div4);
+			h3 = claim_element(div4_nodes, "H3", { class: true });
+			var h3_nodes = children(h3);
+			t0 = claim_text(h3_nodes, "Les Films - Trouvés");
+			h3_nodes.forEach(detach_dev);
+			t1 = claim_space(div4_nodes);
+			div3 = claim_element(div4_nodes, "DIV", { class: true });
+			var div3_nodes = children(div3);
+			div1 = claim_element(div3_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].l(div0_nodes);
+			}
+
+			div0_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			t2 = claim_space(div3_nodes);
+			div2 = claim_element(div3_nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			i = claim_element(div2_nodes, "I", { class: true, size: true });
+			children(i).forEach(detach_dev);
+			div2_nodes.forEach(detach_dev);
+			div3_nodes.forEach(detach_dev);
+			div4_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(h3, "class", "my-3 px-0");
 			add_location(h3, file$2, 49, 8, 1799);
 			attr_dev(div0, "class", "swiper-wrapper d-flex");
@@ -12830,12 +13412,13 @@ function create_if_block$2(ctx) {
 			add_location(div4, file$2, 48, 4, 1747);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div4, anchor);
-			append_dev(div4, h3);
-			append_dev(div4, t1);
-			append_dev(div4, div3);
-			append_dev(div3, div1);
-			append_dev(div1, div0);
+			insert_hydration_dev(target, div4, anchor);
+			append_hydration_dev(div4, h3);
+			append_hydration_dev(h3, t0);
+			append_hydration_dev(div4, t1);
+			append_hydration_dev(div4, div3);
+			append_hydration_dev(div3, div1);
+			append_hydration_dev(div1, div0);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				if (each_blocks[i]) {
@@ -12843,9 +13426,9 @@ function create_if_block$2(ctx) {
 				}
 			}
 
-			append_dev(div3, t2);
-			append_dev(div3, div2);
-			append_dev(div2, i);
+			append_hydration_dev(div3, t2);
+			append_hydration_dev(div3, div2);
+			append_hydration_dev(div2, i);
 
 			if (!mounted) {
 				dispose = action_destroyer(initiateSwiper.call(null, div1));
@@ -12922,6 +13505,28 @@ function create_each_block$1(ctx) {
 			a = element("a");
 			img = element("img");
 			t2 = space();
+			this.h();
+		},
+		l: function claim(nodes) {
+			div2 = claim_element(nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			div1 = claim_element(div2_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+			t0 = claim_text(div0_nodes, t0_value);
+			div0_nodes.forEach(detach_dev);
+			t1 = claim_space(div1_nodes);
+			a = claim_element(div1_nodes, "A", { href: true });
+			var a_nodes = children(a);
+			img = claim_element(a_nodes, "IMG", { src: true, alt: true });
+			a_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			t2 = claim_space(div2_nodes);
+			div2_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(div0, "class", "title");
 			add_location(div0, file$2, 56, 32, 2217);
 			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[4].poster.w342)) attr_dev(img, "src", img_src_value);
@@ -12935,14 +13540,14 @@ function create_each_block$1(ctx) {
 			add_location(div2, file$2, 54, 24, 2103);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div2, anchor);
-			append_dev(div2, div1);
-			append_dev(div1, div0);
-			append_dev(div0, t0);
-			append_dev(div1, t1);
-			append_dev(div1, a);
-			append_dev(a, img);
-			append_dev(div2, t2);
+			insert_hydration_dev(target, div2, anchor);
+			append_hydration_dev(div2, div1);
+			append_hydration_dev(div1, div0);
+			append_hydration_dev(div0, t0);
+			append_hydration_dev(div1, t1);
+			append_hydration_dev(div1, a);
+			append_hydration_dev(a, img);
+			append_hydration_dev(div2, t2);
 
 			if (!mounted) {
 				dispose = action_destroyer(/*onload*/ ctx[2].call(null, img));
@@ -12992,13 +13597,16 @@ function create_fragment$3(ctx) {
 			if_block1_anchor = empty();
 		},
 		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+			if (if_block0) if_block0.l(nodes);
+			t = claim_space(nodes);
+			if (if_block1) if_block1.l(nodes);
+			if_block1_anchor = empty();
 		},
 		m: function mount(target, anchor) {
 			if (if_block0) if_block0.m(target, anchor);
-			insert_dev(target, t, anchor);
+			insert_hydration_dev(target, t, anchor);
 			if (if_block1) if_block1.m(target, anchor);
-			insert_dev(target, if_block1_anchor, anchor);
+			insert_hydration_dev(target, if_block1_anchor, anchor);
 		},
 		p: function update(ctx, [dirty]) {
 			if (/*notfound*/ ctx[1].length) {
@@ -13132,6 +13740,7 @@ function get_each_context_1(ctx, list, i) {
 function create_if_block_1(ctx) {
 	let div4;
 	let h3;
+	let t0;
 	let t1;
 	let div3;
 	let div1;
@@ -13153,7 +13762,7 @@ function create_if_block_1(ctx) {
 		c: function create() {
 			div4 = element("div");
 			h3 = element("h3");
-			h3.textContent = "Les Séries - A trouver";
+			t0 = text("Les Séries - A trouver");
 			t1 = space();
 			div3 = element("div");
 			div1 = element("div");
@@ -13166,6 +13775,40 @@ function create_if_block_1(ctx) {
 			t2 = space();
 			div2 = element("div");
 			i = element("i");
+			this.h();
+		},
+		l: function claim(nodes) {
+			div4 = claim_element(nodes, "DIV", { class: true });
+			var div4_nodes = children(div4);
+			h3 = claim_element(div4_nodes, "H3", { class: true });
+			var h3_nodes = children(h3);
+			t0 = claim_text(h3_nodes, "Les Séries - A trouver");
+			h3_nodes.forEach(detach_dev);
+			t1 = claim_space(div4_nodes);
+			div3 = claim_element(div4_nodes, "DIV", { class: true });
+			var div3_nodes = children(div3);
+			div1 = claim_element(div3_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].l(div0_nodes);
+			}
+
+			div0_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			t2 = claim_space(div3_nodes);
+			div2 = claim_element(div3_nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			i = claim_element(div2_nodes, "I", { class: true, size: true });
+			children(i).forEach(detach_dev);
+			div2_nodes.forEach(detach_dev);
+			div3_nodes.forEach(detach_dev);
+			div4_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(h3, "class", "my-3");
 			add_location(h3, file$1, 18, 8, 539);
 			attr_dev(div0, "class", "swiper-wrapper d-flex");
@@ -13183,12 +13826,13 @@ function create_if_block_1(ctx) {
 			add_location(div4, file$1, 17, 4, 488);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div4, anchor);
-			append_dev(div4, h3);
-			append_dev(div4, t1);
-			append_dev(div4, div3);
-			append_dev(div3, div1);
-			append_dev(div1, div0);
+			insert_hydration_dev(target, div4, anchor);
+			append_hydration_dev(div4, h3);
+			append_hydration_dev(h3, t0);
+			append_hydration_dev(div4, t1);
+			append_hydration_dev(div4, div3);
+			append_hydration_dev(div3, div1);
+			append_hydration_dev(div1, div0);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				if (each_blocks[i]) {
@@ -13196,9 +13840,9 @@ function create_if_block_1(ctx) {
 				}
 			}
 
-			append_dev(div3, t2);
-			append_dev(div3, div2);
-			append_dev(div2, i);
+			append_hydration_dev(div3, t2);
+			append_hydration_dev(div3, div2);
+			append_hydration_dev(div2, i);
 
 			if (!mounted) {
 				dispose = action_destroyer(initiateSwiper.call(null, div1));
@@ -13268,6 +13912,23 @@ function create_each_block_1(ctx) {
 			a = element("a");
 			img = element("img");
 			t = space();
+			this.h();
+		},
+		l: function claim(nodes) {
+			div1 = claim_element(nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+			a = claim_element(div0_nodes, "A", { href: true });
+			var a_nodes = children(a);
+			img = claim_element(a_nodes, "IMG", { src: true, alt: true });
+			a_nodes.forEach(detach_dev);
+			div0_nodes.forEach(detach_dev);
+			t = claim_space(div1_nodes);
+			div1_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[4].cover.w780)) attr_dev(img, "src", img_src_value);
 			attr_dev(img, "alt", "Série à deviner");
 			add_location(img, file$1, 28, 36, 1121);
@@ -13279,11 +13940,11 @@ function create_each_block_1(ctx) {
 			add_location(div1, file$1, 24, 24, 840);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div1, anchor);
-			append_dev(div1, div0);
-			append_dev(div0, a);
-			append_dev(a, img);
-			append_dev(div1, t);
+			insert_hydration_dev(target, div1, anchor);
+			append_hydration_dev(div1, div0);
+			append_hydration_dev(div0, a);
+			append_hydration_dev(a, img);
+			append_hydration_dev(div1, t);
 
 			if (!mounted) {
 				dispose = [
@@ -13325,6 +13986,7 @@ function create_each_block_1(ctx) {
 function create_if_block$1(ctx) {
 	let div4;
 	let h3;
+	let t0;
 	let t1;
 	let div3;
 	let div1;
@@ -13346,7 +14008,7 @@ function create_if_block$1(ctx) {
 		c: function create() {
 			div4 = element("div");
 			h3 = element("h3");
-			h3.textContent = "Les Séries - Trouvées";
+			t0 = text("Les Séries - Trouvées");
 			t1 = space();
 			div3 = element("div");
 			div1 = element("div");
@@ -13359,6 +14021,40 @@ function create_if_block$1(ctx) {
 			t2 = space();
 			div2 = element("div");
 			i = element("i");
+			this.h();
+		},
+		l: function claim(nodes) {
+			div4 = claim_element(nodes, "DIV", { class: true });
+			var div4_nodes = children(div4);
+			h3 = claim_element(div4_nodes, "H3", { class: true });
+			var h3_nodes = children(h3);
+			t0 = claim_text(h3_nodes, "Les Séries - Trouvées");
+			h3_nodes.forEach(detach_dev);
+			t1 = claim_space(div4_nodes);
+			div3 = claim_element(div4_nodes, "DIV", { class: true });
+			var div3_nodes = children(div3);
+			div1 = claim_element(div3_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].l(div0_nodes);
+			}
+
+			div0_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			t2 = claim_space(div3_nodes);
+			div2 = claim_element(div3_nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			i = claim_element(div2_nodes, "I", { class: true, size: true });
+			children(i).forEach(detach_dev);
+			div2_nodes.forEach(detach_dev);
+			div3_nodes.forEach(detach_dev);
+			div4_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(h3, "class", "my-3 px-0");
 			add_location(h3, file$1, 48, 8, 1735);
 			attr_dev(div0, "class", "swiper-wrapper d-flex");
@@ -13376,12 +14072,13 @@ function create_if_block$1(ctx) {
 			add_location(div4, file$1, 47, 4, 1684);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div4, anchor);
-			append_dev(div4, h3);
-			append_dev(div4, t1);
-			append_dev(div4, div3);
-			append_dev(div3, div1);
-			append_dev(div1, div0);
+			insert_hydration_dev(target, div4, anchor);
+			append_hydration_dev(div4, h3);
+			append_hydration_dev(h3, t0);
+			append_hydration_dev(div4, t1);
+			append_hydration_dev(div4, div3);
+			append_hydration_dev(div3, div1);
+			append_hydration_dev(div1, div0);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				if (each_blocks[i]) {
@@ -13389,9 +14086,9 @@ function create_if_block$1(ctx) {
 				}
 			}
 
-			append_dev(div3, t2);
-			append_dev(div3, div2);
-			append_dev(div2, i);
+			append_hydration_dev(div3, t2);
+			append_hydration_dev(div3, div2);
+			append_hydration_dev(div2, i);
 
 			if (!mounted) {
 				dispose = action_destroyer(initiateSwiper.call(null, div1));
@@ -13468,6 +14165,28 @@ function create_each_block(ctx) {
 			a = element("a");
 			img = element("img");
 			t2 = space();
+			this.h();
+		},
+		l: function claim(nodes) {
+			div2 = claim_element(nodes, "DIV", { class: true });
+			var div2_nodes = children(div2);
+			div1 = claim_element(div2_nodes, "DIV", { class: true });
+			var div1_nodes = children(div1);
+			div0 = claim_element(div1_nodes, "DIV", { class: true });
+			var div0_nodes = children(div0);
+			t0 = claim_text(div0_nodes, t0_value);
+			div0_nodes.forEach(detach_dev);
+			t1 = claim_space(div1_nodes);
+			a = claim_element(div1_nodes, "A", { href: true });
+			var a_nodes = children(a);
+			img = claim_element(a_nodes, "IMG", { src: true, alt: true });
+			a_nodes.forEach(detach_dev);
+			div1_nodes.forEach(detach_dev);
+			t2 = claim_space(div2_nodes);
+			div2_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(div0, "class", "title");
 			add_location(div0, file$1, 55, 32, 2148);
 			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[4].poster.w342)) attr_dev(img, "src", img_src_value);
@@ -13481,14 +14200,14 @@ function create_each_block(ctx) {
 			add_location(div2, file$1, 53, 24, 2036);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, div2, anchor);
-			append_dev(div2, div1);
-			append_dev(div1, div0);
-			append_dev(div0, t0);
-			append_dev(div1, t1);
-			append_dev(div1, a);
-			append_dev(a, img);
-			append_dev(div2, t2);
+			insert_hydration_dev(target, div2, anchor);
+			append_hydration_dev(div2, div1);
+			append_hydration_dev(div1, div0);
+			append_hydration_dev(div0, t0);
+			append_hydration_dev(div1, t1);
+			append_hydration_dev(div1, a);
+			append_hydration_dev(a, img);
+			append_hydration_dev(div2, t2);
 
 			if (!mounted) {
 				dispose = action_destroyer(/*onload*/ ctx[2].call(null, img));
@@ -13538,13 +14257,16 @@ function create_fragment$2(ctx) {
 			if_block1_anchor = empty();
 		},
 		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+			if (if_block0) if_block0.l(nodes);
+			t = claim_space(nodes);
+			if (if_block1) if_block1.l(nodes);
+			if_block1_anchor = empty();
 		},
 		m: function mount(target, anchor) {
 			if (if_block0) if_block0.m(target, anchor);
-			insert_dev(target, t, anchor);
+			insert_hydration_dev(target, t, anchor);
 			if (if_block1) if_block1.m(target, anchor);
-			insert_dev(target, if_block1_anchor, anchor);
+			insert_hydration_dev(target, if_block1_anchor, anchor);
 		},
 		p: function update(ctx, [dirty]) {
 			if (/*notfound*/ ctx[1].length) {
@@ -13686,11 +14408,18 @@ function create_if_block(ctx) {
 			t1 = space();
 			create_component(series.$$.fragment);
 		},
+		l: function claim(nodes) {
+			claim_component(cover.$$.fragment, nodes);
+			t0 = claim_space(nodes);
+			claim_component(movies.$$.fragment, nodes);
+			t1 = claim_space(nodes);
+			claim_component(series.$$.fragment, nodes);
+		},
 		m: function mount(target, anchor) {
 			mount_component(cover, target, anchor);
-			insert_dev(target, t0, anchor);
+			insert_hydration_dev(target, t0, anchor);
 			mount_component(movies, target, anchor);
-			insert_dev(target, t1, anchor);
+			insert_hydration_dev(target, t1, anchor);
 			mount_component(series, target, anchor);
 			current = true;
 		},
@@ -13743,11 +14472,12 @@ function create_fragment$1(ctx) {
 			if_block_anchor = empty();
 		},
 		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+			if (if_block) if_block.l(nodes);
+			if_block_anchor = empty();
 		},
 		m: function mount(target, anchor) {
 			if (if_block) if_block.m(target, anchor);
-			insert_dev(target, if_block_anchor, anchor);
+			insert_hydration_dev(target, if_block_anchor, anchor);
 			current = true;
 		},
 		p: function update(ctx, [dirty]) {
@@ -13859,6 +14589,9 @@ function create_default_slot_5(ctx) {
 		c: function create() {
 			create_component(home.$$.fragment);
 		},
+		l: function claim(nodes) {
+			claim_component(home.$$.fragment, nodes);
+		},
 		m: function mount(target, anchor) {
 			mount_component(home, target, anchor);
 			current = true;
@@ -13891,15 +14624,27 @@ function create_default_slot_5(ctx) {
 // (27:8) <Route path="tv/*">
 function create_default_slot_4(ctx) {
 	let h1;
+	let t;
 
 	const block = {
 		c: function create() {
 			h1 = element("h1");
-			h1.textContent = "Séries";
+			t = text("Séries");
+			this.h();
+		},
+		l: function claim(nodes) {
+			h1 = claim_element(nodes, "H1", {});
+			var h1_nodes = children(h1);
+			t = claim_text(h1_nodes, "Séries");
+			h1_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			add_location(h1, file, 27, 12, 872);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, h1, anchor);
+			insert_hydration_dev(target, h1, anchor);
+			append_hydration_dev(h1, t);
 		},
 		p: noop$1,
 		d: function destroy(detaching) {
@@ -13921,15 +14666,27 @@ function create_default_slot_4(ctx) {
 // (30:8) <Route path="movies/*">
 function create_default_slot_3(ctx) {
 	let h1;
+	let t;
 
 	const block = {
 		c: function create() {
 			h1 = element("h1");
-			h1.textContent = "Movies";
+			t = text("Movies");
+			this.h();
+		},
+		l: function claim(nodes) {
+			h1 = claim_element(nodes, "H1", {});
+			var h1_nodes = children(h1);
+			t = claim_text(h1_nodes, "Movies");
+			h1_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			add_location(h1, file, 30, 12, 952);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, h1, anchor);
+			insert_hydration_dev(target, h1, anchor);
+			append_hydration_dev(h1, t);
 		},
 		p: noop$1,
 		d: function destroy(detaching) {
@@ -13951,15 +14708,27 @@ function create_default_slot_3(ctx) {
 // (33:8) <Route path="all/*">
 function create_default_slot_2(ctx) {
 	let h1;
+	let t;
 
 	const block = {
 		c: function create() {
 			h1 = element("h1");
-			h1.textContent = "All";
+			t = text("All");
+			this.h();
+		},
+		l: function claim(nodes) {
+			h1 = claim_element(nodes, "H1", {});
+			var h1_nodes = children(h1);
+			t = claim_text(h1_nodes, "All");
+			h1_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			add_location(h1, file, 33, 12, 1029);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, h1, anchor);
+			insert_hydration_dev(target, h1, anchor);
+			append_hydration_dev(h1, t);
 		},
 		p: noop$1,
 		d: function destroy(detaching) {
@@ -13981,15 +14750,27 @@ function create_default_slot_2(ctx) {
 // (37:8) <Route path="details/:id">
 function create_default_slot_1(ctx) {
 	let h1;
+	let t;
 
 	const block = {
 		c: function create() {
 			h1 = element("h1");
-			h1.textContent = "Details";
+			t = text("Details");
+			this.h();
+		},
+		l: function claim(nodes) {
+			h1 = claim_element(nodes, "H1", {});
+			var h1_nodes = children(h1);
+			t = claim_text(h1_nodes, "Details");
+			h1_nodes.forEach(detach_dev);
+			this.h();
+		},
+		h: function hydrate() {
 			add_location(h1, file, 37, 12, 1111);
 		},
 		m: function mount(target, anchor) {
-			insert_dev(target, h1, anchor);
+			insert_hydration_dev(target, h1, anchor);
+			append_hydration_dev(h1, t);
 		},
 		p: noop$1,
 		d: function destroy(detaching) {
@@ -14095,25 +14876,49 @@ function create_default_slot(ctx) {
 			create_component(mainloader.$$.fragment);
 			t6 = space();
 			create_component(footer.$$.fragment);
+			this.h();
+		},
+		l: function claim(nodes) {
+			claim_component(header.$$.fragment, nodes);
+			t0 = claim_space(nodes);
+			main = claim_element(nodes, "MAIN", { id: true });
+			var main_nodes = children(main);
+			claim_component(route0.$$.fragment, main_nodes);
+			t1 = claim_space(main_nodes);
+			claim_component(route1.$$.fragment, main_nodes);
+			t2 = claim_space(main_nodes);
+			claim_component(route2.$$.fragment, main_nodes);
+			t3 = claim_space(main_nodes);
+			claim_component(route3.$$.fragment, main_nodes);
+			t4 = claim_space(main_nodes);
+			claim_component(route4.$$.fragment, main_nodes);
+			main_nodes.forEach(detach_dev);
+			t5 = claim_space(nodes);
+			claim_component(mainloader.$$.fragment, nodes);
+			t6 = claim_space(nodes);
+			claim_component(footer.$$.fragment, nodes);
+			this.h();
+		},
+		h: function hydrate() {
 			attr_dev(main, "id", "app");
 			add_location(main, file, 22, 4, 748);
 		},
 		m: function mount(target, anchor) {
 			mount_component(header, target, anchor);
-			insert_dev(target, t0, anchor);
-			insert_dev(target, main, anchor);
+			insert_hydration_dev(target, t0, anchor);
+			insert_hydration_dev(target, main, anchor);
 			mount_component(route0, main, null);
-			append_dev(main, t1);
+			append_hydration_dev(main, t1);
 			mount_component(route1, main, null);
-			append_dev(main, t2);
+			append_hydration_dev(main, t2);
 			mount_component(route2, main, null);
-			append_dev(main, t3);
+			append_hydration_dev(main, t3);
 			mount_component(route3, main, null);
-			append_dev(main, t4);
+			append_hydration_dev(main, t4);
 			mount_component(route4, main, null);
-			insert_dev(target, t5, anchor);
+			insert_hydration_dev(target, t5, anchor);
 			mount_component(mainloader, target, anchor);
-			insert_dev(target, t6, anchor);
+			insert_hydration_dev(target, t6, anchor);
 			mount_component(footer, target, anchor);
 			current = true;
 		},
@@ -14221,7 +15026,7 @@ function create_fragment(ctx) {
 			create_component(router.$$.fragment);
 		},
 		l: function claim(nodes) {
-			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+			claim_component(router.$$.fragment, nodes);
 		},
 		m: function mount(target, anchor) {
 			mount_component(router, target, anchor);

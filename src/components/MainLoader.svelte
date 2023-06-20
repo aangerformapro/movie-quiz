@@ -6,6 +6,7 @@
     import { loading } from "../App/utils.mjs";
 
     import messages from "../../modules/components/loading-messages.mjs";
+    import NoScroll from "../../modules/components/noscroll.mjs";
 
     export let phrase = [],
         loop = false,
@@ -19,7 +20,7 @@
         }
 
         if (isEmpty(phrase)) {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 10; i++) {
                 phrase.push(
                     messages[Math.floor(Math.random() * messages.length)]
                 );
@@ -38,7 +39,10 @@
                 if (pleaseStop) {
                     typed.stop();
                     setTimeout(() => {
-                        elem.classList.add("d-none");
+                        NoScroll.disable().then(() => {
+                            elem.classList.add("d-none");
+                            pleaseStop = false;
+                        });
                     }, 500);
                 }
             },
@@ -48,6 +52,7 @@
 
         unsub = loading.subscribe((value) => {
             if (false === (pleaseStop = !value)) {
+                NoScroll.enable();
                 typed.start();
                 elem.classList.remove("d-none");
             }

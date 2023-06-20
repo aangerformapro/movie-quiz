@@ -772,7 +772,7 @@ header {
 }
 
 .main-loader {
-  position: absolute;
+  position: fixed;
   z-index: 500;
   top: 0;
   right: 0;
@@ -1084,7 +1084,7 @@ header {
 }
 
 #app .poster.not-found img {
-  filter: grayscale(70%);
+  filter: grayscale(90%);
 }
 
 .ng-dialog--form {

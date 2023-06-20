@@ -3,7 +3,7 @@
 
 @mixin main-loader {
     .main-loader {
-        position: absolute;
+        position: fixed;
         z-index: 500;
         inset: 0;
         background: $netflix-black;
@@ -22,8 +22,4 @@
             margin-right: 8px;
         }
     }
-
-    // :not(:empty) + .main-loader {
-    //     display: none;
-    // }
 }
