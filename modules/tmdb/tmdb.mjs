@@ -2,7 +2,7 @@
 import path from 'node:path';
 import fs, { writeFileSync } from 'node:fs';
 
-import { isArray } from "../utils/utils.mjs";
+import { isArray, isNull } from "../utils/utils.mjs";
 
 // const TMDB_API_SERVER = 'https://api.themoviedb.org';
 const TMDB_IMAGES = '//image.tmdb.org/t/p/';
@@ -99,6 +99,12 @@ const createImageUrls = (endpoints, key) =>
     {
         throw new TypeError("invalid key");
     }
+
+    if (!endpoints)
+    {
+        return result;
+    }
+
     if (!isArray(endpoints))
     {
         endpoints = [endpoints];
@@ -116,11 +122,11 @@ const createImageUrls = (endpoints, key) =>
 
         result.push(obj);
     }
-    return result;
+    return result.length === 1 ? result[0] : result;
 
 };
 
-const parseApiData = (data) =>
+const parseApiData = (data, item = {}) =>
 {
 
     const result = {
@@ -128,8 +134,8 @@ const parseApiData = (data) =>
         original_title: data.original_title ?? data.original_name,
         title: data.title ?? data.name,
         'alt': [],
-        poster: createImageUrls(data.poster_path, 'poster_path'),
-        cover: createImageUrls(data.backdrop_path, 'backdrop_path'),
+        poster: createImageUrls(data.poster_path ?? item.poster_path, 'poster_path'),
+        cover: createImageUrls(data.backdrop_path ?? item.backdrop_path, 'backdrop_path'),
         overview: {
             en: data.overview,
         },
@@ -247,6 +253,18 @@ export default class TheMovieDatabase
     }
 
 
+    static async getImages(id, type = 'movie')
+    {
+
+        if (!id)
+        {
+            throw new TypeError("invalid tv id");
+        }
+
+        const endpoint = '/3/' + type + '/' + id + '/images';
+
+        return await fetch(buildApiUrl(endpoint), this.fetchApiParams).then(resp => resp.json());
+    }
 
 
 
@@ -267,6 +285,7 @@ export default class TheMovieDatabase
 
 
 
+
 (async () =>
 {
 
@@ -274,20 +293,17 @@ export default class TheMovieDatabase
     const dest = 'public/api/1/movies.json', entries = [];
 
 
-    for (let page = 1; page <= 3; page++)
+    for (let page = 1; page <= 4; page++)
     {
         const list = await TheMovieDatabase.discoverMovies(page);
 
         for (let item of list.results)
         {
 
-            const data = parseApiData(await TheMovieDatabase.getMovieInfos(item.id)),
+            const data = parseApiData(await TheMovieDatabase.getMovieInfos(item.id), item),
                 frData = await TheMovieDatabase.getMovieInfos(item.id, 'fr-FR');
 
             data.overview.fr = frData.overview;
-
-
-
             entries.push(data);
 
         }
@@ -306,20 +322,17 @@ export default class TheMovieDatabase
     const dest = 'public/api/1/tv.json', entries = [];
 
 
-    for (let page = 1; page <= 3; page++)
+    for (let page = 1; page <= 4; page++)
     {
         const list = await TheMovieDatabase.discoverSeries(page);
 
         for (let item of list.results)
         {
 
-            const data = parseApiData(await TheMovieDatabase.getSeriesInfos(item.id)),
+            const data = parseApiData(await TheMovieDatabase.getSeriesInfos(item.id), item),
                 frData = await TheMovieDatabase.getSeriesInfos(item.id, 'fr-FR');
 
             data.overview.fr = frData.overview;
-
-
-
             entries.push(data);
 
         }

@@ -1,9 +1,10 @@
 @use 'helpers' as *;
-@use './components/burger' as *;
+
 @use './components/nav' as *;
 @use './components/dialog' as *;
 @use './components/mainloader' as *;
 @use './components/cover' as *;
+@use './components/slides' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -12,13 +13,17 @@
     overflow-x: hidden;
 }
 
-@include burger-btn;
+:focus-visible {
+    outline: none;
+}
+
 @include nav;
 @include dialog;
 @include main-loader;
 
 #app {
     @include cover;
+    @include slides;
 }
 
 // dialog overrides

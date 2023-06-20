@@ -38,24 +38,11 @@
         }
     }
 
-    .background-picture2 {
-        z-index: -3;
-        user-select: none;
-        pointer-events: none;
-        padding: 0;
-
-        img {
+    @include lg {
+        .cover + * {
+            margin-top: -96px;
             position: relative;
-            z-index: -3;
-            object-fit: cover;
-            object-position: center;
-            width: 100vw;
-            height: 550px;
-
-            @include lg {
-                aspect-ratio: 16/10;
-                height: 720px;
-            }
+            z-index: 2;
         }
     }
 }

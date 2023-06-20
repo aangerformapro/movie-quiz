@@ -17,7 +17,7 @@
         unsub();
     });
 
-    $: $src = $current.cover[0].w1280;
+    $: $src = $current.cover.w1280;
 </script>
 
 <!-- Charge l'image du jeu -->

@@ -17,13 +17,12 @@
             <div class="swiper overflow-x-scroll">
                 <div class="swiper-wrapper d-flex">
                     {#each notfound as item}
-                        <div class="swiper-slide poster flat m-2 not-found">
-                            <div class="poster">
+                        <div class="swiper-slide">
+                            <div class="poster flat m-2 not-found">
                                 <!-- <div class="title">Le titre du film</div> -->
                                 <a href="/movies/{item.id}" use:links>
                                     <img
-                                        src={item.cover[0].w300 ??
-                                            item.cover[0].w780}
+                                        src={item.cover.w780}
                                         alt="Film à deviner"
                                     />
                                 </a>
@@ -34,14 +33,7 @@
             </div>
 
             <div class="chevron-next">
-                <svg
-                    fill="currentColor"
-                    class="ng-svg-icon"
-                    width="32"
-                    height="32"
-                >
-                    <i class="ng-chevron-right" />
-                </svg>
+                <i class="ng-chevron-right" size="32" />
             </div>
         </div>
     </div>
@@ -53,28 +45,23 @@
             <div class="swiper overflow-x-scroll">
                 <div class="swiper-wrapper d-flex">
                     {#each found as item}
-                        <div class="swiper-slide poster m-2">
-                            <div class="title">{item.title}</div>
-                            <a href="/details/{item.id}">
-                                <img
-                                    src={item.poster[0].w342}
-                                    alt="Poster du film"
-                                />
-                            </a>
+                        <div class="swiper-slide">
+                            <div class="poster m-2">
+                                <div class="title">{item.title}</div>
+                                <a href="/details/{item.id}">
+                                    <img
+                                        src={item.poster.w342}
+                                        alt="Poster du film"
+                                    />
+                                </a>
+                            </div>
                         </div>
                     {/each}
                 </div>
             </div>
 
             <div class="chevron-next">
-                <svg
-                    fill="currentColor"
-                    class="ng-svg-icon"
-                    width="32"
-                    height="32"
-                >
-                    <i class="ng-chevron-right" />
-                </svg>
+                <i class="ng-chevron-right" size="32" />
             </div>
         </div>
     </div>

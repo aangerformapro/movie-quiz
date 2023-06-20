@@ -1,0 +1,40 @@
+@use '../helpers' as *;
+@use 'poster' as *;
+
+@use 'swiper';
+
+@mixin slides {
+    .section {
+        overflow: hidden;
+        @include padding-y(2vh);
+        max-width: $cover-max-width;
+        h3 {
+            @include font-size(25px, 900, 24px);
+            text-transform: uppercase;
+            text-align: center;
+
+            @include lg {
+                font-size: 28px;
+            }
+        }
+        .swiper-slide {
+            width: auto;
+        }
+    }
+
+    .chevron-next {
+        display: none;
+
+        &.swiper-button-disabled {
+            color: $netflix-gray;
+            pointer-events: none;
+        }
+
+        @include lg {
+            @include flex-center;
+            margin-left: 16px;
+        }
+    }
+
+    @include poster;
+}
