@@ -62,7 +62,7 @@
                         <div class="swiper-slide">
                             <div class="poster m-2">
                                 <div class="title">{item.title}</div>
-                                <a href="/details/{item.id}">
+                                <a href="/details/{item.id}" use:links>
                                     <img
                                         src={item.poster.w342 ?? NOPIC}
                                         alt="Poster du film"

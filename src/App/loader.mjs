@@ -2,7 +2,7 @@
  * Load Resources observer
  */
 
-import { writable, readable, get, derived } from "svelte/store";
+import { writable } from "svelte/store";
 import { isElement, isFunction } from "../../modules/utils/utils.mjs";
 import emitter from "../../modules/utils/emitter.mjs";
 

@@ -152,6 +152,25 @@ export const all = derived(
 );
 
 
+/**
+ * Notification control
+ */
+
+export class Notification
+{
+    static NONE = new Notification(0);
+    static SUCCESS = new Notification(1);
+    static FAILURE = new Notification(2);
+
+    display()
+    {
+        notify.set(this);
+    }
+}
+
+export const notify = writable(Notification.NONE);
+
+
 export function isFound(item)
 {
     item = getEntry(item);
@@ -224,6 +243,19 @@ export function getEntry(id)
     return get(all).find(item => item.id === id) ?? null;
 }
 
+
+
+export function getAvailableTitles(item)
+{
+
+    const result = [];
+    item = getEntry(item);
+
+
+
+
+    return result;
+}
 
 export function getYoutubeUrl(item)
 {

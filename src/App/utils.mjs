@@ -1,4 +1,4 @@
-import { writable, get, derived } from "svelte/store";
+import { writable, derived } from "svelte/store";
 import { ready } from "./game.mjs";
 import { loading as rload } from "./loader.mjs";
 

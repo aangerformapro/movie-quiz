@@ -8,30 +8,21 @@
     import Dialog from "../../modules/components/dialog.mjs";
     import GameForm from "../components/GameForm.svelte";
     import Notify from "../components/Notify.svelte";
+    import { writable } from "svelte/store";
 
     const params = useParams(),
         navigate = useNavigate();
 
-    let item;
+    const item = writable(null);
 
-    onMount(() => {
-        if (!$params.id) {
-            let id = getRandom(getNotFound($movies), 1)[0].id;
-            navigate("" + id);
-            return;
-        }
-        item = getEntry(decode($params.id));
-        if (!item) {
-            Dialog.alert("Movie not found !").then(() => history.back());
-            return;
-        }
-    });
+    $: !$params.id && navigate("" + getRandom(getNotFound($movies), 1)[0].id);
+    $: $item = getEntry(decode($params.id));
 </script>
 
-{#if item && item.id}
-    <Cover {item}>
+{#if $item}
+    <Cover item={$item}>
         <Notify />
     </Cover>
-    <GameForm />
+    <GameForm item={$item} />
     <Movies />
 {/if}
