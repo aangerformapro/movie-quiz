@@ -7,14 +7,10 @@ import { BackedEnum, getUrl, isFunction } from "./utils.mjs";
 
 
 
-
-
-
-
-
 export default class HistoryEvent extends BackedEnum
 {
 
+    static ALL = new HistoryEvent('all');
     static PUSH = new HistoryEvent('push');
     static REPLACE = new HistoryEvent('replace');
     static POP = new HistoryEvent('pop');
@@ -28,12 +24,31 @@ export default class HistoryEvent extends BackedEnum
             throw new TypeError("fn is not a Function");
         }
 
+
+        if (this === ALL)
+        {
+
+            const unsub = HistoryEvent.cases()
+                .filter(x => x !== this)
+                .map(x => x.listen(fn));
+
+            return () =>
+            {
+                while (unsub.length > 0)
+                {
+                    unsub.shift()();
+                }
+            };
+
+        }
+
+
         const listeners = EventListeners.get(this);
 
 
-        if (!detach.has(this))
+        if (!detach.has($this))
         {
-            attach(this);
+            attach($this);
         }
 
         listeners.add(fn);
@@ -51,6 +66,7 @@ export default class HistoryEvent extends BackedEnum
 }
 
 const
+    ALL = HistoryEvent.ALL,
     PUSH = HistoryEvent.PUSH,
     REPLACE = HistoryEvent.REPLACE,
     POP = HistoryEvent.POP,
@@ -121,7 +137,7 @@ function attach(type)
             }
             detach.delete(type);
         });
-    } else
+    } else if (type === REPLACE)
     {
         const
             { replaceState } = history,
