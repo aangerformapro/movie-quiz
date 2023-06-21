@@ -168,7 +168,7 @@ export class Notification
     }
 }
 
-export const notify = writable(Notification.NONE);
+export const notify = writable(Notification.NONE, set => set(Notification.NONE));
 
 
 export function isFound(item)
@@ -251,8 +251,10 @@ export function getAvailableTitles(item)
     const result = [];
     item = getEntry(item);
 
-
-
+    if (item && item.alt)
+    {
+        result.push(item.title, item.original_title, ...item.alt);
+    }
 
     return result;
 }

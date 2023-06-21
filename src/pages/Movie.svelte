@@ -13,16 +13,16 @@
     const params = useParams(),
         navigate = useNavigate();
 
-    const item = writable(null);
+    let item;
 
     $: !$params.id && navigate("" + getRandom(getNotFound($movies), 1)[0].id);
-    $: $item = getEntry(decode($params.id));
+    $: item = getEntry(decode($params.id));
 </script>
 
-{#if $item}
-    <Cover item={$item}>
+{#if item}
+    <Cover {item}>
         <Notify />
     </Cover>
-    <GameForm item={$item} />
+    <GameForm {item} />
     <Movies />
 {/if}

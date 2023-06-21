@@ -1,23 +1,20 @@
 <script>
-    import TVPage from "./pages/TVPage.svelte";
+    import TV from "./pages/TV.svelte";
     import Details from "./pages/Details.svelte";
-    import { Router, Route, Link } from "svelte-navigator";
+    import { Router, Route } from "svelte-navigator";
     import Header from "./components/Header.svelte";
     import Footer from "./components/Footer.svelte";
     import MainLoader from "./components/MainLoader.svelte";
     import Home from "./pages/Home.svelte";
     import { ready, current } from "./App/game.mjs";
+
     // auto replace i.ng-* by their svgs
     import { watch as watchIcons } from "../modules/components/sprite.mjs";
-
     import { autoLoadAlternatives } from "../modules/utils/webp.mjs";
-    import MoviesPage from "./pages/MoviesPage.svelte";
-
+    import Movie from "./pages/Movie.svelte";
+    import NotFound from "./pages/NotFound.svelte";
     watchIcons();
-
     autoLoadAlternatives();
-
-    // $: console.debug("current", $current);
 </script>
 
 {#if $ready}
@@ -29,17 +26,18 @@
             </Route>
 
             <Route path="tv/:id">
-                <TVPage />
+                <TV />
             </Route>
+
             <Route path="tv/*">
-                <TVPage />
+                <TV />
             </Route>
 
             <Route path="movies/:id">
-                <MoviesPage />
+                <Movie />
             </Route>
             <Route path="movies/*">
-                <MoviesPage />
+                <Movie />
             </Route>
 
             <Route path="all/:id">
@@ -53,11 +51,7 @@
                 <Details />
             </Route>
             <Route path="*">
-                <div
-                    class="position-fixed top-0 left-0 w-100 h-100 d-flex justify-content-center align-items-center text-danger fs-1 fw-bolder user-select-none"
-                >
-                    OOPS
-                </div>
+                <NotFound />
             </Route>
         </main>
         <Footer />

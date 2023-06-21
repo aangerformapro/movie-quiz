@@ -1,5 +1,4 @@
 <script>
-    import Loader from "./Loader.svelte";
     import { onDestroy, onMount } from "svelte";
     import Typed from "typed.js";
     import { isArray, isEmpty } from "../../modules/utils/utils.mjs";
@@ -65,7 +64,12 @@
     <div class="background">
         <img src="./assets/pictures/moviequiz.webp" alt="" />
     </div>
-    <Loader />
+    <div class="fluo">
+        <span />
+        <span />
+        <span />
+        <span />
+    </div>
     <div class="load-message">
         <span class="typed" bind:this={toType}>
             Veuillez patienter, ça charge ...
