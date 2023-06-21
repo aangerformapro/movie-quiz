@@ -17,6 +17,12 @@ export class MediaType extends BackedEnum
     static MOVIE = new MediaType("movies");
     static TV = new MediaType("tv");
 
+
+    get route()
+    {
+        return '/' + this.value;
+    }
+
     get path()
     {
         return API_PATH + '/' + this.value + '.json';
@@ -26,6 +32,28 @@ export class MediaType extends BackedEnum
     {
         return this.value;
     }
+
+    get hook()
+    {
+        return MediaTypeMap.get(this);
+    }
+
+    get list()
+    {
+        return get(this.hook);
+    }
+
+    get found()
+    {
+
+        return getFound(this.list);
+    }
+
+    get notFound()
+    {
+        return getNotFound(this.list);
+    }
+
 }
 
 export const NOPIC = './assets/pictures/nopic.webp';
@@ -150,6 +178,17 @@ export const all = derived(
     [movies, tv],
     ([$movies, $tv]) => [...$movies, ...$tv]
 );
+
+
+/**
+ * A map of the mediatypes hooks
+ */
+
+const MediaTypeMap = new Map([
+    [MediaType.ALL, all],
+    [MediaType.MOVIE, movies],
+    [MediaType.TV, tv]
+]);
 
 
 /**

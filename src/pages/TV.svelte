@@ -11,15 +11,14 @@
         navigate = useNavigate();
 
     let item;
-
-    $: !$params.id && navigate(String(getRandom(getNotFound($tv), 1)[0].id));
-    $: $item = getEntry(decode($params.id));
+    $: console.debug(decode($params.id));
+    $: item = getEntry(decode($params.id));
 </script>
 
 {#if item}
-    <Cover item={$item}>
+    <Cover {item}>
         <Notify />
     </Cover>
-    <GameForm item={$item} />
+    <GameForm {item} />
     <Series />
 {/if}
