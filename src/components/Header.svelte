@@ -1,8 +1,13 @@
 <script>
     import { links, useLocation } from "svelte-navigator";
 
+    import createResourceLoader from "../App/loader.mjs";
+
     import Dialog, { Position } from "../../modules/components/dialog.mjs";
     import NoScroll from "../../modules/components/noscroll.mjs";
+    import { noop } from "svelte/internal";
+
+    const { onload } = createResourceLoader(noop);
 
     export const regles = new Dialog(
         `<p class="text-center">Le joueur doit deviner les noms de films et de séries à partir d'images grisées<br>
@@ -71,6 +76,7 @@
                 height="32"
                 alt="Movie Quiz Logo Mini"
                 class="d-md-none"
+                use:onload
             />
             <img
                 src="./assets/pictures/moviequiz.webp"
@@ -78,6 +84,7 @@
                 width="126"
                 alt="Movie Quiz Logo"
                 class="d-none d-md-inline-block"
+                use:onload
             />
         </a>
         <input

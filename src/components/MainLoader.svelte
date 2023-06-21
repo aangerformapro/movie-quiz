@@ -3,7 +3,7 @@
     import { onDestroy, onMount } from "svelte";
     import Typed from "typed.js";
     import { isArray, isEmpty } from "../../modules/utils/utils.mjs";
-    import { loading } from "../App/utils.mjs";
+    import { loading, loaderDisplayed } from "../App/utils.mjs";
     import { fr as messages } from "../../modules/components/loading-messages.mjs";
     import NoScroll from "../../modules/components/noscroll.mjs";
 
@@ -11,7 +11,7 @@
         loop = false,
         speed = 20;
 
-    let toType, typed, unsub, elem;
+    let toType, typed, unsub, pleaseStop;
 
     onMount(() => {
         if (!isArray(phrase)) {
@@ -39,21 +39,18 @@
                     typed.stop();
                     setTimeout(() => {
                         NoScroll.disable().then(() => {
-                            elem.classList.add("d-none");
-                            pleaseStop = false;
+                            $loaderDisplayed = pleaseStop = false;
                         });
                     }, 500);
                 }
             },
         });
 
-        let pleaseStop = false;
-
         unsub = loading.subscribe((value) => {
             if (false === (pleaseStop = !value)) {
+                $loaderDisplayed = true;
                 NoScroll.enable();
                 typed.start();
-                elem.classList.remove("d-none");
             }
         });
     });
@@ -64,7 +61,7 @@
     });
 </script>
 
-<div class="main-loader justify-content-evenly" bind:this={elem}>
+<div class="main-loader justify-content-evenly" hidden={!$loaderDisplayed}>
     <div class="background">
         <img src="./assets/pictures/moviequiz.webp" alt="" />
     </div>

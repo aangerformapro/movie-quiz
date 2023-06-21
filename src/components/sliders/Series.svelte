@@ -6,8 +6,9 @@
         getNotFound,
         getRandom,
         settings,
+        NOPIC,
     } from "../../App/game.mjs";
-    import createResourceLoader, { loading } from "../../App/loader.mjs";
+    import createResourceLoader from "../../App/loader.mjs";
     import swiper from "../../App/swiper.mjs";
     import { noop } from "svelte/internal";
 
@@ -61,7 +62,7 @@
                                 <div class="title">{item.title}</div>
                                 <a href="/details/{item.id}">
                                     <img
-                                        src={item.poster.w342}
+                                        src={item.poster.w342 ?? NOPIC}
                                         alt="Poster de la série"
                                         use:onload
                                     />

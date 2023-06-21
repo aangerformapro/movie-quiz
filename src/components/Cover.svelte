@@ -3,7 +3,9 @@
     import createResourceLoader, { loading } from "../App/loader.mjs";
     import Heading from "./Heading.svelte";
 
-    export let item = {};
+    export let item = {},
+        more = true,
+        force = false;
 
     const { onload } = createResourceLoader(noop);
 </script>
@@ -15,5 +17,5 @@
         <div class="blured" />
     </div>
 
-    <Heading force="true" {item} />
+    <Heading {item} {more} {force} />
 </div>

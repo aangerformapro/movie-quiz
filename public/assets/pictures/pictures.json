@@ -11,6 +11,10 @@
         "alt": "moviequiz.png",
         "src": "moviequiz.webp"
     },
+    "nopic": {
+        "alt": "nopic.png",
+        "src": "nopic.webp"
+    },
     "poster": {
         "alt": "poster.jpg",
         "src": "poster.webp"

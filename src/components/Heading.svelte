@@ -4,7 +4,8 @@
     import { isPlainObject } from "../../modules/utils/utils.mjs";
 
     export let item = {},
-        force = false;
+        force = false,
+        more = true;
 
     if (!isPlainObject(item) || !item.title) {
         force = false;
@@ -33,7 +34,7 @@
                     <span>Voir la bande annonce</span>
                 </a>
             {/if}
-            {#if id}
+            {#if id && more}
                 <a
                     href="/details/{id}"
                     class="button-infos btn btn-secondary btn-lg col-12 col-lg-auto ms-lg-3 my-3 my-lg-0"

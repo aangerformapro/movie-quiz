@@ -1114,6 +1114,31 @@ header {
   filter: grayscale(90%);
 }
 
+#app .media-info {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#app .media-info h4 {
+  font-size: 32px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+#app .media-info .overview {
+  font-size: 16.5px;
+  line-height: 25px;
+  text-align: center;
+}
+
+#app .actors {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .ng-dialog--form {
   color: rgb(254, 252, 248);
   color: var(--netflix-white);
@@ -1277,6 +1302,23 @@ header {
   }
   #app .poster:hover .title {
     font-size: 18px;
+  }
+  #app .media-info h4 {
+    text-align: left;
+  }
+  #app .media-info .overview {
+    text-align: left;
+  }
+  #app .media-info {
+    margin-left: 5vw;
+    max-width: 70vw;
+  }
+  #app .actors h3 {
+    font-size: 32px;
+    font-weight: 900;
+    text-align: left;
+    margin-left: calc(5vw - 16px);
+    padding-left: 0;
   }
   .mobile-only {
     display: none !important;

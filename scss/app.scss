@@ -5,6 +5,7 @@
 @use './components/mainloader' as *;
 @use './components/cover' as *;
 @use './components/slides' as *;
+@use './components/details' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -23,6 +24,7 @@
 #app {
     @include cover;
     @include slides;
+    @include details;
 }
 
 // dialog overrides

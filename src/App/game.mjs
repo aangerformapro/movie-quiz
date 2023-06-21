@@ -28,7 +28,7 @@ export class MediaType extends BackedEnum
     }
 }
 
-
+export const NOPIC = './assets/pictures/nopic.webp';
 
 export const settings = LocalStore.hook('settings', {
     notFoundToDisplay: 20,
