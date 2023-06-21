@@ -6,6 +6,8 @@
 @use './components/cover' as *;
 @use './components/slides' as *;
 @use './components/details' as *;
+@use './components/form' as *;
+@use './components/notifications' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -25,6 +27,8 @@
     @include cover;
     @include slides;
     @include details;
+    @include form;
+    @include notifications;
 }
 
 // dialog overrides

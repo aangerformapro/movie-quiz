@@ -7,7 +7,6 @@
         z-index: 500;
         inset: 0;
         background: $netflix-black;
-        // color: $netflix-red;
         @include flex-center(column);
 
         @include fluo;
@@ -18,8 +17,17 @@
         }
 
         .typed {
-            @include font-size(18px, 600);
             margin-right: 8px;
+        }
+
+        .load-message {
+            text-align: center;
+
+            @include font-size(16px, 600);
+
+            @include lg {
+                font-size: 20px;
+            }
         }
     }
 }

@@ -18,4 +18,5 @@
     </div>
 
     <Heading {item} {more} {force} />
+    <slot />
 </div>

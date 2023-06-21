@@ -1,4 +1,5 @@
 <script>
+    import TVPage from "./pages/TVPage.svelte";
     import Details from "./pages/Details.svelte";
     import { Router, Route, Link } from "svelte-navigator";
     import Header from "./components/Header.svelte";
@@ -10,6 +11,7 @@
     import { watch as watchIcons } from "../modules/components/sprite.mjs";
 
     import { autoLoadAlternatives } from "../modules/utils/webp.mjs";
+    import MoviesPage from "./pages/MoviesPage.svelte";
 
     watchIcons();
 
@@ -25,11 +27,23 @@
             <Route path="/">
                 <Home />
             </Route>
+
+            <Route path="tv/:id">
+                <TVPage />
+            </Route>
             <Route path="tv/*">
-                <h1>Séries</h1>
+                <TVPage />
+            </Route>
+
+            <Route path="movies/:id">
+                <MoviesPage />
             </Route>
             <Route path="movies/*">
-                <h1>Movies</h1>
+                <MoviesPage />
+            </Route>
+
+            <Route path="all/:id">
+                <h1>All</h1>
             </Route>
             <Route path="all/*">
                 <h1>All</h1>

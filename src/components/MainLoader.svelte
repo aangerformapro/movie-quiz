@@ -41,7 +41,7 @@
                         NoScroll.disable().then(() => {
                             $loaderDisplayed = pleaseStop = false;
                         });
-                    }, 500);
+                    }, 1200);
                 }
             },
         });
@@ -66,7 +66,7 @@
         <img src="./assets/pictures/moviequiz.webp" alt="" />
     </div>
     <Loader />
-    <div class="">
+    <div class="load-message">
         <span class="typed" bind:this={toType}>
             Veuillez patienter, ça charge ...
         </span>

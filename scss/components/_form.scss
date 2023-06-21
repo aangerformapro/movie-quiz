@@ -173,10 +173,21 @@
                 background: $hl-color !important;
                 width: 100%;
             }
+        }
+    }
 
-            // .input--placeholder {
-            //     color: $hl-color !important;
-            // }
+    #input-movie-title {
+        min-height: 78px;
+        .btn-submit {
+            width: 48px !important;
+        }
+
+        .input-text {
+            width: calc(100% - 48px) !important;
+        }
+
+        @include lg {
+            margin-left: 5vw;
         }
     }
 }

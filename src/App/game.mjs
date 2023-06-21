@@ -138,7 +138,9 @@ export const ready = writable(false, set =>
 
 export const movies = LocalStore.hook(MediaType.MOVIE.key);
 export const tv = LocalStore.hook(MediaType.TV.key);
-export const current = LocalStore.hook('current');
+// export const current = LocalStore.hook('current');
+
+export const current = writable(null);
 export const found = LocalStore.hook('found', []);
 
 /**
