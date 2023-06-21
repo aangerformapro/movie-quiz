@@ -234,8 +234,8 @@ export function setFound(item)
  */
 export function getLastFound()
 {
-    let found = getFound(get(all));
-    return found[found.length - 1] ?? get(current);
+    let id = get(found).slice(-1)[0];
+    return id ? getItem(id) : getRandom(get(all), 1)[0];
 }
 
 export function getFound(items)

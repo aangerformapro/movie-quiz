@@ -1,9 +1,13 @@
 <script>
-    import { onMount } from "svelte";
-    import { Notification, getAvailableTitles, notify } from "../App/game.mjs";
+    import { onDestroy, onMount } from "svelte";
+    import {
+        Notification,
+        current,
+        getAvailableTitles,
+        notify,
+    } from "../App/game.mjs";
     import { stringSimilarity } from "string-similarity-js";
     import { removeAccent } from "../../modules/utils/utils.mjs";
-    export let item;
 
     let validResults = [],
         value = "",
@@ -40,53 +44,52 @@
         );
     }
 
-    function initialize() {
-        value = "";
-        validResults = getAvailableTitles(item);
-    }
-    $: initialize();
+    const unsub = current.subscribe((val) => {
+        value = normalized = "";
+        validResults = getAvailableTitles(val);
+        $notify = Notification.NONE;
+        console.debug(val);
+    });
 
-    onMount(() => {
-        initialize();
+    onDestroy(() => {
+        unsub();
     });
 </script>
 
-{#if item}
-    <form
-        on:submit|preventDefault={handleSubmit}
-        method="post"
-        id="input-movie-title"
-        name="input-movie-title"
-        class=""
-        novalidate
-    >
-        <div class="form--input">
-            <label for="user-input col-lg-5"> Votre Proposition: </label>
-            <div class="input--mix col-lg-7">
-                <div class="input--group input-text">
-                    <input
-                        type="text"
-                        name="user-input"
-                        id="user-input"
-                        placeholder="Entrez un nom de film ou de série"
-                        class=""
-                        autocomplete="off"
-                        required
-                        bind:value
-                        on:input={handleInput}
-                    />
-                    <span class="input--placeholder">
-                        Entrez un nom de film ou de série
-                    </span>
-                    <span class="input--bar" />
-                </div>
-                <div class="input--group btn-submit">
-                    <button type="submit" title="Valider" {disabled} class="">
-                        <i class="ng-done" size="20" />
-                    </button>
-                    <span class="input--bar" />
-                </div>
+<form
+    on:submit|preventDefault={handleSubmit}
+    method="post"
+    id="input-movie-title"
+    name="input-movie-title"
+    class=""
+    novalidate
+>
+    <div class="form--input">
+        <label for="user-input col-lg-5"> Votre Proposition: </label>
+        <div class="input--mix col-lg-7">
+            <div class="input--group input-text">
+                <input
+                    type="text"
+                    name="user-input"
+                    id="user-input"
+                    placeholder="Entrez un nom de film ou de série"
+                    class=""
+                    autocomplete="off"
+                    required
+                    bind:value
+                    on:input={handleInput}
+                />
+                <span class="input--placeholder">
+                    Entrez un nom de film ou de série
+                </span>
+                <span class="input--bar" />
+            </div>
+            <div class="input--group btn-submit">
+                <button type="submit" title="Valider" {disabled} class="">
+                    <i class="ng-done" size="20" />
+                </button>
+                <span class="input--bar" />
             </div>
         </div>
-    </form>
-{/if}
+    </div>
+</form>

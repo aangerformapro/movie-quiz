@@ -1,19 +1,18 @@
 <script>
     import { links } from "svelte-navigator";
-    import { getYoutubeUrl, isFound } from "../App/game.mjs";
+    import { current, getYoutubeUrl, isFound } from "../App/game.mjs";
     import { isPlainObject } from "../../modules/utils/utils.mjs";
 
-    export let item = {},
-        force = false,
+    export let force = false,
         more = true;
 
-    if (!isPlainObject(item) || !item.title) {
+    if (!isPlainObject($current) || !$current.title) {
         force = false;
     }
 
-    let youtube = getYoutubeUrl(item),
-        { id, title } = item,
-        found = isFound(item);
+    let youtube = getYoutubeUrl($current),
+        { id, title } = $current,
+        found = isFound($current);
 </script>
 
 {#if found || force}

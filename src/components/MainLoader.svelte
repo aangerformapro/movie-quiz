@@ -37,8 +37,9 @@
                 if (pleaseStop) {
                     typed.stop();
                     setTimeout(() => {
-                        NoScroll.disable().then(() => {
+                        NoScroll.disable(false).then(() => {
                             $loaderDisplayed = pleaseStop = false;
+                            scrollTo(0, 0);
                         });
                     }, 1200);
                 }
@@ -48,7 +49,7 @@
         unsub = loading.subscribe((value) => {
             if (false === (pleaseStop = !value)) {
                 $loaderDisplayed = true;
-                NoScroll.enable();
+                NoScroll.enable(false);
                 typed.start();
             }
         });

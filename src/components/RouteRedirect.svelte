@@ -28,8 +28,6 @@
         error = true;
     }
 
-    $: console.debug("err", error);
-
     onMount(() => {
         redirect();
     });

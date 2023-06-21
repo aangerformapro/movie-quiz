@@ -32,8 +32,6 @@
 
         found = isFound(item);
 
-        console.debug(item);
-
         if (!found) {
             item = null;
             $loaderDisplayed = false;
