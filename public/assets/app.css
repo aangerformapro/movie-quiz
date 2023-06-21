@@ -1110,6 +1110,9 @@ header {
   color: rgb(163, 163, 163);
   color: var(--netflix-gray);
 }
+#app .input--group [type=submit]:not([disabled]):active, #app .input--group [type=submit]:not([disabled]):focus, #app .input--group [type=submit]:not([disabled]):hover {
+  color: #2196f3;
+}
 #app .input--group textarea {
   resize: none;
 }

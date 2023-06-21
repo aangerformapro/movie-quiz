@@ -8,16 +8,7 @@
     import Footer from "./components/Footer.svelte";
     import MainLoader from "./components/MainLoader.svelte";
     import Home from "./pages/Home.svelte";
-    import {
-        MediaType,
-        all,
-        getNotFound,
-        getRandom,
-        movies,
-        ready,
-        tv,
-    } from "./App/game.mjs";
-    import { useNavigate } from "svelte-navigator";
+    import { ready } from "./App/game.mjs";
 
     // auto replace i.ng-* by their svgs
     import { watch as watchIcons } from "../modules/components/sprite.mjs";

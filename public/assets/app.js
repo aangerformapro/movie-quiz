@@ -425,6 +425,9 @@ function claim_text(nodes, data) {
 function claim_space(nodes) {
     return claim_text(nodes, ' ');
 }
+function set_input_value(input, value) {
+    input.value = value == null ? '' : value;
+}
 function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
     const e = document.createEvent('CustomEvent');
     e.initCustomEvent(type, bubbles, cancelable, detail);
@@ -3851,6 +3854,27 @@ function html2element(html)
     }
 }
 
+function removeAccent(str)
+{
+    let accent = [
+        /[\300-\306]/g, /[\340-\346]/g, // A, a
+        /[\310-\313]/g, /[\350-\353]/g, // E, e
+        /[\314-\317]/g, /[\354-\357]/g, // I, i
+        /[\322-\330]/g, /[\362-\370]/g, // O, o
+        /[\331-\334]/g, /[\371-\374]/g, // U, u
+        /[\321]/g, /[\361]/g, // N, n
+        /[\307]/g, /[\347]/g, // C, c
+    ], noaccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
+
+
+    for (var i = 0; i < accent.length; i++)
+    {
+        str = str.replace(accent[i], noaccent[i]);
+    }
+
+    return str;
+}
+
 
 /**
  * PHP BackedEnum like Api
@@ -4967,6 +4991,22 @@ function getEntry(id)
     }
 
     return get_store_value(all).find(item => item.id === id) ?? null;
+}
+
+
+
+function getAvailableTitles(item)
+{
+
+    const result = [];
+    item = getEntry(item);
+
+    if (item && item.alt)
+    {
+        result.push(item.title, item.original_title, ...item.alt);
+    }
+
+    return result.map(str => removeAccent(str.toLowerCase()));
 }
 
 function getYoutubeUrl(item)
@@ -10520,9 +10560,9 @@ function create_if_block_1$3(ctx) {
 			add_location(div1, file$9, 27, 12, 773);
 			attr_dev(i, "class", "ng-chevron-right");
 			attr_dev(i, "size", "32");
-			add_location(i, file$9, 47, 16, 1673);
+			add_location(i, file$9, 47, 16, 1682);
 			attr_dev(div2, "class", "chevron-next");
-			add_location(div2, file$9, 46, 12, 1630);
+			add_location(div2, file$9, 46, 12, 1639);
 			attr_dev(div3, "class", "d-flex align-items-center justify-content-between");
 			add_location(div3, file$9, 26, 8, 697);
 			attr_dev(div4, "class", "section mx-auto mb-3 px-3");
@@ -10553,7 +10593,7 @@ function create_if_block_1$3(ctx) {
 			}
 		},
 		p: function update(ctx, dirty) {
-			if (dirty & /*notfound*/ 2) {
+			if (dirty & /*notfound, NOPIC*/ 2) {
 				each_value_1 = /*notfound*/ ctx[1];
 				validate_each_argument(each_value_1);
 				let i;
@@ -10632,7 +10672,7 @@ function create_each_block_1$1(ctx) {
 			this.h();
 		},
 		h: function hydrate() {
-			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780)) attr_dev(img, "src", img_src_value);
+			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780 ?? NOPIC)) attr_dev(img, "src", img_src_value);
 			attr_dev(img, "alt", "Série à deviner");
 			add_location(img, file$9, 34, 36, 1225);
 			attr_dev(a, "href", a_href_value = "/tv/" + /*item*/ ctx[5].id);
@@ -10659,7 +10699,7 @@ function create_each_block_1$1(ctx) {
 			}
 		},
 		p: function update(ctx, dirty) {
-			if (dirty & /*notfound*/ 2 && !src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780)) {
+			if (dirty & /*notfound*/ 2 && !src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780 ?? NOPIC)) {
 				attr_dev(img, "src", img_src_value);
 			}
 
@@ -10759,20 +10799,20 @@ function create_if_block$9(ctx) {
 		},
 		h: function hydrate() {
 			attr_dev(h3, "class", "my-3 px-0");
-			add_location(h3, file$9, 54, 8, 1836);
+			add_location(h3, file$9, 54, 8, 1845);
 			attr_dev(div0, "class", "swiper-wrapper d-flex");
-			add_location(div0, file$9, 57, 16, 2035);
+			add_location(div0, file$9, 57, 16, 2044);
 			attr_dev(div1, "class", "swiper overflow-x-scroll");
-			add_location(div1, file$9, 56, 12, 1969);
+			add_location(div1, file$9, 56, 12, 1978);
 			attr_dev(i, "class", "ng-chevron-right");
 			attr_dev(i, "size", "32");
-			add_location(i, file$9, 76, 16, 2846);
+			add_location(i, file$9, 76, 16, 2855);
 			attr_dev(div2, "class", "chevron-next");
-			add_location(div2, file$9, 75, 12, 2803);
+			add_location(div2, file$9, 75, 12, 2812);
 			attr_dev(div3, "class", "d-flex align-items-center justify-content-between");
-			add_location(div3, file$9, 55, 8, 1893);
+			add_location(div3, file$9, 55, 8, 1902);
 			attr_dev(div4, "class", "section mx-auto mb-3 px-3");
-			add_location(div4, file$9, 53, 4, 1788);
+			add_location(div4, file$9, 53, 4, 1797);
 		},
 		m: function mount(target, anchor) {
 			insert_hydration_dev(target, div4, anchor);
@@ -10891,16 +10931,16 @@ function create_each_block$2(ctx) {
 		},
 		h: function hydrate() {
 			attr_dev(div0, "class", "title");
-			add_location(div0, file$9, 61, 32, 2249);
+			add_location(div0, file$9, 61, 32, 2258);
 			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[5].poster.w342 ?? NOPIC)) attr_dev(img, "src", img_src_value);
 			attr_dev(img, "alt", "Poster de la série");
-			add_location(img, file$9, 63, 36, 2385);
+			add_location(img, file$9, 63, 36, 2394);
 			attr_dev(a, "href", a_href_value = "/details/" + /*item*/ ctx[5].id);
-			add_location(a, file$9, 62, 32, 2319);
+			add_location(a, file$9, 62, 32, 2328);
 			attr_dev(div1, "class", "poster m-2");
-			add_location(div1, file$9, 60, 28, 2192);
+			add_location(div1, file$9, 60, 28, 2201);
 			attr_dev(div2, "class", "swiper-slide");
-			add_location(div2, file$9, 59, 24, 2137);
+			add_location(div2, file$9, 59, 24, 2146);
 		},
 		m: function mount(target, anchor) {
 			insert_hydration_dev(target, div2, anchor);
@@ -11090,12 +11130,56 @@ class Series extends SvelteComponentDev {
 	}
 }
 
+var stringSimilarity = {};
+
+(function (exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.stringSimilarity = void 0;
+	/* global exports, Map */
+	/**
+	 * Calculate similarity between two strings
+	 * @param {string} str1 First string to match
+	 * @param {string} str2 Second string to match
+	 * @param {number} [substringLength=2] Optional. Length of substring to be used in calculating similarity. Default 2.
+	 * @param {boolean} [caseSensitive=false] Optional. Whether you want to consider case in string matching. Default false;
+	 * @returns Number between 0 and 1, with 0 being a low match score.
+	 */
+	var stringSimilarity = function (str1, str2, substringLength, caseSensitive) {
+	    if (substringLength === void 0) { substringLength = 2; }
+	    if (caseSensitive === void 0) { caseSensitive = false; }
+	    if (!caseSensitive) {
+	        str1 = str1.toLowerCase();
+	        str2 = str2.toLowerCase();
+	    }
+	    if (str1.length < substringLength || str2.length < substringLength)
+	        return 0;
+	    var map = new Map();
+	    for (var i = 0; i < str1.length - (substringLength - 1); i++) {
+	        var substr1 = str1.substr(i, substringLength);
+	        map.set(substr1, map.has(substr1) ? map.get(substr1) + 1 : 1);
+	    }
+	    var match = 0;
+	    for (var j = 0; j < str2.length - (substringLength - 1); j++) {
+	        var substr2 = str2.substr(j, substringLength);
+	        var count = map.has(substr2) ? map.get(substr2) : 0;
+	        if (count > 0) {
+	            map.set(substr2, count - 1);
+	            match++;
+	        }
+	    }
+	    return (match * 2) / (str1.length + str2.length - ((substringLength - 1) * 2));
+	};
+	exports.stringSimilarity = stringSimilarity;
+	exports.default = exports.stringSimilarity;
+	
+} (stringSimilarity));
+
 /* src\components\GameForm.svelte generated by Svelte v3.59.1 */
 
 const { console: console_1$2 } = globals;
 const file$8 = "src\\components\\GameForm.svelte";
 
-// (13:0) {#if item && item.id}
+// (54:0) {#if item}
 function create_if_block$8(ctx) {
 	let form;
 	let div3;
@@ -11116,6 +11200,8 @@ function create_if_block$8(ctx) {
 	let i;
 	let t6;
 	let span2;
+	let mounted;
+	let dispose;
 
 	const block = {
 		c: function create() {
@@ -11198,44 +11284,43 @@ function create_if_block$8(ctx) {
 		},
 		h: function hydrate() {
 			attr_dev(label, "for", "user-input col-lg-5");
-			add_location(label, file$8, 21, 12, 386);
+			add_location(label, file$8, 63, 12, 1624);
 			attr_dev(input, "type", "text");
 			attr_dev(input, "name", "user-input");
 			attr_dev(input, "id", "user-input");
-			input.value = /*value*/ ctx[1];
 			attr_dev(input, "placeholder", "Entrez un nom de film ou de série");
 			attr_dev(input, "class", "");
 			attr_dev(input, "autocomplete", "off");
 			input.required = true;
-			add_location(input, file$8, 24, 20, 571);
+			add_location(input, file$8, 66, 20, 1809);
 			attr_dev(span0, "class", "input--placeholder");
-			add_location(span0, file$8, 34, 20, 962);
+			add_location(span0, file$8, 77, 20, 2251);
 			attr_dev(span1, "class", "input--bar");
-			add_location(span1, file$8, 37, 20, 1105);
+			add_location(span1, file$8, 80, 20, 2394);
 			attr_dev(div0, "class", "input--group input-text");
-			add_location(div0, file$8, 23, 16, 512);
+			add_location(div0, file$8, 65, 16, 1750);
 			attr_dev(i, "class", "ng-done");
 			attr_dev(i, "size", "20");
-			add_location(i, file$8, 41, 24, 1315);
+			add_location(i, file$8, 84, 24, 2606);
 			attr_dev(button, "type", "submit");
 			attr_dev(button, "title", "Valider");
-			button.disabled = true;
+			button.disabled = /*disabled*/ ctx[2];
 			attr_dev(button, "class", "");
-			add_location(button, file$8, 40, 20, 1233);
+			add_location(button, file$8, 83, 20, 2522);
 			attr_dev(span2, "class", "input--bar");
-			add_location(span2, file$8, 43, 20, 1399);
+			add_location(span2, file$8, 86, 20, 2690);
 			attr_dev(div1, "class", "input--group btn-submit");
-			add_location(div1, file$8, 39, 16, 1174);
+			add_location(div1, file$8, 82, 16, 2463);
 			attr_dev(div2, "class", "input--mix col-lg-7");
-			add_location(div2, file$8, 22, 12, 461);
+			add_location(div2, file$8, 64, 12, 1699);
 			attr_dev(div3, "class", "form--input");
-			add_location(div3, file$8, 20, 8, 347);
+			add_location(div3, file$8, 62, 8, 1585);
 			attr_dev(form, "method", "post");
 			attr_dev(form, "id", "input-movie-title");
 			attr_dev(form, "name", "input-movie-title");
 			attr_dev(form, "class", "");
 			form.noValidate = true;
-			add_location(form, file$8, 13, 4, 198);
+			add_location(form, file$8, 54, 4, 1387);
 		},
 		m: function mount(target, anchor) {
 			insert_hydration_dev(target, form, anchor);
@@ -11246,6 +11331,7 @@ function create_if_block$8(ctx) {
 			append_hydration_dev(div3, div2);
 			append_hydration_dev(div2, div0);
 			append_hydration_dev(div0, input);
+			set_input_value(input, /*value*/ ctx[1]);
 			append_hydration_dev(div0, t2);
 			append_hydration_dev(div0, span0);
 			append_hydration_dev(span0, t3);
@@ -11257,10 +11343,30 @@ function create_if_block$8(ctx) {
 			append_hydration_dev(button, i);
 			append_hydration_dev(div1, t6);
 			append_hydration_dev(div1, span2);
+
+			if (!mounted) {
+				dispose = [
+					listen_dev(input, "input", /*input_input_handler*/ ctx[5]),
+					listen_dev(input, "input", /*handleInput*/ ctx[3], false, false, false, false),
+					listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[4]), false, true, false, false)
+				];
+
+				mounted = true;
+			}
 		},
-		p: noop$1,
+		p: function update(ctx, dirty) {
+			if (dirty & /*value*/ 2 && input.value !== /*value*/ ctx[1]) {
+				set_input_value(input, /*value*/ ctx[1]);
+			}
+
+			if (dirty & /*disabled*/ 4) {
+				prop_dev(button, "disabled", /*disabled*/ ctx[2]);
+			}
+		},
 		d: function destroy(detaching) {
 			if (detaching) detach_dev(form);
+			mounted = false;
+			run_all(dispose);
 		}
 	};
 
@@ -11268,7 +11374,7 @@ function create_if_block$8(ctx) {
 		block,
 		id: create_if_block$8.name,
 		type: "if",
-		source: "(13:0) {#if item && item.id}",
+		source: "(54:0) {#if item}",
 		ctx
 	});
 
@@ -11277,7 +11383,7 @@ function create_if_block$8(ctx) {
 
 function create_fragment$d(ctx) {
 	let if_block_anchor;
-	let if_block = /*item*/ ctx[0] && /*item*/ ctx[0].id && create_if_block$8(ctx);
+	let if_block = /*item*/ ctx[0] && create_if_block$8(ctx);
 
 	const block = {
 		c: function create() {
@@ -11293,7 +11399,7 @@ function create_fragment$d(ctx) {
 			insert_hydration_dev(target, if_block_anchor, anchor);
 		},
 		p: function update(ctx, [dirty]) {
-			if (/*item*/ ctx[0] && /*item*/ ctx[0].id) {
+			if (/*item*/ ctx[0]) {
 				if (if_block) {
 					if_block.p(ctx, dirty);
 				} else {
@@ -11326,13 +11432,41 @@ function create_fragment$d(ctx) {
 }
 
 function instance$e($$self, $$props, $$invalidate) {
+	let $notify;
+	validate_store(notify, 'notify');
+	component_subscribe($$self, notify, $$value => $$invalidate(8, $notify = $$value));
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots('GameForm', slots, []);
 	let { item } = $$props;
-	let value = "";
+	let validResults = [], value = "", normalized = "", disabled = true;
+
+	// Notification
+	function handleInput() {
+		$$invalidate(2, disabled = !value.length);
+		normalized = removeAccent(value.toLowerCase());
+
+		if ($notify !== Notification.NONE) {
+			set_store_value(notify, $notify = Notification.NONE, $notify);
+		}
+	}
+
+	function handleSubmit() {
+		if (validResults.map(valid => stringSimilarity.stringSimilarity(valid, normalized)).some(result => result > 0.9)) {
+			Notification.SUCCESS.display();
+		} else {
+			Notification.FAILURE.display();
+		}
+
+		console.debug(validResults.map(valid => [stringSimilarity.stringSimilarity(valid, normalized), valid, normalized]));
+	}
+
+	function initialize() {
+		$$invalidate(1, value = "");
+		validResults = getAvailableTitles(item);
+	}
 
 	onMount(() => {
-		console.debug(item);
+		initialize();
 	});
 
 	$$self.$$.on_mount.push(function () {
@@ -11347,22 +11481,47 @@ function instance$e($$self, $$props, $$invalidate) {
 		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$2.warn(`<GameForm> was created with unknown prop '${key}'`);
 	});
 
+	function input_input_handler() {
+		value = this.value;
+		$$invalidate(1, value);
+	}
+
 	$$self.$$set = $$props => {
 		if ('item' in $$props) $$invalidate(0, item = $$props.item);
 	};
 
-	$$self.$capture_state = () => ({ onMount, item, value });
+	$$self.$capture_state = () => ({
+		onMount,
+		Notification,
+		getAvailableTitles,
+		notify,
+		stringSimilarity: stringSimilarity.stringSimilarity,
+		removeAccent,
+		item,
+		validResults,
+		value,
+		normalized,
+		disabled,
+		handleInput,
+		handleSubmit,
+		initialize,
+		$notify
+	});
 
 	$$self.$inject_state = $$props => {
 		if ('item' in $$props) $$invalidate(0, item = $$props.item);
+		if ('validResults' in $$props) validResults = $$props.validResults;
 		if ('value' in $$props) $$invalidate(1, value = $$props.value);
+		if ('normalized' in $$props) normalized = $$props.normalized;
+		if ('disabled' in $$props) $$invalidate(2, disabled = $$props.disabled);
 	};
 
 	if ($$props && "$$inject" in $$props) {
 		$$self.$inject_state($$props.$$inject);
 	}
 
-	return [item, value];
+	initialize();
+	return [item, value, disabled, handleInput, handleSubmit, input_input_handler];
 }
 
 class GameForm extends SvelteComponentDev {
@@ -11931,9 +12090,9 @@ function create_if_block_1$1(ctx) {
 			add_location(div1, file$6, 29, 12, 815);
 			attr_dev(i, "class", "ng-chevron-right");
 			attr_dev(i, "size", "32");
-			add_location(i, file$6, 49, 16, 1738);
+			add_location(i, file$6, 49, 16, 1747);
 			attr_dev(div2, "class", "chevron-next");
-			add_location(div2, file$6, 48, 12, 1694);
+			add_location(div2, file$6, 48, 12, 1703);
 			attr_dev(div3, "class", "d-flex align-items-center justify-content-between");
 			add_location(div3, file$6, 28, 8, 738);
 			attr_dev(div4, "class", "section mx-auto mb-3 px-3");
@@ -11964,7 +12123,7 @@ function create_if_block_1$1(ctx) {
 			}
 		},
 		p: function update(ctx, dirty) {
-			if (dirty & /*notfound*/ 2) {
+			if (dirty & /*notfound, NOPIC*/ 2) {
 				each_value_1 = /*notfound*/ ctx[1];
 				validate_each_argument(each_value_1);
 				let i;
@@ -12043,7 +12202,7 @@ function create_each_block_1(ctx) {
 			this.h();
 		},
 		h: function hydrate() {
-			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780)) attr_dev(img, "src", img_src_value);
+			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780 ?? NOPIC)) attr_dev(img, "src", img_src_value);
 			attr_dev(img, "alt", "Film à deviner");
 			add_location(img, file$6, 36, 36, 1278);
 			attr_dev(a, "href", a_href_value = "/movies/" + /*item*/ ctx[5].id);
@@ -12070,7 +12229,7 @@ function create_each_block_1(ctx) {
 			}
 		},
 		p: function update(ctx, dirty) {
-			if (dirty & /*notfound*/ 2 && !src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780)) {
+			if (dirty & /*notfound*/ 2 && !src_url_equal(img.src, img_src_value = /*item*/ ctx[5].cover.w780 ?? NOPIC)) {
 				attr_dev(img, "src", img_src_value);
 			}
 
@@ -12170,20 +12329,20 @@ function create_if_block$5(ctx) {
 		},
 		h: function hydrate() {
 			attr_dev(h3, "class", "my-3 px-0");
-			add_location(h3, file$6, 56, 8, 1908);
+			add_location(h3, file$6, 56, 8, 1917);
 			attr_dev(div0, "class", "swiper-wrapper d-flex");
-			add_location(div0, file$6, 59, 16, 2108);
+			add_location(div0, file$6, 59, 16, 2117);
 			attr_dev(div1, "class", "swiper overflow-x-scroll");
-			add_location(div1, file$6, 58, 12, 2041);
+			add_location(div1, file$6, 58, 12, 2050);
 			attr_dev(i, "class", "ng-chevron-right");
 			attr_dev(i, "size", "32");
-			add_location(i, file$6, 78, 16, 2944);
+			add_location(i, file$6, 78, 16, 2953);
 			attr_dev(div2, "class", "chevron-next");
-			add_location(div2, file$6, 77, 12, 2900);
+			add_location(div2, file$6, 77, 12, 2909);
 			attr_dev(div3, "class", "d-flex align-items-center justify-content-between");
-			add_location(div3, file$6, 57, 8, 1964);
+			add_location(div3, file$6, 57, 8, 1973);
 			attr_dev(div4, "class", "section mx-auto mb-3 px-3");
-			add_location(div4, file$6, 55, 4, 1859);
+			add_location(div4, file$6, 55, 4, 1868);
 		},
 		m: function mount(target, anchor) {
 			insert_hydration_dev(target, div4, anchor);
@@ -12302,16 +12461,16 @@ function create_each_block$1(ctx) {
 		},
 		h: function hydrate() {
 			attr_dev(div0, "class", "title");
-			add_location(div0, file$6, 63, 32, 2326);
+			add_location(div0, file$6, 63, 32, 2335);
 			if (!src_url_equal(img.src, img_src_value = /*item*/ ctx[5].poster.w342 ?? NOPIC)) attr_dev(img, "src", img_src_value);
 			attr_dev(img, "alt", "Poster du film");
-			add_location(img, file$6, 65, 36, 2474);
+			add_location(img, file$6, 65, 36, 2483);
 			attr_dev(a, "href", a_href_value = "/details/" + /*item*/ ctx[5].id);
-			add_location(a, file$6, 64, 32, 2397);
+			add_location(a, file$6, 64, 32, 2406);
 			attr_dev(div1, "class", "poster m-2");
-			add_location(div1, file$6, 62, 28, 2268);
+			add_location(div1, file$6, 62, 28, 2277);
 			attr_dev(div2, "class", "swiper-slide");
-			add_location(div2, file$6, 61, 24, 2212);
+			add_location(div2, file$6, 61, 24, 2221);
 		},
 		m: function mount(target, anchor) {
 			insert_hydration_dev(target, div2, anchor);
@@ -16581,7 +16740,7 @@ class All extends SvelteComponentDev {
 /* src\App.svelte generated by Svelte v3.59.1 */
 const file = "src\\App.svelte";
 
-// (32:0) {#if $ready}
+// (23:0) {#if $ready}
 function create_if_block(ctx) {
 	let router;
 	let current;
@@ -16623,14 +16782,14 @@ function create_if_block(ctx) {
 		block,
 		id: create_if_block.name,
 		type: "if",
-		source: "(32:0) {#if $ready}",
+		source: "(23:0) {#if $ready}",
 		ctx
 	});
 
 	return block;
 }
 
-// (36:12) <Route path="/">
+// (27:12) <Route path="/">
 function create_default_slot_9(ctx) {
 	let home;
 	let current;
@@ -16665,41 +16824,41 @@ function create_default_slot_9(ctx) {
 		block,
 		id: create_default_slot_9.name,
 		type: "slot",
-		source: "(36:12) <Route path=\\\"/\\\">",
+		source: "(27:12) <Route path=\\\"/\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (40:12) <Route path="tv/:id">
+// (31:12) <Route path="tv/:id">
 function create_default_slot_8(ctx) {
-	let tv_1;
+	let tv;
 	let current;
-	tv_1 = new TV({ $$inline: true });
+	tv = new TV({ $$inline: true });
 
 	const block = {
 		c: function create() {
-			create_component(tv_1.$$.fragment);
+			create_component(tv.$$.fragment);
 		},
 		l: function claim(nodes) {
-			claim_component(tv_1.$$.fragment, nodes);
+			claim_component(tv.$$.fragment, nodes);
 		},
 		m: function mount(target, anchor) {
-			mount_component(tv_1, target, anchor);
+			mount_component(tv, target, anchor);
 			current = true;
 		},
 		i: function intro(local) {
 			if (current) return;
-			transition_in(tv_1.$$.fragment, local);
+			transition_in(tv.$$.fragment, local);
 			current = true;
 		},
 		o: function outro(local) {
-			transition_out(tv_1.$$.fragment, local);
+			transition_out(tv.$$.fragment, local);
 			current = false;
 		},
 		d: function destroy(detaching) {
-			destroy_component(tv_1, detaching);
+			destroy_component(tv, detaching);
 		}
 	};
 
@@ -16707,14 +16866,14 @@ function create_default_slot_8(ctx) {
 		block,
 		id: create_default_slot_8.name,
 		type: "slot",
-		source: "(40:12) <Route path=\\\"tv/:id\\\">",
+		source: "(31:12) <Route path=\\\"tv/:id\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (44:12) <Route path="tv">
+// (35:12) <Route path="tv">
 function create_default_slot_7(ctx) {
 	let routeredirect;
 	let current;
@@ -16749,14 +16908,14 @@ function create_default_slot_7(ctx) {
 		block,
 		id: create_default_slot_7.name,
 		type: "slot",
-		source: "(44:12) <Route path=\\\"tv\\\">",
+		source: "(35:12) <Route path=\\\"tv\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (48:12) <Route path="movies/:id">
+// (39:12) <Route path="movies/:id">
 function create_default_slot_6(ctx) {
 	let movie;
 	let current;
@@ -16791,14 +16950,14 @@ function create_default_slot_6(ctx) {
 		block,
 		id: create_default_slot_6.name,
 		type: "slot",
-		source: "(48:12) <Route path=\\\"movies/:id\\\">",
+		source: "(39:12) <Route path=\\\"movies/:id\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (51:12) <Route path="movies">
+// (42:12) <Route path="movies">
 function create_default_slot_5(ctx) {
 	let routeredirect;
 	let current;
@@ -16833,41 +16992,41 @@ function create_default_slot_5(ctx) {
 		block,
 		id: create_default_slot_5.name,
 		type: "slot",
-		source: "(51:12) <Route path=\\\"movies\\\">",
+		source: "(42:12) <Route path=\\\"movies\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (55:12) <Route path="all/:id">
+// (46:12) <Route path="all/:id">
 function create_default_slot_4(ctx) {
-	let all_1;
+	let all;
 	let current;
-	all_1 = new All({ $$inline: true });
+	all = new All({ $$inline: true });
 
 	const block = {
 		c: function create() {
-			create_component(all_1.$$.fragment);
+			create_component(all.$$.fragment);
 		},
 		l: function claim(nodes) {
-			claim_component(all_1.$$.fragment, nodes);
+			claim_component(all.$$.fragment, nodes);
 		},
 		m: function mount(target, anchor) {
-			mount_component(all_1, target, anchor);
+			mount_component(all, target, anchor);
 			current = true;
 		},
 		i: function intro(local) {
 			if (current) return;
-			transition_in(all_1.$$.fragment, local);
+			transition_in(all.$$.fragment, local);
 			current = true;
 		},
 		o: function outro(local) {
-			transition_out(all_1.$$.fragment, local);
+			transition_out(all.$$.fragment, local);
 			current = false;
 		},
 		d: function destroy(detaching) {
-			destroy_component(all_1, detaching);
+			destroy_component(all, detaching);
 		}
 	};
 
@@ -16875,14 +17034,14 @@ function create_default_slot_4(ctx) {
 		block,
 		id: create_default_slot_4.name,
 		type: "slot",
-		source: "(55:12) <Route path=\\\"all/:id\\\">",
+		source: "(46:12) <Route path=\\\"all/:id\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (58:12) <Route path="all">
+// (49:12) <Route path="all">
 function create_default_slot_3(ctx) {
 	let routeredirect;
 	let current;
@@ -16917,14 +17076,14 @@ function create_default_slot_3(ctx) {
 		block,
 		id: create_default_slot_3.name,
 		type: "slot",
-		source: "(58:12) <Route path=\\\"all\\\">",
+		source: "(49:12) <Route path=\\\"all\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (62:12) <Route path="details/:id">
+// (53:12) <Route path="details/:id">
 function create_default_slot_2(ctx) {
 	let details;
 	let current;
@@ -16959,14 +17118,14 @@ function create_default_slot_2(ctx) {
 		block,
 		id: create_default_slot_2.name,
 		type: "slot",
-		source: "(62:12) <Route path=\\\"details/:id\\\">",
+		source: "(53:12) <Route path=\\\"details/:id\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (65:12) <Route path="*">
+// (56:12) <Route path="*">
 function create_default_slot_1(ctx) {
 	let notfound;
 	let current;
@@ -17001,14 +17160,14 @@ function create_default_slot_1(ctx) {
 		block,
 		id: create_default_slot_1.name,
 		type: "slot",
-		source: "(65:12) <Route path=\\\"*\\\">",
+		source: "(56:12) <Route path=\\\"*\\\">",
 		ctx
 	});
 
 	return block;
 }
 
-// (33:4) <Router>
+// (24:4) <Router>
 function create_default_slot(ctx) {
 	let header;
 	let t0;
@@ -17173,7 +17332,7 @@ function create_default_slot(ctx) {
 		},
 		h: function hydrate() {
 			attr_dev(main, "id", "app");
-			add_location(main, file, 34, 8, 1113);
+			add_location(main, file, 25, 8, 939);
 		},
 		m: function mount(target, anchor) {
 			mount_component(header, target, anchor);
@@ -17316,7 +17475,7 @@ function create_default_slot(ctx) {
 		block,
 		id: create_default_slot.name,
 		type: "slot",
-		source: "(33:4) <Router>",
+		source: "(24:4) <Router>",
 		ctx
 	});
 
@@ -17423,14 +17582,7 @@ function instance($$self, $$props, $$invalidate) {
 		Footer,
 		MainLoader,
 		Home,
-		MediaType,
-		all,
-		getNotFound,
-		getRandom,
-		movies,
 		ready,
-		tv,
-		useNavigate,
 		watchIcons: watch,
 		autoLoadAlternatives,
 		RouteRedirect,

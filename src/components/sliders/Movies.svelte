@@ -35,7 +35,7 @@
                                 <!-- <div class="title">Le titre du film</div> -->
                                 <a href="/movies/{item.id}" use:links>
                                     <img
-                                        src={item.cover.w780}
+                                        src={item.cover.w780 ?? NOPIC}
                                         alt="Film à deviner"
                                         use:onload
                                     />

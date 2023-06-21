@@ -1,6 +1,6 @@
 import { derived, get, writable, readable } from 'svelte/store';
 import LocalStore from './../../modules/stores/webstore.mjs';
-import { BackedEnum, isArray, isEmpty, isInt, isPlainObject } from '../../modules/utils/utils.mjs';
+import { BackedEnum, isArray, isEmpty, isInt, isPlainObject, removeAccent } from '../../modules/utils/utils.mjs';
 
 
 const API_PATH = '/api/1', BUILD_DATE = '[VI]{date}[/VI]';
@@ -295,7 +295,7 @@ export function getAvailableTitles(item)
         result.push(item.title, item.original_title, ...item.alt);
     }
 
-    return result;
+    return result.map(str => removeAccent(str.toLowerCase()));
 }
 
 export function getYoutubeUrl(item)

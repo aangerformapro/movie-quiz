@@ -33,7 +33,7 @@
                                 <!-- <div class="title">Le titre du film</div> -->
                                 <a href="/tv/{item.id}" use:links>
                                     <img
-                                        src={item.cover.w780}
+                                        src={item.cover.w780 ?? NOPIC}
                                         alt="Série à deviner"
                                         use:onload
                                     />

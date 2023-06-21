@@ -5,12 +5,12 @@ import emitter from './../utils/emitter.mjs';
 
 
 
-export class RouterEvent extends BackedEnum
+export class HistoryEvent extends BackedEnum
 {
-    static ALL = new RouterEvent('change');
-    static PUSH = new RouterEvent('push pop');
-    static REPLACE = new RouterEvent('replace pop');
-    static HASH = new RouterEvent('hash');
+    static ALL = new HistoryEvent('change');
+    static PUSH = new HistoryEvent('push pop');
+    static REPLACE = new HistoryEvent('replace pop');
+    static HASH = new HistoryEvent('hash');
 
 
     get list()
@@ -99,34 +99,34 @@ export const attachReplaceState = (/** @type {function} */ fn) =>
 
 const unsetEvents = new Set();
 
-function attachEvents(events = RouterEvent.ALL)
+function attachEvents(events = HistoryEvent.ALL)
 {
     if (!attachedOnce)
     {
         attachedOnce = true;
 
 
-        if (events === RouterEvent.ALL || events === RouterEvent.PUSH)
+        if (events === HistoryEvent.ALL || events === HistoryEvent.PUSH)
         {
             unsetEvents.add(
                 attachPushState((url, state) =>
                 {
-                    EventListeners.trigger(RouterEvent.PUSH.first + ' change', { url, state });
+                    EventListeners.trigger(HistoryEvent.PUSH.first + ' change', { url, state });
                 })
             );
         }
-        if (events === RouterEvent.ALL || events === RouterEvent.REPLACE)
+        if (events === HistoryEvent.ALL || events === HistoryEvent.REPLACE)
         {
             unsetEvents.add(
                 attachReplaceState((url, state) =>
                 {
-                    EventListeners.trigger(RouterEvent.REPLACE.first + ' change', { url, state });
+                    EventListeners.trigger(HistoryEvent.REPLACE.first + ' change', { url, state });
                 })
             );
         }
 
 
-        if (events.value.includes('pop') || events === RouterEvent.ALL)
+        if (events.value.includes('pop') || events === HistoryEvent.ALL)
         {
 
             const listener = e =>
@@ -142,7 +142,7 @@ function attachEvents(events = RouterEvent.ALL)
             unsetEvents.add(() => emitter.off('popstate', listener));
         }
 
-        if (events === RouterEvent.HASH || events === RouterEvent.ALL)
+        if (events === HistoryEvent.HASH || events === HistoryEvent.ALL)
         {
 
             const listener = e =>
@@ -184,7 +184,7 @@ export default class History
     static onChange(fn)
     {
 
-        const type = RouterEvent.ALL.value;
+        const type = HistoryEvent.ALL.value;
 
         EventListeners.on(type, fn);
 
@@ -198,7 +198,7 @@ export default class History
     static onPush(fn)
     {
 
-        const type = RouterEvent.PUSH.value;
+        const type = HistoryEvent.PUSH.value;
         EventListeners.on(type, fn);
         return () =>
         {
@@ -209,7 +209,7 @@ export default class History
 
     static onReplace(fn)
     {
-        const type = RouterEvent.REPLACE.value;
+        const type = HistoryEvent.REPLACE.value;
         EventListeners.on(type, fn);
         return () =>
         {
@@ -222,7 +222,7 @@ export default class History
     static onHash(fn)
     {
 
-        const type = RouterEvent.HASH.value;
+        const type = HistoryEvent.HASH.value;
         EventListeners.on(type, fn);
 
         return () =>
@@ -232,7 +232,7 @@ export default class History
     }
 
 
-    static start(events = RouterEvent.default)
+    static start(events = HistoryEvent.default)
     {
         return attachEvents(events);
     }

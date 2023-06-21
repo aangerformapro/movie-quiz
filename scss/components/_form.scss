@@ -138,7 +138,13 @@
 
             &[disabled] {
                 color: $netflix-gray;
-                // border-bottom-color: transparent;
+            }
+        }
+        [type='submit']:not([disabled]) {
+            &:active,
+            &:focus,
+            &:hover {
+                color: $hl-color;
             }
         }
 
