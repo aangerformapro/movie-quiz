@@ -1,4 +1,5 @@
 <script>
+    import Movies from "./../components/sliders/Movies.svelte";
     import { useParams } from "svelte-navigator";
     import { getEntry } from "../App/game.mjs";
     import { decode } from "../../modules/utils/utils.mjs";
@@ -16,5 +17,6 @@
         <Notify />
     </Cover>
     <GameForm {item} />
+    <Movies />
     <Series />
 {/if}

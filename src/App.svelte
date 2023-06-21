@@ -23,6 +23,7 @@
     import { watch as watchIcons } from "../modules/components/sprite.mjs";
     import { autoLoadAlternatives } from "../modules/utils/webp.mjs";
     import RouteRedirect from "./components/RouteRedirect.svelte";
+    import All from "./pages/All.svelte";
 
     watchIcons();
     autoLoadAlternatives();
@@ -52,7 +53,7 @@
             </Route>
 
             <Route path="all/:id">
-                <h1>All</h1>
+                <All />
             </Route>
             <Route path="all">
                 <RouteRedirect />
