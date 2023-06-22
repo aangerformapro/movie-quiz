@@ -33,6 +33,8 @@
         embed = getEmbedHtml($current),
         { id, title } = $current,
         found = isFound($current);
+
+    $: console.debug($current.alt);
 </script>
 
 {#if found || force}

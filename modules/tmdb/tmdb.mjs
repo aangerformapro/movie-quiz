@@ -208,22 +208,40 @@ export default class TheMovieDatabase
 
     static async discoverMovies(page = 1, with_origin_country = 'US|FR')
     {
-        const url = buildApiUrl('/3/discover/movie', { page });
+        const url = buildApiUrl('/3/discover/movie', { page, sort_by: 'popularity.desc', with_origin_country });
 
         return await fetch(url, this.fetchApiParams).then(resp => resp.json());
 
     }
 
 
+    static async movieList(page = 1)
+    {
+        const url = buildApiUrl('/3/movie/changes', { page });
 
-    static async discoverSeries(page = 1, with_origin_country = 'US|JP|KR|FR|CA')
+        return await fetch(url, this.fetchApiParams).then(resp => resp.json());
+
+    }
+
+
+    static async discoverSeries(page = 1, with_origin_country = 'US|JP|CA')
     {
 
-        const url = buildApiUrl('/3/discover/tv', { page, with_origin_country });
+        const url = buildApiUrl('/3/discover/tv', { page, with_origin_country, sort_by: 'popularity.desc' });
 
         return await fetch(url, this.fetchApiParams).then(resp => resp.json());
 
     }
+
+    static async tvList(page = 1)
+    {
+        const url = buildApiUrl('/3/tv/changes', { page });
+
+        return await fetch(url, this.fetchApiParams).then(resp => resp.json());
+
+    }
+
+
 
 
     static async getMovieInfos(id, language = null)
