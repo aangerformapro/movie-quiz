@@ -3,7 +3,6 @@
     import SoundTrack, { muted, playIntro } from "../App/audio.mjs";
     import { loaderDisplayed } from "../App/utils.mjs";
     import { SessionStarted } from "../App/game.mjs";
-    import { loading } from "../App/loader.mjs";
 </script>
 
 <script>
@@ -16,17 +15,10 @@
             if (false === value && !$SessionStarted) {
                 $SessionStarted = true;
                 SoundTrack.INTRO.play();
+                $playIntro = !$muted;
             }
         })
     );
-
-    onMount(() => {
-        SoundTrack.INTRO.player.addEventListener(
-            "play",
-            () => ($playIntro = $SessionStarted && !$muted),
-            { once: true }
-        );
-    });
 </script>
 
 <div class="audio-player">
