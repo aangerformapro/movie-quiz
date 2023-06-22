@@ -4,8 +4,7 @@ import fs, { writeFileSync } from 'node:fs';
 
 import { isArray, isEmpty, isNull } from "../utils/utils.mjs";
 
-// const TMDB_API_SERVER = 'https://api.themoviedb.org';
-const TMDB_IMAGES = '//image.tmdb.org/t/p/';
+
 
 const TMDB_CONFIGURATION = {
     backdrops: [
@@ -62,7 +61,10 @@ const TMDB_CONFIGURATION = {
 
 
 // proxy overrides
+
+// const TMDB_API_SERVER = 'https://api.themoviedb.org';
 const TMDB_API_SERVER = 'http://localhost:1337';
+const TMDB_IMAGES = '//image.tmdb.org/t/p/';
 // const TMDB_IMAGES = 'http://localhost:1337';
 
 
@@ -346,7 +348,7 @@ const ids = new Set;
             if (ids.has(item.id))
             {
 
-                console.log('doublon: ', item.title);
+                console.debug('doublon: ', item.title);
                 continue;
             }
 
@@ -398,7 +400,7 @@ const ids = new Set;
             if (ids.has(item.id))
             {
 
-                console.log('doublon: ', item.title);
+                console.debug('doublon: ', item.title);
                 continue;
             }
 

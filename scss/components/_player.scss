@@ -1,0 +1,55 @@
+@use '../helpers' as *;
+
+@mixin player {
+    .audio-player {
+        position: fixed;
+        visibility: hidden;
+        opacity: 0;
+        top: -100vmax;
+        right: -100vmax;
+    }
+
+    .mute-sound {
+        position: absolute;
+        top: 72px;
+        right: 16px;
+        z-index: 300;
+        padding: 8px;
+        border-radius: 50%;
+        cursor: pointer;
+        @include flex-center(column);
+        border: 2px solid transparent;
+        outline: 1px solid transparent;
+
+        &:active,
+        &:hover {
+            border-color: rgba($netflix-black-rgb, 0.7);
+            background: rgba($netflix-white-rgb, 0.7);
+            color: $netflix-black;
+            transform: scale(1.2);
+        }
+
+        &:active {
+            outline-color: rgba($netflix-red-rgb, 0.7);
+        }
+
+        transition-duration: 0.5s;
+
+        @include lg {
+            padding: 16px;
+            right: 2vw;
+            top: 96px;
+        }
+
+        &[data-muted='true'] {
+            [data-muted='false'] {
+                display: none;
+            }
+        }
+        &[data-muted='false'] {
+            [data-muted='true'] {
+                display: none;
+            }
+        }
+    }
+}

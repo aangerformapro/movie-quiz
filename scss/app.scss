@@ -8,6 +8,7 @@
 @use './components/details' as *;
 @use './components/form' as *;
 @use './components/notifications' as *;
+@use './components/player' as *;
 
 @include simple-reset {
     background-color: $netflix-background;
@@ -22,6 +23,7 @@
 @include nav;
 @include dialog;
 @include main-loader;
+@include player;
 
 #app {
     @include cover;
@@ -29,6 +31,8 @@
     @include details;
     @include form;
     @include notifications;
+
+    min-height: calc(100vh - 80px);
 }
 
 // dialog overrides
@@ -63,6 +67,7 @@
     }
 }
 
+// youtube player dialog overrides
 #youtube-video {
     aspect-ratio: 16/9;
 
@@ -79,6 +84,7 @@
     }
 }
 
+// noscroll hack
 .noscroll {
     overflow: hidden !important;
     width: 100% !important;
@@ -88,6 +94,8 @@
 .scrollback {
     scroll-behavior: auto !important;
 }
+
+// utility classes, not used much
 
 @include lg-down {
     .hide-on-mobile {
@@ -99,8 +107,4 @@
     .mobile-only {
         display: none !important;
     }
-}
-
-#app {
-    min-height: calc(100vh - 80px);
 }

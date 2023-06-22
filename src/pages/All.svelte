@@ -7,13 +7,18 @@
     import Series from "../components/sliders/Series.svelte";
     import GameForm from "../components/GameForm.svelte";
     import Notify from "../components/Notify.svelte";
+    import NotFound from "./NotFound.svelte";
     const params = useParams();
     $: $current = getEntry(decode($params.id));
 </script>
 
-<Cover>
-    <Notify />
-</Cover>
-<GameForm />
-<Movies route="/all" />
-<Series route="/all" />
+{#if $current}
+    <Cover>
+        <Notify />
+    </Cover>
+    <GameForm />
+    <Movies route="/all" />
+    <Series route="/all" />
+{:else}
+    <NotFound />
+{/if}

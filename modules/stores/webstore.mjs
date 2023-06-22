@@ -1,6 +1,6 @@
 import { uuidv4, encode, decode, isString, IS_UNSAFE } from "../utils/utils.mjs";
 import { DataStore, GetDataStoreHook } from "./datastore.mjs";
-import emitter from './../utils/emitter.mjs';
+import '../stubs/storage.mjs';
 
 
 const VENDOR_KEY = 'NGSOFT:UUID', SEP = ':';
@@ -120,13 +120,15 @@ export class WebStore extends DataStore
                 }
             };
 
-            emitter.on('storage', listener);
+
+            addEventListener('storage', listener);
 
             set(this.getItem(name, defaultValue));
 
             return () =>
             {
-                emitter.off('storage', listener);
+                removeEventListener('storage', listener);
+
             };
 
         });

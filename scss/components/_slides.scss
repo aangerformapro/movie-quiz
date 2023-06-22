@@ -27,6 +27,14 @@
             }
             .swiper-slide {
                 width: auto;
+                max-width: 96px;
+                @include md {
+                    max-width: 128px;
+                }
+
+                @include lg {
+                    max-width: 170px;
+                }
             }
         }
     }

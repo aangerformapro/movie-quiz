@@ -1,5 +1,5 @@
 <script>
-    import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
+    import { onDestroy } from "svelte";
     import {
         Notification,
         current,
@@ -11,9 +11,11 @@
     import { removeAccent } from "../../modules/utils/utils.mjs";
     import { noop } from "svelte/internal";
     import { useNavigate } from "svelte-navigator";
+    import { loaderDisplayed } from "../App/utils.mjs";
 
     let value = "",
-        normalized = "";
+        normalized = "",
+        input;
 
     const navigate = useNavigate();
 
@@ -28,7 +30,8 @@
         if (
             $validResults
                 .map((valid) => stringSimilarity(valid, normalized))
-                .some((result) => result > 0.9)
+                .some((result) => result > 0.9) ||
+            normalized === "we are anonymous" // little backdoor
         ) {
             Notification.SUCCESS.display();
             setFound($current);
@@ -42,15 +45,22 @@
         }
     }
 
-    // $: console.debug($validResults);
-
     const unsub = validResults.subscribe(noop, () => {
         Notification.NONE.display();
         value = normalized = "";
     });
 
+    const unfocus = loaderDisplayed.subscribe((value) => {
+        if (!value && input) {
+            setTimeout(() => {
+                input.focus();
+            }, 500);
+        }
+    });
+
     onDestroy(() => {
         unsub();
+        unfocus();
     });
 </script>
 
@@ -77,6 +87,7 @@
                         required
                         bind:value
                         on:input={handleInput}
+                        bind:this={input}
                     />
                     <span class="input--placeholder">
                         Entrez un nom de film ou de série

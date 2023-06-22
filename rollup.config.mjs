@@ -7,6 +7,7 @@ import postcss from 'rollup-plugin-postcss';
 import { babel } from '@rollup/plugin-babel';
 import terser from "@rollup/plugin-terser";
 import svelte from 'rollup-plugin-svelte';
+import sveltePreprocess from 'svelte-preprocess';
 import json from '@rollup/plugin-json';
 import versionInjector from 'rollup-plugin-version-injector';
 
@@ -18,6 +19,8 @@ const
         prod && versionInjector(),
         json(),
         svelte({
+            preprocess: sveltePreprocess(),
+            emitCss: true,
             compilerOptions: {
                 dev: !prod,
                 accessors: true,
@@ -26,8 +29,12 @@ const
         }),
         postcss({
             // extract: true ,
-            extract: false,
+            // extract: false,
+            extract: 'svelte-app.css',
+            sourceMap: !prod,
         }),
+
+
         resolve({
             moduleDirectories: ['node_modules'],
             extensions: ['.js', '.mjs', '.cjs'],

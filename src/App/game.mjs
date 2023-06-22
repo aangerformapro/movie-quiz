@@ -1,5 +1,5 @@
 import { derived, get, writable, readable } from 'svelte/store';
-import LocalStore from './../../modules/stores/webstore.mjs';
+import { LocalStore, SessionStore } from './../../modules/stores/webstore.mjs';
 import { BackedEnum, isArray, isEmpty, isInt, isPlainObject, removeAccent } from '../../modules/utils/utils.mjs';
 
 
@@ -58,9 +58,10 @@ export class MediaType extends BackedEnum
 
 export const NOPIC = './assets/pictures/nopic.webp';
 
-export const settings = LocalStore.hook('settings', {
-    notFoundToDisplay: 20,
-});
+
+export const todisplay = LocalStore.hook('todisplay', 20);
+
+
 
 
 
@@ -76,6 +77,7 @@ export const settings = LocalStore.hook('settings', {
         LocalStore.removeItem(MediaType.MOVIE.key);
         LocalStore.removeItem(MediaType.TV.key);
         LocalStore.removeItem('current');
+        SessionStore.removeItem('started');
         LocalStore.setItem('BuildDate', BUILD_DATE);
         console.debug('Storage reset flowing base code update.');
     }
@@ -84,6 +86,11 @@ export const settings = LocalStore.hook('settings', {
 
 
 
+/**
+ * Session is new?
+ * Used to play intro
+ */
+export const SessionStarted = SessionStore.hook("started", false);
 
 
 

@@ -5,8 +5,8 @@
         getFound,
         getNotFound,
         getRandom,
-        settings,
         NOPIC,
+        todisplay,
     } from "../../App/game.mjs";
     import createResourceLoader from "../../App/loader.mjs";
     import swiper from "../../App/swiper.mjs";
@@ -18,7 +18,7 @@
     const { onload } = createResourceLoader(noop);
 
     $: found = getFound($tv);
-    $: notfound = getRandom(getNotFound($tv), $settings.notFoundToDisplay);
+    $: notfound = getRandom(getNotFound($tv), $todisplay);
 </script>
 
 {#if notfound.length}

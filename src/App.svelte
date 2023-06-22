@@ -11,12 +11,13 @@
     import { ready } from "./App/game.mjs";
 
     // auto replace i.ng-* by their svgs
-    import { watch as watchIcons } from "../modules/components/sprite.mjs";
+    import "../modules/components/sprite.mjs";
     import { autoLoadAlternatives } from "../modules/utils/webp.mjs";
     import RouteRedirect from "./components/RouteRedirect.svelte";
     import All from "./pages/All.svelte";
+    import Player from "./components/Player.svelte";
+    import Intro from "./components/Intro.svelte";
 
-    watchIcons();
     autoLoadAlternatives();
 </script>
 
@@ -49,7 +50,6 @@
             <Route path="all">
                 <RouteRedirect />
             </Route>
-
             <Route path="details/:id">
                 <Details />
             </Route>
@@ -57,6 +57,8 @@
                 <NotFound />
             </Route>
         </main>
+        <Player />
+        <Intro />
         <Footer />
     </Router>
 {/if}

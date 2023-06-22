@@ -8,36 +8,23 @@
     import Cover from "../components/Cover.svelte";
 
     import swiper from "../App/swiper.mjs";
+    import NotFound from "./NotFound.svelte";
 
     const params = useParams();
 
-    let item, found;
-
-    function RouteNotFound() {
-        Dialog.alert("Média non trouvé").then(() => history.back());
-    }
-
-    function DoNotTryToCheat() {
-        Dialog.alert("N'essayez-pas de tricher !!!").then(() => history.back());
-    }
+    let found;
 
     $current = getEntry(decode($params.id));
 
     // params.subscribe()
 
     onMount(() => {
-        item = $current;
-        if (!$current) {
-            $loaderDisplayed = false;
-            return RouteNotFound();
-        }
+        if ($current) {
+            found = isFound($current);
 
-        found = isFound($current);
-
-        if (!found) {
-            $current = null;
-            $loaderDisplayed = false;
-            DoNotTryToCheat();
+            if (!found) {
+                $current = null;
+            }
         }
     });
 </script>
@@ -55,21 +42,24 @@
                 <div class="swiper overflow-x-scroll" use:swiper>
                     <div class="swiper-wrapper d-flex">
                         {#each $current.cast as actor}
-                            <div class="swiper-slide m-2">
-                                <div class="poster flat">
-                                    <img
-                                        src={actor.picture.w185 ?? NOPIC}
-                                        alt={actor.name}
-                                    />
+                            {#if actor.picture.w185}
+                                <div class="swiper-slide m-2">
+                                    <div class="poster flat">
+                                        <img
+                                            src={actor.picture.w185}
+                                            alt={actor.name}
+                                        />
+                                    </div>
+                                    <div class="actor d-flex flex-column">
+                                        <strong class="actor-name"
+                                            >{actor.name}</strong
+                                        >
+                                        <small class="role"
+                                            >{actor.character}</small
+                                        >
+                                    </div>
                                 </div>
-                                <div class="actor d-flex flex-column">
-                                    <strong class="actor-name"
-                                        >{actor.name}</strong
-                                    >
-                                    <small class="role">{actor.character}</small
-                                    >
-                                </div>
-                            </div>
+                            {/if}
                         {/each}
                     </div>
                 </div>
@@ -80,4 +70,6 @@
             </div>
         </div>
     {/if}
+{:else}
+    <NotFound />
 {/if}

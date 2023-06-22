@@ -1,7 +1,15 @@
 {
+    "bg-intro": {
+        "alt": "bg-intro.jpg",
+        "src": "bg-intro.webp"
+    },
     "heading": {
         "alt": "heading.jpg",
         "src": "heading.webp"
+    },
+    "logobig": {
+        "alt": "logobig.png",
+        "src": "logobig.webp"
     },
     "m": {
         "alt": "m.png",
@@ -10,6 +18,10 @@
     "moviequiz": {
         "alt": "moviequiz.png",
         "src": "moviequiz.webp"
+    },
+    "mq": {
+        "alt": "mq.png",
+        "src": "mq.webp"
     },
     "nopic": {
         "alt": "nopic.png",

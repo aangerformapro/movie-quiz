@@ -5,8 +5,8 @@
         getFound,
         getNotFound,
         getRandom,
-        settings,
         NOPIC,
+        todisplay,
     } from "../../App/game.mjs";
     import createResourceLoader from "../../App/loader.mjs";
 
@@ -21,7 +21,7 @@
     const { onload } = createResourceLoader(noop);
 
     $: found = getFound($movies);
-    $: notfound = getRandom(getNotFound($movies), $settings.notFoundToDisplay);
+    $: notfound = getRandom(getNotFound($movies), $todisplay);
 </script>
 
 {#if notfound.length}
