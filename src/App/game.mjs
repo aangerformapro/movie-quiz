@@ -77,6 +77,8 @@ export const todisplay = LocalStore.hook('todisplay', 20);
         LocalStore.removeItem(MediaType.MOVIE.key);
         LocalStore.removeItem(MediaType.TV.key);
         LocalStore.removeItem('current');
+        LocalStore.removeItem('muted');
+        LocalStore.removeItem('started');
         SessionStore.removeItem('started');
         LocalStore.setItem('BuildDate', BUILD_DATE);
         console.debug('Storage reset flowing base code update.');
