@@ -34,7 +34,15 @@ $_fluo-wheel-gradient: v-add(fluo-wheel-gradient, $fluo-wheel-gradient);
         background: $_fluo-wheel-gradient;
         color: $_fluo-text-color;
 
-        & > * {
+        svg {
+            position: absolute;
+            @include size(70%);
+            margin: 15%;
+            color: rgba(18, 18, 18, 0.9);
+            animation: spin 0.75s linear reverse infinite;
+        }
+
+        .fluo-color {
             border-radius: 50%;
             background: $_fluo-wheel-gradient;
             @include size(100%);

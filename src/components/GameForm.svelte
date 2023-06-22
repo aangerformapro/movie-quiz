@@ -10,14 +10,12 @@
     import { stringSimilarity } from "string-similarity-js";
     import { removeAccent } from "../../modules/utils/utils.mjs";
     import { noop } from "svelte/internal";
-    import { useNavigate } from "svelte-navigator";
+
     import { loaderDisplayed } from "../App/utils.mjs";
 
     let value = "",
         normalized = "",
         input;
-
-    const navigate = useNavigate();
 
     function handleInput() {
         normalized = removeAccent(value.toLowerCase());
@@ -30,15 +28,10 @@
         if (
             $validResults
                 .map((valid) => stringSimilarity(valid, normalized))
-                .some((result) => result > 0.9) ||
-            normalized === "we are anonymous" // little backdoor
+                .some((result) => result > 0.9)
         ) {
             Notification.SUCCESS.display();
             setFound($current);
-
-            setTimeout(() => {
-                navigate("/");
-            }, 3500);
         } else {
             value = normalized = "";
             Notification.FAILURE.display();

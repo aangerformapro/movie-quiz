@@ -21,14 +21,23 @@ export const playIntro = writable(false);
 
 function playAudio(el)
 {
-    if (isElement(el))
+
+    return new Promise((resolve, reject) =>
     {
-        el.currentTime = 0;
-        if (el.paused && !el.muted)
+        if (isElement(el))
         {
-            el.play();
+            el.currentTime = 0;
+            if (el.paused && !el.muted)
+            {
+                el.addEventListener('ended', () => resolve(el));
+                el.play();
+                return;
+            }
         }
-    }
+        reject(new TypeError("not an element"));
+
+    });
+
 }
 
 
@@ -68,7 +77,7 @@ export default class SoundTrack extends BackedEnum
 
     play()
     {
-        playAudio(this.player);
+        return playAudio(this.player);
     }
 
 

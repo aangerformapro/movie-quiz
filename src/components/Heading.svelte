@@ -8,7 +8,6 @@
     } from "../App/game.mjs";
     import { IS_TOUCH, isPlainObject } from "../../modules/utils/utils.mjs";
     import Dialog, { Position } from "../../modules/components/dialog.mjs";
-    import { onMount } from "svelte";
 
     export let force = false,
         more = true;
@@ -30,19 +29,10 @@
         }
     }
 
-    // onMount(() => {
-    //     (youtube = getYoutubeUrl($current)),
-    //         (embed = getEmbedHtml($current)),
-    //         ({ id, title } = $current),
-    //         (found = isFound($current));
-    // });
-
     let youtube = getYoutubeUrl($current),
         embed = getEmbedHtml($current),
         { id, title } = $current,
         found = isFound($current);
-
-    // $: console.debug($current.alt);
 </script>
 
 {#if found || force}

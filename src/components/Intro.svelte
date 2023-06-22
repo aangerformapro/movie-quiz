@@ -1,5 +1,16 @@
 <script>
+    import { onDestroy } from "svelte";
     import { playIntro } from "../App/audio.mjs";
+
+    onDestroy(
+        playIntro.subscribe((value) => {
+            if (value === true) {
+                setTimeout(() => {
+                    $playIntro = false;
+                }, 4200);
+            }
+        })
+    );
 </script>
 
 {#if $playIntro}

@@ -7,41 +7,26 @@
 </script>
 
 <script>
-    let introPlayed = false;
-
     function handleClick() {
         $muted = !$muted;
     }
 
-    const unsubLoader = loaderDisplayed.subscribe((value) => {
-        if (
-            false === value
-            //  && !$SessionStarted
-        ) {
-            $SessionStarted = true;
-            SoundTrack.INTRO.play();
-        }
-    });
+    onDestroy(
+        loaderDisplayed.subscribe((value) => {
+            if (false === value && !$SessionStarted) {
+                $SessionStarted = true;
+                SoundTrack.INTRO.play();
+            }
+        })
+    );
 
     onMount(() => {
         SoundTrack.INTRO.player.addEventListener(
             "play",
-            () => {
-                if (!introPlayed) {
-                    introPlayed = true;
-                    if (
-                        !$muted
-                        // && !$SessionStarted
-                    ) {
-                        $playIntro = true;
-                    }
-                }
-            },
+            () => ($playIntro = $SessionStarted && !$muted),
             { once: true }
         );
     });
-
-    onDestroy(() => unsubLoader());
 </script>
 
 <div class="audio-player">

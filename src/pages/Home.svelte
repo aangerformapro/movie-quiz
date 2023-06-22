@@ -7,6 +7,8 @@
     $current = getLastFound();
 </script>
 
-<Cover />
-<Movies />
-<Series />
+{#if $current}
+    <Cover />
+    <Movies />
+    <Series />
+{/if}

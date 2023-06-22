@@ -2,22 +2,15 @@
     import { useParams } from "svelte-navigator";
     import { onMount } from "svelte/internal";
     import { decode } from "../../modules/utils/utils.mjs";
-    import { NOPIC, getEntry, isFound, current } from "../App/game.mjs";
-    import Dialog from "../../modules/components/dialog.mjs";
-    import { loaderDisplayed } from "../App/utils.mjs";
+    import { getEntry, isFound, current } from "../App/game.mjs";
     import Cover from "../components/Cover.svelte";
 
     import swiper from "../App/swiper.mjs";
     import NotFound from "./NotFound.svelte";
 
     const params = useParams();
-
     let found;
-
     $current = getEntry(decode($params.id));
-
-    // params.subscribe()
-
     onMount(() => {
         if ($current) {
             found = isFound($current);

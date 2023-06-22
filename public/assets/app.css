@@ -458,209 +458,6 @@ header {
   color: rgba(254, 252, 248, 1);
   color: rgba(var(--netflix-white-rgb), 1);
 }
-.ng-dialog {
-  /*
-      Dialog Reset
-  */
-  font-family: "Poppins", "Roboto", sans-serif;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  position: initial;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: auto;
-  height: auto;
-  position: relative;
-}
-.ng-dialog--form {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-radius: 2px;
-  background: #ddd;
-  padding: 0.5em;
-}
-.ng-dialog--form input,
-.ng-dialog--form textarea {
-  -webkit-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-}
-.ng-dialog--form label {
-  font-size: 16px;
-  font-weight: 700;
-}
-.ng-dialog--form [type=submit],
-.ng-dialog--form [type=button],
-.ng-dialog--form [type=reset],
-.ng-dialog--form [role=button],
-.ng-dialog--form button {
-  padding: 0.25em 1em;
-  text-transform: capitalize;
-  border: 0;
-  outline: 0;
-  appearance: none;
-  border-radius: 0.25em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #0c0c0d;
-  background-color: rgba(12, 12, 13, 0.1);
-  cursor: pointer;
-}
-.ng-dialog--form [type=submit]:hover:not(:disabled), .ng-dialog--form [type=submit]:focus:not(:disabled),
-.ng-dialog--form [type=button]:hover:not(:disabled),
-.ng-dialog--form [type=button]:focus:not(:disabled),
-.ng-dialog--form [type=reset]:hover:not(:disabled),
-.ng-dialog--form [type=reset]:focus:not(:disabled),
-.ng-dialog--form [role=button]:hover:not(:disabled),
-.ng-dialog--form [role=button]:focus:not(:disabled),
-.ng-dialog--form button:hover:not(:disabled),
-.ng-dialog--form button:focus:not(:disabled) {
-  background-color: rgba(12, 12, 13, 0.2);
-}
-.ng-dialog--form [type=submit]:active:not(:disabled),
-.ng-dialog--form [type=button]:active:not(:disabled),
-.ng-dialog--form [type=reset]:active:not(:disabled),
-.ng-dialog--form [role=button]:active:not(:disabled),
-.ng-dialog--form button:active:not(:disabled) {
-  background-color: rgba(12, 12, 13, 0.3);
-}
-.ng-dialog--form [type=submit]:disabled,
-.ng-dialog--form [type=button]:disabled,
-.ng-dialog--form [type=reset]:disabled,
-.ng-dialog--form [role=button]:disabled,
-.ng-dialog--form button:disabled {
-  color: #b1b1b3;
-  cursor: default;
-}
-.ng-dialog--form button + button {
-  margin-left: 2vmin;
-}
-.ng-dialog--heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.ng-dialog--heading button[value=close] {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  margin: 0;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.ng-dialog--heading h4 {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 0 0 0 1em;
-  margin: 0;
-}
-.ng-dialog--contents {
-  padding: 3vmin;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 15vmin;
-}
-.ng-dialog--footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-.ng-dialog:not([open]) {
-  visibility: hidden;
-  opacity: 0;
-  clip: rect(0, 0, 0, 0);
-  width: 0;
-  height: 0;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.ng-dialog:not([open]) .ng-dialog--form, .ng-dialog.closing .ng-dialog--form {
-  transform: scale(0);
-  opacity: 0;
-}
-.ng-dialog:modal {
-  position: fixed;
-  width: 100vw;
-  min-height: 100vh;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  max-width: none;
-  max-width: initial;
-  max-height: none;
-  max-height: initial;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.ng-dialog:modal .ng-dialog--form {
-  min-height: 20vmin;
-  min-width: 30vmin;
-  max-width: 100vw;
-  max-height: 100vh;
-  transition-duration: 0.5s;
-  transition-timing-function: ease;
-  transform-origin: center center;
-}
-.ng-dialog.pos-top {
-  align-items: flex-start;
-}
-.ng-dialog.pos-top .ng-dialog--form {
-  margin-top: 10vmin;
-}
-.ng-dialog.pos-bottom {
-  align-items: flex-end;
-}
-.ng-dialog.pos-bottom .ng-dialog--form {
-  margin-bottom: 10vmin;
-}
-.ng-dialog.pos-left {
-  justify-content: flex-start;
-}
-.ng-dialog.pos-left .ng-dialog--form {
-  margin-left: 10vmin;
-}
-.ng-dialog.pos-right {
-  justify-content: flex-end;
-}
-.ng-dialog.pos-right .ng-dialog--form {
-  margin-right: 10vmin;
-}
-.ng-dialog::backdrop {
-  background: rgba(14, 14, 14, 0.5);
-  filter: blur(3px);
-  box-shadow: 0 0 3px 3px rgba(14, 14, 14, 0.5);
-}
-.ng-dialog .ng-dialog--form-input {
-  display: flex;
-  flex-direction: column;
-}
-.ng-dialog .ng-dialog--form-input label + input {
-  margin: 0.25em 0;
-}
-.ng-dialog .ng-dialog--form-input-inline {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-  align-items: center;
-}
-.ng-dialog .ng-dialog--form-input-inline label + input {
-  margin: 0 0.5em 0 0;
-}
-.ng-dialog [hidden] {
-  display: none !important;
-}
-.ng-dialog [disabled] {
-  pointer-events: none;
-  opacity: 0.9;
-}
 .main-loader {
   position: fixed;
   z-index: 500;
@@ -698,23 +495,31 @@ header {
   color: rgb(254, 252, 248);
   color: var(--fluo-text-color);
 }
-.main-loader .fluo > * {
+.main-loader .fluo svg {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  margin: 15%;
+  color: rgba(18, 18, 18, 0.9);
+  animation: spin 0.75s linear reverse infinite;
+}
+.main-loader .fluo .fluo-color {
   border-radius: 50%;
   background: var(--fluo-wheel-gradient);
   width: 100%;
   height: 100%;
   position: absolute;
 }
-.main-loader .fluo > *:nth-child(1) {
+.main-loader .fluo .fluo-color:nth-child(1) {
   filter: blur(5px);
 }
-.main-loader .fluo > *:nth-child(2) {
+.main-loader .fluo .fluo-color:nth-child(2) {
   filter: blur(10px);
 }
-.main-loader .fluo > *:nth-child(3) {
+.main-loader .fluo .fluo-color:nth-child(3) {
   filter: blur(25px);
 }
-.main-loader .fluo > *:nth-child(4) {
+.main-loader .fluo .fluo-color:nth-child(4) {
   filter: blur(50px);
 }
 .main-loader .fluo::after {
@@ -1296,27 +1101,10 @@ header {
   height: auto;
   max-height: 540px;
 }
-.noscroll {
-  overflow: hidden !important;
-  width: 100% !important;
-  padding-right: 8px !important;
-}
-.scrollback {
-  scroll-behavior: auto !important;
-}
 @media (min-width: 768px){
   .nav-container .logo img {
     max-width: none;
     max-width: initial;
-  }
-  .ng-dialog--form [type=submit][title]:not([type=button])::after,
-  .ng-dialog--form [type=button][title]:not([type=button])::after,
-  .ng-dialog--form [type=reset][title]:not([type=button])::after,
-  .ng-dialog--form [role=button][title]:not([type=button])::after,
-  .ng-dialog--form button[title]:not([type=button])::after {
-    display: inline-block;
-    content: attr(title);
-    margin-left: 8px;
   }
   #app .section .swiper .swiper-slide {
     max-width: 128px;
@@ -1341,9 +1129,6 @@ header {
   .nav-container .nav .nav-link:hover::after {
     left: 15%;
     right: 15%;
-  }
-  .ng-dialog:modal .ng-dialog--form {
-    transform: scale(1.2);
   }
   .main-loader .load-message {
     font-size: 20px;

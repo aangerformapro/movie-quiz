@@ -1,7 +1,6 @@
 @use 'helpers' as *;
 
 @use './components/nav' as *;
-@use './components/dialog' as *;
 @use './components/mainloader' as *;
 @use './components/cover' as *;
 @use './components/slides' as *;
@@ -21,7 +20,6 @@
 }
 
 @include nav;
-@include dialog;
 @include main-loader;
 @include player;
 
@@ -83,19 +81,6 @@
         max-height: 540px;
     }
 }
-
-// noscroll hack
-.noscroll {
-    overflow: hidden !important;
-    width: 100% !important;
-    padding-right: 8px !important;
-}
-
-.scrollback {
-    scroll-behavior: auto !important;
-}
-
-// utility classes, not used much
 
 @include lg-down {
     .hide-on-mobile {

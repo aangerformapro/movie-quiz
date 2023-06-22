@@ -3,7 +3,7 @@
  * @link https://getmdl.io/components/index.html#dialog-section
  */
 
-// import "./_dialog.scss";
+import "./_dialog.scss";
 
 
 import { isElement, createElement, decode, encode, isEmpty, isString, isArray, BackedEnum } from '../utils/utils.mjs';

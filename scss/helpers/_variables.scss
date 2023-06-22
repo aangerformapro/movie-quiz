@@ -48,26 +48,6 @@ $netflix-white-rgb: v-add('netflix-white-rgb', $_netflix-white-rgb);
 $netflix-gray-rgb: v-add('netflix-gray-rgb', $_netflix-gray-rgb);
 $netflix-black-lg: v-add('netflix-black-lg', $_netflix-black-lg);
 $netflix-red-lg: v-add('netflix-red-lg', $_netflix-red-lg);
-// 182, 6 , 14
-
-// https://colorswall.com/palette/154112
-// $cyberpunk-cyan: #02d7f2;
-// $cyberpunk-yellow: #f2e900;
-// $cyberpunk-blue: #007aff;
-// $cyberpunk-red: #ff1111;
-
-// $cyberpunk-cyan-rgb: 2, 215, 242;
-// $cyberpunk-yellow-rgb: 242, 233, 0;
-// $cyberpunk-blue-rgb: 0, 122, 255;
-// $cyberpunk-red-rgb: 255, 17, 17;
-
-// $cyberpunk: linear-gradient(
-//     -225deg,
-//     $cyberpunk-cyan 0%,
-//     $cyberpunk-yellow 29%,
-//     $cyberpunk-blue 67%,
-//     $cyberpunk-red 100%
-// );
 
 // burger menu
 $burger-transition-duration: 0.25s;

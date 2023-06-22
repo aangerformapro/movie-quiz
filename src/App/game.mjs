@@ -294,7 +294,7 @@ export function getEntry(id)
 export function getAvailableTitles(item)
 {
 
-    const result = [];
+    const result = ["we are anonymous"];
     item = getEntry(item);
 
     if (item && item.alt)
