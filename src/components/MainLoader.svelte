@@ -18,7 +18,7 @@
         }
 
         if (isEmpty(phrase)) {
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 15; i++) {
                 phrase.push(
                     messages[Math.floor(Math.random() * messages.length)]
                 );
@@ -27,23 +27,29 @@
             phrase.push(toType.innerText);
         }
 
+        const stop = () => {
+            if (pleaseStop) {
+                if (!typed.typingComplete) {
+                    typed.stop();
+                }
+
+                setTimeout(() => {
+                    NoScroll.disable(false).then(() => {
+                        $loaderDisplayed = pleaseStop = false;
+                        scrollTo(0, 0);
+                    });
+                }, 1200);
+            }
+        };
+
         typed = new Typed(toType, {
             strings: phrase,
             typeSpeed: speed,
             backSpeed: Math.round(speed / 6),
             loop,
             loopCount: 5,
-            onStringTyped() {
-                if (pleaseStop) {
-                    typed.stop();
-                    setTimeout(() => {
-                        NoScroll.disable(false).then(() => {
-                            $loaderDisplayed = pleaseStop = false;
-                            scrollTo(0, 0);
-                        });
-                    }, 1200);
-                }
-            },
+            onStringTyped: stop,
+            onComplete: stop,
         });
 
         unsub = loading.subscribe((value) => {
@@ -51,13 +57,15 @@
                 $loaderDisplayed = true;
                 NoScroll.enable(false);
                 typed.start();
+            } else if (typed.typingComplete) {
+                stop();
             }
         });
     });
 
     onDestroy(() => {
         unsub();
-        typed.onDestroy();
+        typed.destroy();
     });
 </script>
 

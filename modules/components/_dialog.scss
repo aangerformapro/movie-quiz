@@ -180,28 +180,28 @@
         &top {
             align-items: flex-start;
             .ng-dialog--form {
-                margin-top: 10vmax;
+                margin-top: 10vmin;
             }
         }
 
         &bottom {
             align-items: flex-end;
             .ng-dialog--form {
-                margin-bottom: 10vmax;
+                margin-bottom: 10vmin;
             }
         }
 
         &left {
             justify-content: flex-start;
             .ng-dialog--form {
-                margin-left: 10vmax;
+                margin-left: 10vmin;
             }
         }
 
         &right {
             justify-content: flex-end;
             .ng-dialog--form {
-                margin-right: 10vmax;
+                margin-right: 10vmin;
             }
         }
     }

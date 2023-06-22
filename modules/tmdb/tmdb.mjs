@@ -305,7 +305,7 @@ export default class TheMovieDatabase
 
 
 
-
+const ids = new Set;
 
 
 
@@ -325,15 +325,26 @@ export default class TheMovieDatabase
         for (let item of list.results)
         {
 
+            if (ids.has(item.id))
+            {
+
+                console.log('doublon: ', item.title);
+                continue;
+            }
+
             const data = parseApiData(await TheMovieDatabase.getMovieInfos(item.id), item),
                 frData = await TheMovieDatabase.getMovieInfos(item.id, 'fr-FR');
 
             data.overview.fr = frData.overview;
 
+            data.alt.unshift(data.title);
+            data.title = frData.title ?? frData.name;
+
 
             if (!isEmpty(data.cover) && !isEmpty(data.poster))
             {
                 entries.push(data);
+                ids.add(data.id);
             }
 
 
@@ -366,15 +377,26 @@ export default class TheMovieDatabase
         for (let item of list.results)
         {
 
+            if (ids.has(item.id))
+            {
+
+                console.log('doublon: ', item.title);
+                continue;
+            }
+
             const data = parseApiData(await TheMovieDatabase.getSeriesInfos(item.id), item),
                 frData = await TheMovieDatabase.getSeriesInfos(item.id, 'fr-FR');
 
             data.overview.fr = frData.overview;
 
+            data.alt.unshift(data.title);
+            data.title = frData.title ?? frData.name;
+
 
             if (!isEmpty(data.cover) && !isEmpty(data.poster))
             {
                 entries.push(data);
+                ids.add(data.id);
             }
 
         }

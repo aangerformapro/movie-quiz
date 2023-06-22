@@ -6,7 +6,7 @@ export const
 
     IS_UNSAFE = typeof unsafeWindow !== 'undefined',
     IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined',
-    IS_TOUCH = typeof 'ontouchstart' !== 'undefined',
+    IS_TOUCH = typeof ontouchstart !== 'undefined',
     noop = () => { },
     identity = x => x,
     global = IS_UNSAFE ? unsafeWindow : globalThis ?? window,

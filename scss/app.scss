@@ -63,6 +63,22 @@
     }
 }
 
+#youtube-video {
+    aspect-ratio: 16/9;
+
+    .ng-dialog--contents {
+        padding: 1vmin;
+    }
+
+    iframe {
+        width: 90vw;
+        max-width: 960px;
+        aspect-ratio: 16/9;
+        height: auto;
+        max-height: 540px;
+    }
+}
+
 .noscroll {
     overflow: hidden !important;
     width: 100% !important;

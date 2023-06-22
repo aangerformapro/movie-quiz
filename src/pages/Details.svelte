@@ -2,7 +2,7 @@
     import { useParams } from "svelte-navigator";
     import { onMount } from "svelte/internal";
     import { decode } from "../../modules/utils/utils.mjs";
-    import { NOPIC, getEntry, isFound } from "../App/game.mjs";
+    import { NOPIC, getEntry, isFound, current } from "../App/game.mjs";
     import Dialog from "../../modules/components/dialog.mjs";
     import { loaderDisplayed } from "../App/utils.mjs";
     import Cover from "../components/Cover.svelte";
@@ -21,38 +21,40 @@
         Dialog.alert("N'essayez-pas de tricher !!!").then(() => history.back());
     }
 
+    $current = getEntry(decode($params.id));
+
     // params.subscribe()
 
     onMount(() => {
-        item = getEntry(decode($params.id));
-        if (!item) {
+        item = $current;
+        if (!$current) {
             $loaderDisplayed = false;
             return RouteNotFound();
         }
 
-        found = isFound(item);
+        found = isFound($current);
 
         if (!found) {
-            item = null;
+            $current = null;
             $loaderDisplayed = false;
             DoNotTryToCheat();
         }
     });
 </script>
 
-{#if item}
-    <Cover {item} more={false} />
+{#if $current}
+    <Cover more={false} />
     <div class="media-info d-flex flex-column">
         <h4 class="my-3">Synopsis</h4>
-        <p class="overview">{item.overview.fr || item.overview.en}</p>
+        <p class="overview">{$current.overview.fr || $current.overview.en}</p>
     </div>
-    {#if item.cast.length}
+    {#if $current.cast.length}
         <div class="section actors mx-auto mb-3 px-3">
             <h3 class="my-3">Les acteurs</h3>
             <div class="d-flex align-items-center justify-content-between">
                 <div class="swiper overflow-x-scroll" use:swiper>
                     <div class="swiper-wrapper d-flex">
-                        {#each item.cast as actor}
+                        {#each $current.cast as actor}
                             <div class="swiper-slide m-2">
                                 <div class="poster flat">
                                     <img

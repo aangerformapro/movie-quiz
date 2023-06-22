@@ -613,25 +613,25 @@ header {
   align-items: flex-start;
 }
 .ng-dialog.pos-top .ng-dialog--form {
-  margin-top: 10vmax;
+  margin-top: 10vmin;
 }
 .ng-dialog.pos-bottom {
   align-items: flex-end;
 }
 .ng-dialog.pos-bottom .ng-dialog--form {
-  margin-bottom: 10vmax;
+  margin-bottom: 10vmin;
 }
 .ng-dialog.pos-left {
   justify-content: flex-start;
 }
 .ng-dialog.pos-left .ng-dialog--form {
-  margin-left: 10vmax;
+  margin-left: 10vmin;
 }
 .ng-dialog.pos-right {
   justify-content: flex-end;
 }
 .ng-dialog.pos-right .ng-dialog--form {
-  margin-right: 10vmax;
+  margin-right: 10vmin;
 }
 .ng-dialog::backdrop {
   background: rgba(14, 14, 14, 0.5);
@@ -1236,6 +1236,19 @@ header {
 .ng-dialog--form [role=button]:active,
 .ng-dialog--form button:active {
   box-shadow: 1px 0 rgba(0, 0, 0, 0.45);
+}
+#youtube-video {
+  aspect-ratio: 16/9;
+}
+#youtube-video .ng-dialog--contents {
+  padding: 1vmin;
+}
+#youtube-video iframe {
+  width: 90vw;
+  max-width: 960px;
+  aspect-ratio: 16/9;
+  height: auto;
+  max-height: 540px;
 }
 .noscroll {
   overflow: hidden !important;

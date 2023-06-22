@@ -221,10 +221,11 @@ export function setFound(item)
 {
     found.update(value =>
     {
-        value.push(
-            isInt(item) ? item : item.id
-        );
-
+        item = isInt(item) ? item : item.id;
+        if (!value.includes(item))
+        {
+            value.push(item);
+        }
         return value;
     });
 }
@@ -234,8 +235,7 @@ export function setFound(item)
  */
 export function getLastFound()
 {
-    let id = get(found).slice(-1)[0];
-    return id ? getItem(id) : getRandom(get(all), 1)[0];
+    return getEntry(get(found).slice(-1)[0]) ?? getRandom(get(all), 1)[0];
 }
 
 export function getFound(items)
@@ -298,20 +298,20 @@ export function getAvailableTitles(item)
     return result.map(str => removeAccent(str.toLowerCase()));
 }
 
-export function getYoutubeUrl(item)
+
+
+function getYoutubeId(item)
 {
 
-    if (isInt(item))
-    {
-        item = getEntry(item);
-    }
+    item = getEntry(item);
+
     if (item && item.videos && item.videos.length)
     {
         for (let entry of item.videos)
         {
             if (entry.site.toLowerCase() === 'youtube')
             {
-                return new URL('https://www.youtube.com/watch?v=' + entry.key);
+                return entry.key;
             }
         }
     }
@@ -320,3 +320,29 @@ export function getYoutubeUrl(item)
     return null;
 }
 
+
+
+
+export function getYoutubeUrl(item)
+{
+    let vid = getYoutubeId(item);
+    return vid ? new URL('https://www.youtube.com/watch?v=' + vid) : null;
+}
+
+/**
+ * @link https://support.google.com/youtube/answer/171780?hl=en#zippy=%2Cmake-an-embedded-video-play-automatically%2Cadd-captions-to-an-embedded-video%2Cturn-on-privacy-enhanced-mode
+ */
+export function getEmbedHtml(item)
+{
+
+    let vid = getYoutubeId(item);
+    if (vid)
+    {
+        // 960x540
+        return `<iframe width="960" height="540" src="https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&cc_load_policy=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    }
+
+    return null;
+}
+
+export const validResults = derived(current, $current => getAvailableTitles($current));
