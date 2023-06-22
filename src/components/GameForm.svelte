@@ -42,7 +42,7 @@
         }
     }
 
-    $: console.debug($validResults);
+    // $: console.debug($validResults);
 
     const unsub = validResults.subscribe(noop, () => {
         Notification.NONE.display();
