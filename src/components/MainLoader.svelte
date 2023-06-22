@@ -53,7 +53,6 @@
         });
 
         unsub = loading.subscribe((value) => {
-            return;
             if (false === (pleaseStop = !value)) {
                 $loaderDisplayed = true;
                 NoScroll.enable(false);
