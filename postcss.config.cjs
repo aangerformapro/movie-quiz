@@ -3,7 +3,7 @@ module.exports = (ctx) =>
 {
 
 
-    const prod = ctx.enx === 'production';
+    const prod = ctx.env === 'production';
 
     return {
         map: ctx.options.map,

@@ -11,7 +11,7 @@
     import createResourceLoader from "../../App/loader.mjs";
     import swiper from "../../App/swiper.mjs";
     import { noop } from "svelte/internal";
-
+    export let route = "/tv";
     let found = [],
         notfound = [];
 
@@ -23,7 +23,9 @@
 
 {#if notfound.length}
     <div class="section mx-auto mb-3 px-3">
-        <h3 class="my-3">Les Séries - A trouver</h3>
+        <h3 class="my-3">
+            Les Séries - A trouver ({$tv.length - found.length})
+        </h3>
         <div class="d-flex align-items-center justify-content-between">
             <div class="swiper overflow-x-scroll" use:swiper>
                 <div class="swiper-wrapper d-flex">
@@ -31,7 +33,7 @@
                         <div class="swiper-slide">
                             <div class="poster flat m-2 not-found">
                                 <!-- <div class="title">Le titre du film</div> -->
-                                <a href="/tv/{item.id}" use:links>
+                                <a href="{route}/{item.id}" use:links>
                                     <img
                                         src={item.cover.w780 ?? NOPIC}
                                         alt="Série à deviner"
@@ -52,7 +54,7 @@
 {/if}
 {#if found.length}
     <div class="section mx-auto mb-3 px-3">
-        <h3 class="my-3 px-0">Les Séries - Trouvées</h3>
+        <h3 class="my-3 px-0">Les Séries - Trouvées ({found.length})</h3>
         <div class="d-flex align-items-center justify-content-between">
             <div class="swiper overflow-x-scroll" use:swiper>
                 <div class="swiper-wrapper d-flex">
