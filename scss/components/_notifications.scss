@@ -4,10 +4,14 @@
     .notify-area:not(:empty) {
         pointer-events: none;
         z-index: 2;
-        height: 550px;
+        height: 256px;
         @include flex-center(column);
 
-        @include lg {
+        @include sm {
+            height: 480px;
+        }
+
+        @include md {
             height: 620px;
         }
 
@@ -15,7 +19,7 @@
             user-select: none;
             color: #fff;
             text-transform: uppercase;
-            min-width: 90vw;
+            min-width: 60vw;
 
             padding: 1vmin;
 
@@ -33,9 +37,5 @@
                 margin-top: 1rem;
             }
         }
-
-        // & + .heading {
-        //     display: none;
-        // }
     }
 }

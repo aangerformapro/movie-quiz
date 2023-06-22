@@ -31,10 +31,17 @@ function playAudio(el)
             {
                 el.addEventListener('ended', () => resolve(el));
                 el.play();
-                return;
             }
+            else
+            {
+                resolve(el);
+            }
+
+        } else
+        {
+            reject(new TypeError("not an element"));
         }
-        reject(new TypeError("not an element"));
+
 
     });
 
