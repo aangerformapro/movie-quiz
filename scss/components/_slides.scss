@@ -19,6 +19,11 @@
 
         .swiper {
             cursor: grab;
+            width: 100%;
+            padding: 16px 0;
+
+            display: flex;
+
             &.moving {
                 cursor: grabbing;
                 a {
@@ -26,8 +31,14 @@
                 }
             }
             .swiper-slide {
+                aspect-ratio: 2/3;
+
                 width: auto;
                 max-width: 96px;
+                & + .swiper-slide {
+                    margin-left: 16px;
+                }
+
                 @include md {
                     max-width: 128px;
                 }

@@ -188,6 +188,9 @@ export const all = derived(
     ([$movies, $tv]) => [...$movies, ...$tv]
 );
 
+export const movieList = derived([movie, found]);
+
+
 
 /**
  * A map of the mediatypes hooks

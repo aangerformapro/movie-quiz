@@ -3,7 +3,7 @@
  */
 import Swiper, { Navigation, FreeMode, Mousewheel } from "swiper";
 
-
+import "swiper/css";
 
 const DEFAULT_OPTIONS = {
     modules: [Navigation, FreeMode, Mousewheel],

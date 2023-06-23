@@ -13,7 +13,6 @@ const players = new Map();
  * Hook to mute sound
  */
 
-
 export const muted = LocalStore.hook('soundMuted', false);
 
 export const playIntro = writable(false);
@@ -56,7 +55,7 @@ export default class SoundTrack extends BackedEnum
 
     static INTRO = new SoundTrack('intro');
     static ERROR = new SoundTrack('error');
-    static SUCCESS = new SoundTrack('victory');
+    static SUCCESS = new SoundTrack('success');
 
 
 

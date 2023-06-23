@@ -35,6 +35,9 @@
         } else {
             value = normalized = "";
             Notification.FAILURE.display();
+            setTimeout(() => {
+                Notification.NONE.display();
+            }, 3000);
         }
     }
 

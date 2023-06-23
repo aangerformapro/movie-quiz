@@ -10,9 +10,11 @@
         notify.subscribe((value) => {
             if (value === Notification.SUCCESS) {
                 if (!$muted) {
-                    SoundTrack.SUCCESS.play().then(() => navigate("/"));
+                    SoundTrack.SUCCESS.play().then(() =>
+                        navigate("/", { replace: true })
+                    );
                 } else {
-                    setTimeout(navigate, 3500, "/");
+                    setTimeout(navigate, 3500, "/", { replace: true });
                 }
             } else if (value === Notification.FAILURE) {
                 SoundTrack.ERROR.play();

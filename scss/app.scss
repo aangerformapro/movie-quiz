@@ -93,3 +93,18 @@
         display: none !important;
     }
 }
+
+// chrome fix scrollbar pourie
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(219, 219, 219, 1);
+    border-radius: 20px;
+}

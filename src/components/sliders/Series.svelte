@@ -60,7 +60,7 @@
                 <div class="swiper-wrapper d-flex">
                     {#each found as item}
                         <div class="swiper-slide">
-                            <div class="poster m-2">
+                            <div class="poster flat m-2">
                                 <div class="title">{item.title}</div>
                                 <a href="/details/{item.id}">
                                     <img

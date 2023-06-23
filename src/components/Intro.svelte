@@ -28,7 +28,6 @@
         inset: 0;
         background: var(--netflix-black);
         display: flex;
-        // flex-direction: column;
         justify-content: center;
         align-items: center;
         overflow: hidden;
