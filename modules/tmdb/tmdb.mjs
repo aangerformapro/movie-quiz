@@ -338,7 +338,7 @@ const ids = new Set;
     const dest = 'public/api/1/movies.json', entries = [];
 
 
-    for (let page = 1; page <= 5; page++)
+    for (let page = 1; page <= 6; page++)
     {
         const list = await TheMovieDatabase.discoverMovies(page);
 
@@ -390,7 +390,7 @@ const ids = new Set;
     const dest = 'public/api/1/tv.json', entries = [];
 
 
-    for (let page = 1; page <= 5; page++)
+    for (let page = 1; page <= 6; page++)
     {
         const list = await TheMovieDatabase.discoverSeries(page);
 
