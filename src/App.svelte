@@ -23,6 +23,9 @@
 
 {#if $ready}
     <Router>
+        <Route path="intro">
+            <Intro force={true} animated={false} />
+        </Route>
         <Header />
         <main id="app">
             <Route path="/">
@@ -53,6 +56,7 @@
             <Route path="details/:id">
                 <Details />
             </Route>
+
             <Route path="*">
                 <NotFound />
             </Route>

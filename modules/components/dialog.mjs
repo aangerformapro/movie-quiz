@@ -6,7 +6,7 @@
 import "./_dialog.scss";
 
 
-import { isElement, createElement, decode, encode, isEmpty, isString, isArray, BackedEnum } from '../utils/utils.mjs';
+import { isElement, createElement, decode, encode, isEmpty, isString, isArray, BackedEnum, isBool } from '../utils/utils.mjs';
 
 import icons from './sprite.mjs';
 import NoScroll from './noscroll.mjs';
@@ -240,13 +240,15 @@ export default class Dialog extends HtmlComponent
 
         if (isArray(value))
         {
-            this.elements.content = '';
+            this.elements.content.innerHTML = '';
             value.forEach(html =>
             {
+
+                console.debug('html', html, this.elements.content);
                 if (isString(html))
                 {
-                    this.elements.content += html;
-                } else if (isElement(value))
+                    this.elements.content.innerHTML += html;
+                } else if (isElement(html))
                 {
                     this.elements.content.appendChild(html);
                 }
@@ -476,6 +478,62 @@ export default class Dialog extends HtmlComponent
 
 
     }
+
+
+    destroy()
+    {
+        dialogs.delete(this);
+        this.element.remove();
+    }
+
+
+}
+
+
+/**
+ * Binding for svelte
+ */
+export function createDialog({ backdropCloses,
+    canCancel,
+    canClose, position } = {})
+{
+
+
+
+    const dialog = new Dialog();
+    dialog.backdropCloses = backdropCloses ?? true;
+    dialog.canCancel = canCancel ?? true;
+    dialog.canClose = canClose ?? true;
+    if (position instanceof Position)
+    {
+        dialog.position = position;
+    }
+
+
+    const oncreateDialog = (el) =>
+    {
+
+        if (el.hasAttribute('title'))
+        {
+            dialog.title = el.getAttribute("title");
+        }
+        dialog.content = el;
+
+        return {
+            onDestroy()
+            {
+                dialog.destroy();
+            }
+        };
+    };
+
+
+
+    return {
+        dialog,
+        oncreateDialog,
+    };
+
 
 
 }

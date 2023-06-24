@@ -2,6 +2,8 @@
     import { onDestroy } from "svelte";
     import SoundTrack, { playIntro } from "../App/audio.mjs";
 
+    export let force = false,
+        animated = true;
     onDestroy(
         playIntro.subscribe((value) => {
             if (value === true) {
@@ -14,8 +16,8 @@
     );
 </script>
 
-{#if $playIntro}
-    <div class="intro">
+{#if $playIntro || force}
+    <div class="intro {animated ? 'intro-animated' : ''}">
         <div class="logo-big">
             <img src="./assets/pictures/moviequiz.webp" alt="MovieQuiz" />
         </div>
@@ -33,12 +35,9 @@
         align-items: center;
         overflow: hidden;
 
-        animation: fadeOut 1s ease-out forwards 3s;
-
         .logo-big {
             max-width: 90vw;
-            transform: scale(0.3);
-            animation: zoomOut 3s ease forwards;
+
             img {
                 object-fit: cover;
                 object-position: center center;
@@ -46,6 +45,14 @@
             }
         }
 
+        &.intro-animated {
+            animation: fadeOut 1s ease-out forwards 3s;
+
+            .logo-big {
+                transform: scale(0.3);
+                animation: zoomOut 3s ease forwards;
+            }
+        }
         @keyframes fadeOut {
             to {
                 opacity: 0;
