@@ -4,18 +4,20 @@ import fs from "node:fs";
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import postcss from 'rollup-plugin-postcss';
-import { babel } from '@rollup/plugin-babel';
 import terser from "@rollup/plugin-terser";
 import svelte from 'rollup-plugin-svelte';
 import sveltePreprocess from 'svelte-preprocess';
 import json from '@rollup/plugin-json';
 import versionInjector from 'rollup-plugin-version-injector';
+import del from 'rollup-plugin-delete';
+import postcssConfig from './postcss.config.cjs';
+
 
 const
     prod = !process.env.ROLLUP_WATCH,
-    USE_BABEL = false,
     inputdir = 'src', outputdir = 'public/assets',
     plugins = [
+        prod && del({ targets: outputdir + '/*.map' }),
         prod && versionInjector(),
         json(),
         svelte({
@@ -32,6 +34,7 @@ const
             // extract: false,
             extract: 'svelte-app.css',
             sourceMap: !prod,
+            plugins: postcssConfig.getPlugins(prod)
         }),
 
 
@@ -42,11 +45,15 @@ const
 
         }),
         commonjs(),
+
+        prod && terser(),
     ];
 
 
 
-const inputFiles = fs.readdirSync('src').filter(filename => filename.endsWith('.mjs') && !filename.startsWith('_')).map(filename =>
+const inputFiles = fs.readdirSync('src').filter(
+    filename => filename.endsWith('.mjs') && !filename.startsWith('_')
+).map(filename =>
 {
     const { name } = path.parse(filename);
     return {
@@ -59,28 +66,7 @@ const inputFiles = fs.readdirSync('src').filter(filename => filename.endsWith('.
 
 
 
-if (prod)
-{
 
-    if (USE_BABEL)
-    {
-        plugins.unshift(babel({
-            presets: [
-                [
-                    '@babel/preset-env', {
-                        targets: { esmodules: true },
-                        loose: true, modules: false
-                    }
-
-                ]
-            ], babelHelpers: 'bundled'
-        }));
-    }
-
-
-    plugins.push(terser());
-
-}
 
 
 export default inputFiles.map(item => ({

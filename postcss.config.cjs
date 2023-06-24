@@ -1,27 +1,34 @@
 
-module.exports = (ctx) =>
+function getPlugins(prod)
 {
+    return [
+        require("postcss-import")(),
+        !prod && require('postcss-combine-media-query')(),
+        require('postcss-preset-env')({
+            autoprefixer: {
+                cascade: false,
+            },
+            features: {
+                'custom-properties': true,
+            },
+        }),
+        !!prod && require('cssnano')({ preset: 'default' })
+    ];
+};
 
 
-    const prod = ctx.env === 'production';
+function postcss(ctx) 
+{
 
     return {
         map: ctx.options.map,
         parser: ctx.options.parser,
-        plugins: {
-            "postcss-import": {},
-            'postcss-combine-media-query': !prod ? {} : false,
-            'postcss-preset-env': {
-                autoprefixer: {
-                    cascade: false,
-                },
-                features: {
-                    // creates fallback duplicates properties for older browsers
-                    // adds ~200 lines to bootstrap mini
-                    'custom-properties': true,
-                },
-            },
-            cssnano: !prod ? false : { preset: 'default' },
-        }
+        plugins: getPlugins(ctx.env === 'production'),
     };
 };
+
+
+postcss.getPlugins = getPlugins;
+
+
+module.exports = postcss;
