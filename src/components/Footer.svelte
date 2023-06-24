@@ -1,8 +1,6 @@
 <script>
     import { createDialog } from "../../modules/components/dialog.mjs";
 
-    import "devicon";
-
     const { dialog, oncreateDialog } = createDialog({
         canCancel: false,
         canClose: false,
