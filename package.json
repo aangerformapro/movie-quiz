@@ -60,6 +60,7 @@
         "watch": "^1.0.2"
     },
     "dependencies": {
+        "bootstrap": "^5.3.0",
         "hint.css": "^2.7.0",
         "string-similarity-js": "^2.1.4",
         "svelte": "^3.59.1",

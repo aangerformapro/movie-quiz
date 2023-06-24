@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -18,45 +18,22 @@
     <link rel="shortcut icon" href="./assets/pictures/logo/logox512.png" sizes="512x512" type="image/png">
 
     <!-- Fonts -->
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
 
-    <!-- preload -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="preload" as="style"
-        crossorigin="anonymous">
-    <!-- <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css"
-        as="style" crossorigin="anonymous"> -->
-    <!-- <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
-        crossorigin="anonymous">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" crossorigin="anonymous"
-        as="script"> -->
-
 
     <!-- Styles -->
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin>
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css"
-        crossorigin> -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"> -->
-
-    <!-- <link rel="stylesheet" href="./assets/main.css">
-    <link rel="stylesheet" href="./assets/style.css"> -->
     <link rel="stylesheet" href="./assets/svelte-app.css">
     <link rel="stylesheet" href="./assets/app.css">
 
 
     <!-- Scripts -->
-
-    <!-- <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script> -->
-
     <script src="./assets/app.js" type="module" defer></script>
 
     <!-- Metadata -->
-
     <title>MovieQuiz</title>
     <meta name="robots" content="index,follow">
     <meta name="description" content="Movie and Series Quiz.">
@@ -66,9 +43,42 @@
 </head>
 
 <body>
+    <div class="no-script-display">
+        <div class="noscript-bg">
+            <img src="./assets/pictures/moviequiz.webp" alt="MovieQuiz">
+        </div>
+        <p class="no-script-message">
+            Ce site est prévu pour fonctionner en utilisant les dernières technologies web.<br>
+            Merci d'activer le JavaScript, ou d'utiliser un navigateur plus récent.
+        </p>
+        <style>
+            .no-script-display {
+                position: fixed;
+                inset: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
 
+            .no-script-message {
+                margin: 32px auto;
+                padding: 16px;
+                text-align: center;
+                font-size: 16px;
+            }
 
+            @media (min-width: 992px) {
+                .no-script-message {
+                    font-size: 20px;
+                }
+            }
+        </style>
 
+        <script>
+            document.body.innerHTML = "";
+        </script>
+    </div>
 </body>
 
 </html>
