@@ -810,3 +810,42 @@ export class BackedEnum
 
     }
 }
+
+/**
+ * Make a queue of functions to run later
+ */
+
+export function runLater(...fns)
+{
+
+
+    const toRun = new Map();
+
+    for (let arr of fns)
+    {
+        if (!isArray(arr))
+        {
+            arr = [arr];
+        }
+
+        let fn = arr.shift();
+
+        if (isFunction(fn))
+        {
+            toRun.set(fn, arr);
+        }
+    }
+
+    return () =>
+    {
+
+        const result = [];
+        for (const [fn, args] of toRun.entries())
+        {
+            result.push(fn(...args));
+        }
+        return result;
+
+    };
+}
+

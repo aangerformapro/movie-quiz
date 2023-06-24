@@ -5,6 +5,7 @@
 import { writable } from "svelte/store";
 import { isElement, isFunction } from "../../modules/utils/utils.mjs";
 import emitter from "../../modules/utils/emitter.mjs";
+import { noop } from "svelte/internal";
 
 
 
@@ -24,7 +25,7 @@ function checkValid(el)
 export const loading = writable(0);
 
 
-export default function createResourceLoader(fn, triggerChange = false)
+export default function createResourceLoader(fn = noop, triggerChange = false)
 {
     if (!isFunction(fn))
     {

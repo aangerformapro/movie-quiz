@@ -3,6 +3,7 @@
     import SoundTrack, { muted, playIntro } from "../App/audio.mjs";
     import { loaderDisplayed } from "../App/utils.mjs";
     import { SessionStarted } from "../App/game.mjs";
+    export const sounds = new Set();
 </script>
 
 <script>
@@ -13,12 +14,14 @@
     onDestroy(
         loaderDisplayed.subscribe((value) => {
             if (false === value && !$SessionStarted) {
-                $SessionStarted = true;
-                SoundTrack.INTRO.play();
-                $playIntro = !$muted;
+                $playIntro = $SessionStarted = true;
             }
         })
     );
+
+    onDestroy(() => {
+        sounds.clear();
+    });
 </script>
 
 <div class="audio-player">

@@ -1,9 +1,13 @@
 import { derived, get, writable, readable } from 'svelte/store';
-import { LocalStore, SessionStore } from './../../modules/stores/webstore.mjs';
-import { BackedEnum, isArray, isEmpty, isInt, isPlainObject, removeAccent } from '../../modules/utils/utils.mjs';
+import { WebStore } from './../../modules/stores/webstore.mjs';
+import { BackedEnum, isArray, isInt, isPlainObject, removeAccent } from '../../modules/utils/utils.mjs';
 
 
-const API_PATH = '/api/1', BUILD_DATE = '[VI]{date}[/VI]';
+const
+    API_PATH = '/api/1',
+    BUILD_DATE = '[VI]{date}[/VI]',
+    LocalStore = new WebStore(localStorage, 'MovieQuiz'),
+    SessionStore = new WebStore(sessionStorage, 'MovieQuiz');
 
 
 
@@ -16,6 +20,9 @@ export class MediaType extends BackedEnum
     static ALL = new MediaType("all");
     static MOVIE = new MediaType("movies");
     static TV = new MediaType("tv");
+
+
+
 
 
     get route()
@@ -45,7 +52,6 @@ export class MediaType extends BackedEnum
 
     get found()
     {
-
         return getFound(this.list);
     }
 
@@ -74,14 +80,19 @@ export const todisplay = LocalStore.hook('todisplay', 20);
 {
     if (LocalStore.getItem('BuildDate') !== BUILD_DATE)
     {
+        // DB
         LocalStore.removeItem(MediaType.MOVIE.key);
         LocalStore.removeItem(MediaType.TV.key);
         LocalStore.removeItem('current');
-        LocalStore.removeItem('muted');
-        LocalStore.removeItem('started');
+
+        // Session hooks
         SessionStore.removeItem('started');
+        SessionStore.removeItem('streak');
+
+
+        // sync
         LocalStore.setItem('BuildDate', BUILD_DATE);
-        console.debug('Storage reset flowing base code update.');
+        console.debug('Storage reset folowing base code update.');
     }
 
 })();
@@ -94,6 +105,25 @@ export const todisplay = LocalStore.hook('todisplay', 20);
  */
 export const SessionStarted = SessionStore.hook("started", false);
 
+/**
+ * Winning streak
+ */
+export const WinningStreak = SessionStore.hook('streak', 0);
+
+WinningStreak.increment = function ()
+{
+    this.update(n => n + 1);
+};
+
+WinningStreak.decrement = function ()
+{
+    this.update(n => n - 1);
+};
+
+WinningStreak.clear = function ()
+{
+    this.set(0);
+};
 
 
 /**
@@ -141,8 +171,7 @@ export const ready = writable(false, set =>
         {
             if (!get(current))
             {
-                const list = getNotFound(get(all));
-                current.set(list[Math.floor(Math.random() * list.length)]);
+                current.set(getRandom(getNotFound(get(all)), 1)[0]);
             }
             set(value);
         }
@@ -188,9 +217,28 @@ export const all = derived(
     ([$movies, $tv]) => [...$movies, ...$tv]
 );
 
-export const movieList = derived([movie, found]);
+movies.notFound = derived([movies, found], ([$movies, $found]) =>
+{
+    return $movies.filter(item => !$found.includes(item.id));
+});
 
 
+movies.found = derived([movies, found], ([$movies, $found]) =>
+{
+    return $movies.filter(item => $found.includes(item.id));
+});
+
+
+tv.notFound = derived([tv, found], ([$tv, $found]) =>
+{
+    return $tv.filter(item => !$found.includes(item.id));
+});
+
+
+tv.found = derived([tv, found], ([$tv, $found]) =>
+{
+    return $tv.filter(item => $found.includes(item.id));
+});
 
 /**
  * A map of the mediatypes hooks
@@ -264,7 +312,7 @@ export function getNotFound(items)
 
 export function getRandom(list, howMuch)
 {
-    if (!howMuch || list.length < howMuch)
+    if (!howMuch || !list.length || list.length < howMuch)
     {
         return list;
     }

@@ -1,6 +1,6 @@
 <script>
     import { onDestroy } from "svelte";
-    import { playIntro } from "../App/audio.mjs";
+    import SoundTrack, { playIntro } from "../App/audio.mjs";
 
     onDestroy(
         playIntro.subscribe((value) => {
@@ -8,6 +8,7 @@
                 setTimeout(() => {
                     $playIntro = false;
                 }, 4200);
+                SoundTrack.INTRO.play().catch(console.warn);
             }
         })
     );

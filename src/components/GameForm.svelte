@@ -2,6 +2,7 @@
     import { onDestroy } from "svelte";
     import {
         Notification,
+        WinningStreak,
         current,
         notify,
         setFound,
@@ -9,13 +10,17 @@
     } from "../App/game.mjs";
     import { stringSimilarity } from "string-similarity-js";
     import { removeAccent } from "../../modules/utils/utils.mjs";
-    import { noop } from "svelte/internal";
+    import { noop, run_all } from "svelte/internal";
 
     import { loaderDisplayed } from "../App/utils.mjs";
+    import SoundTrack from "../App/audio.mjs";
+    import { useNavigate } from "svelte-navigator";
 
     let value = "",
         normalized = "",
         input;
+
+    const navigate = useNavigate();
 
     function handleInput() {
         normalized = removeAccent(value.toLowerCase());
@@ -28,36 +33,44 @@
         if (
             $validResults
                 .map((valid) => stringSimilarity(valid, normalized))
-                .some((result) => result > 0.9)
+                .some((result) => result > 0.82)
         ) {
             Notification.SUCCESS.display();
-            setFound($current);
+            WinningStreak.increment();
+
+            SoundTrack.victorySound.play().then(() => {
+                Notification.NONE.display();
+                setFound($current);
+                navigate("/", { replace: true });
+            });
         } else {
-            value = normalized = "";
-            Notification.FAILURE.display();
             setTimeout(() => {
                 Notification.NONE.display();
             }, 3000);
+
+            WinningStreak.clear();
+            value = normalized = "";
+            Notification.FAILURE.display();
+            SoundTrack.errorSound.play();
         }
     }
 
-    const unsub = validResults.subscribe(noop, () => {
-        Notification.NONE.display();
-        value = normalized = "";
-    });
+    onDestroy(
+        validResults.subscribe(noop, () => {
+            Notification.NONE.display();
+            value = normalized = "";
+        })
+    );
 
-    const unfocus = loaderDisplayed.subscribe((value) => {
-        if (!value && input) {
-            setTimeout(() => {
-                input.focus();
-            }, 500);
-        }
-    });
-
-    onDestroy(() => {
-        unsub();
-        unfocus();
-    });
+    onDestroy(
+        loaderDisplayed.subscribe((value) => {
+            if (!value && input) {
+                setTimeout(() => {
+                    input.focus();
+                }, 500);
+            }
+        })
+    );
 </script>
 
 {#if $validResults.length}
