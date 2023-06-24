@@ -158,7 +158,7 @@
     <p class="text-center">
         Le joueur doit deviner les noms de films et de séries à partir d'images
         grisées<br />
-        en tappant le nom dans la zone dédiée.
+        en tapant le nom dans la zone dédiée.
     </p>
 </div>
 

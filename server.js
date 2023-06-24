@@ -5,17 +5,6 @@ import minimist from "minimist";
 import path from "node:path";
 
 
-const liveReloadServer = livereload.createServer();
-
-liveReloadServer.watch(path.resolve(process.cwd(), 'public'));
-
-liveReloadServer.server.once("connection", () =>
-{
-    setTimeout(() =>
-    {
-        liveReloadServer.refresh("/");
-    }, 100);
-});
 
 
 
@@ -35,8 +24,20 @@ const
 
 let { port, root } = argv;
 
-app.use(connectLiveReload());
+const liveReloadServer = livereload.createServer();
 
+liveReloadServer.watch(path.resolve(process.cwd(), root));
+
+liveReloadServer.server.once("connection", () =>
+{
+    setTimeout(() =>
+    {
+        liveReloadServer.refresh("/");
+    }, 100);
+});
+
+
+app.use(connectLiveReload());
 
 app.use(express.static(root));
 

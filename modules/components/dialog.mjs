@@ -243,8 +243,6 @@ export default class Dialog extends HtmlComponent
             this.elements.content.innerHTML = '';
             value.forEach(html =>
             {
-
-                console.debug('html', html, this.elements.content);
                 if (isString(html))
                 {
                     this.elements.content.innerHTML += html;
@@ -474,7 +472,7 @@ export default class Dialog extends HtmlComponent
         }).on('close', e =>
         {
             NoScroll.disable();
-        }).on('open', console.dir);
+        });
 
 
     }

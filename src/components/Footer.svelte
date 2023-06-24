@@ -140,5 +140,9 @@
             text-decoration: none;
             font-size: 24px;
         }
+        .hint--top::after {
+            font-family: "Poppins", sans-serif;
+            font-size: 16px;
+        }
     }
 </style>
