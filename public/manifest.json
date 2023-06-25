@@ -46,7 +46,7 @@
         },
         {
             "src": "assets/pictures/logo/logox512.png",
-            "type": "image/webp",
+            "type": "image/png",
             "sizes": "512x512",
             "purpose": "any maskable"
         },
