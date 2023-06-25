@@ -71,9 +71,13 @@
             $loc.pathname === href
         ) {
             el.classList.add("active");
+        } else if ($loc.pathname === "/" && href === "index.html") {
+            el.classList.add("active");
         } else {
             el.classList.remove("active");
         }
+
+        console.debug($loc.pathname);
     }
 
     beforeUpdate(() => {
@@ -90,7 +94,7 @@
         class="nav-container w-100 d-flex align-items-center px-2 px-md-5"
         id="top"
     >
-        <a class="logo" href="/" title="Movie Quiz">
+        <a class="logo" href="index.html" title="Movie Quiz">
             <img
                 src="./assets/pictures/m.webp"
                 width="32"
@@ -122,7 +126,9 @@
             class="nav flex-column flex-lg-row justify-content-center"
             on:click={navClick}
         >
-            <a class="nav-link" href="/" use:active use:links> Accueil </a>
+            <a class="nav-link" href="index.html" use:active use:links>
+                Accueil
+            </a>
             <a href="tv" class="nav-link" use:active use:links> Séries </a>
             <a href="movies" class="nav-link" use:active use:links>Films</a>
             <a href="all" class="nav-link" use:active use:links>

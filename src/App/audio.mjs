@@ -1,12 +1,11 @@
 import { get, writable } from "svelte/store";
-import { WebStore } from "../../modules/stores/webstore.mjs";
+import { LocalStore, BASE } from "./game.mjs";
 import { BackedEnum, getUrl, isElement } from "../../modules/utils/utils.mjs";
 import { WinningStreak } from "./game.mjs";
 
 
 
-const PATH = '/assets/sound/', EXT = '.ogg',
-    LocalStore = new WebStore(localStorage, 'MovieQuiz');
+const PATH = BASE + '/assets/sound/', EXT = '.ogg';
 
 const players = new Map();
 

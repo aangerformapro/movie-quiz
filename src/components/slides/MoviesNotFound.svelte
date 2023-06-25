@@ -35,7 +35,7 @@
                     {#each items as item}
                         <div class="swiper-slide">
                             <Poster
-                                href="{route}/{item.id}"
+                                href=".{route}/{item.id}"
                                 cover={item.cover.w780}
                                 found="not-found"
                             />

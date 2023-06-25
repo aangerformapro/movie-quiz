@@ -56,7 +56,7 @@
             {/if}
             {#if id && more}
                 <a
-                    href="/details/{id}"
+                    href="details/{id}"
                     class="button-infos btn btn-secondary btn-lg col-12 col-lg-auto ms-lg-3 my-3 my-lg-0"
                     use:links
                 >

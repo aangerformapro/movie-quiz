@@ -3,8 +3,11 @@ import { WebStore } from './../../modules/stores/webstore.mjs';
 import { BackedEnum, isArray, isInt, isPlainObject, removeAccent } from '../../modules/utils/utils.mjs';
 
 
-const
-    API_PATH = '/api/1',
+
+
+export const
+    BASE = document.querySelector('base').getAttribute('href').slice(0, -1),
+    API_PATH = BASE + '/api/1',
     BUILD_DATE = '[VI]{date}[/VI]',
     LocalStore = new WebStore(localStorage, 'MovieQuiz'),
     SessionStore = new WebStore(sessionStorage, 'MovieQuiz');

@@ -19,16 +19,21 @@
     import Intro from "./components/Intro.svelte";
 
     autoLoadAlternatives();
+
+    export let basepath = "";
 </script>
 
 {#if $ready}
-    <Router>
+    <Router {basepath}>
         <Route path="intro">
             <Intro force={true} animated={false} />
         </Route>
         <Header />
         <main id="app">
             <Route path="/">
+                <Home />
+            </Route>
+            <Route path="/index.html">
                 <Home />
             </Route>
 

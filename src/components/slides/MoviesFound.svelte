@@ -20,7 +20,7 @@
                     {#each items as item}
                         <div class="swiper-slide">
                             <Poster
-                                href="/details/{item.id}"
+                                href="details/{item.id}"
                                 cover={item.poster.w342}
                                 title={item.title}
                             />
