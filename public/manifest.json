@@ -5,47 +5,47 @@
         {
             "src": "assets/pictures/logo/logox128.webp",
             "type": "image/webp",
-            "sizes": "129x129"
+            "sizes": "128x128"
         },
         {
             "src": "assets/pictures/logo/logox16.webp",
             "type": "image/webp",
-            "sizes": "17x17"
+            "sizes": "16x16"
         },
         {
             "src": "assets/pictures/logo/logox180.webp",
             "type": "image/webp",
-            "sizes": "181x181"
+            "sizes": "180x180"
         },
         {
             "src": "assets/pictures/logo/logox256.webp",
             "type": "image/webp",
-            "sizes": "257x257"
+            "sizes": "256x256"
         },
         {
             "src": "assets/pictures/logo/logox300.webp",
             "type": "image/webp",
-            "sizes": "301x301"
+            "sizes": "300x300"
         },
         {
             "src": "assets/pictures/logo/logox32.webp",
             "type": "image/webp",
-            "sizes": "33x33"
+            "sizes": "32x32"
         },
         {
             "src": "assets/pictures/logo/logox512.webp",
             "type": "image/webp",
-            "sizes": "513x513"
+            "sizes": "512x512"
         },
         {
             "src": "assets/pictures/logo/logox64.webp",
             "type": "image/webp",
-            "sizes": "65x65"
+            "sizes": "64x64"
         },
         {
             "src": "assets/pictures/logo/logox96.webp",
             "type": "image/webp",
-            "sizes": "97x97"
+            "sizes": "96x96"
         }
     ],
     "start_url": "/index.html",
