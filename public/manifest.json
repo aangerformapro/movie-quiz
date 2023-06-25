@@ -45,6 +45,12 @@
             "purpose": "any maskable"
         },
         {
+            "src": "assets/pictures/logo/logox512.png",
+            "type": "image/webp",
+            "sizes": "512x512",
+            "purpose": "any maskable"
+        },
+        {
             "src": "assets/pictures/logo/logox64.webp",
             "type": "image/webp",
             "sizes": "64x64",
