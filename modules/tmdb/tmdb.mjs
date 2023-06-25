@@ -1,10 +1,6 @@
-
-import path from 'node:path';
-import fs, { writeFileSync } from 'node:fs';
+import fs from 'fs';
 
 import { isArray, isEmpty, isNull } from "../utils/utils.mjs";
-
-
 
 const TMDB_CONFIGURATION = {
     backdrops: [
@@ -378,7 +374,7 @@ const ids = new Set;
 
     // console.debug(entries[0]);
 
-    writeFileSync(dest, JSON.stringify(entries));
+    fs.writeFileSync(dest, JSON.stringify(entries));
 
 })();
 
@@ -424,6 +420,6 @@ const ids = new Set;
     }
 
 
-    writeFileSync(dest, JSON.stringify(entries));
+    fs.writeFileSync(dest, JSON.stringify(entries));
 
 })();

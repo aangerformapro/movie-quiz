@@ -1,7 +1,16 @@
+/**
+ * sass + postcss are not run anymore but i will keep that file there if needed as
+ * rollup is a mjs module and there are some bugs when importing cjs modules from a mjs
+ * that file will serve as proxy to load plugins in a commonjs environment
+ */
 
-function getPlugins(prod)
+
+// function is being used there to load the same plugins in rollup-plugin-postcss
+function loadPlugins(prod)
 {
     return [
+        // put your plugin configuration there
+
         require("postcss-import")(),
         !prod && require('postcss-combine-media-query')(),
         require('postcss-preset-env')({
@@ -23,12 +32,12 @@ function postcss(ctx)
     return {
         map: ctx.options.map,
         parser: ctx.options.parser,
-        plugins: getPlugins(ctx.env === 'production'),
+        plugins: loadPlugins(ctx.env === 'production'),
     };
 };
 
 
-postcss.getPlugins = getPlugins;
+postcss.plugins = loadPlugins;
 
 
 module.exports = postcss;

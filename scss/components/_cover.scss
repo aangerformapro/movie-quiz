@@ -4,6 +4,7 @@
 @mixin cover {
     .cover {
         background: $netflix-black;
+        position: relative;
     }
     .background-picture {
         @include blured {

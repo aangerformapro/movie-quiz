@@ -4,10 +4,6 @@ import livereload from "livereload";
 import minimist from "minimist";
 import path from "node:path";
 
-
-
-
-
 const
     app = express(),
     argv = minimist(process.argv.slice(2), {

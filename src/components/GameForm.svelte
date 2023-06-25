@@ -10,7 +10,7 @@
     } from "../App/game.mjs";
     import { stringSimilarity } from "string-similarity-js";
     import { removeAccent } from "../../modules/utils/utils.mjs";
-    import { noop, run_all } from "svelte/internal";
+    import { noop } from "svelte/internal";
 
     import { loaderDisplayed } from "../App/utils.mjs";
     import SoundTrack from "../App/audio.mjs";
@@ -49,10 +49,11 @@
             }, 3000);
 
             WinningStreak.clear();
-            value = normalized = "";
             Notification.FAILURE.display();
             SoundTrack.errorSound.play();
         }
+
+        value = normalized = "";
     }
 
     onDestroy(

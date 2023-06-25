@@ -2,7 +2,7 @@
     import "hint.css/hint.min.css";
     import { links, useLocation } from "svelte-navigator";
     import createResourceLoader from "../App/loader.mjs";
-    import Dialog, {
+    import {
         Position,
         createDialog,
     } from "../../modules/components/dialog.mjs";
