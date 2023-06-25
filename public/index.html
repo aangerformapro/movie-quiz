@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- BaseURl à changer selon l'hébergeur -->
     <base href="/">
     <!-- Icons -->
     <link rel="shortcut icon" href="./assets/pictures/logo/logox16.png" sizes="16x16" type="image/png">
@@ -39,6 +40,18 @@
     <meta name="author" content="Aymeric Anger">
     <meta name="keywords"
         content="Aymeric Anger, DWWM, Intégrateur, Informatique, Web, page web, HTML, CSS, développeur France, Developpeur web Chalon sur Saône, Full-Stack, Jquery, Javascript, Node, Composer, SASS, PHP, Wordpress, Figma, ajax,  SEO, Intégration et développement web, movie, serie">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#fefcf8">
+    <!-- Register Service Worker / Offline mode -->
+    <script>
+        if ("serviceWorker" in navigator)
+        {
+            navigator.serviceWorker.register("service-worker.js")
+                .then(e => console.log("Service worker registered", e))
+                .catch(e => console.log("service worker failed", e));
+        }
+    </script>
 </head>
 
 <body></body>
