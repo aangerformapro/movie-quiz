@@ -76,8 +76,6 @@
         } else {
             el.classList.remove("active");
         }
-
-        console.debug($loc.pathname);
     }
 
     beforeUpdate(() => {
