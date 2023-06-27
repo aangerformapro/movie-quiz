@@ -2,7 +2,7 @@
  * Load Resources observer
  */
 
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 import { isElement, isFunction } from "../../modules/utils/utils.mjs";
 import emitter from "../../modules/utils/emitter.mjs";
 import { noop } from "svelte/internal";
@@ -24,6 +24,11 @@ function checkValid(el)
  */
 export const loading = writable(0);
 
+
+export const errors = writable(0);
+
+
+const loadedUrls = new Set();
 
 export default function createResourceLoader(fn = noop, triggerChange = false)
 {
@@ -79,6 +84,24 @@ export default function createResourceLoader(fn = noop, triggerChange = false)
 
         const listener = () =>
         {
+
+            // if (!loadedUrls.has(el.src))
+            // {
+            //     errors.set(0);
+            // }
+
+
+            decrement();
+
+            loadedUrls.add(el.src);
+
+            if (count === 0)
+            {
+                fn();
+            }
+        }, errorListener = () =>
+        {
+            errors.update(val => val + 1);
             decrement();
             if (count === 0)
             {
@@ -87,20 +110,26 @@ export default function createResourceLoader(fn = noop, triggerChange = false)
         };
 
 
+
+
         emitter(el).on('load', listener);
+        emitter(el).on("error", errorListener);
+
+
 
         return {
             onDestroy()
             {
                 observer.disconnect();
                 emitter.off('load', listener);
+                emitter(el).off("error", errorListener);
                 decrement();
             }
         };
     }
 
     return {
-        waiting, onload,
+        waiting, onload
     };
 
 }

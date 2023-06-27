@@ -17,6 +17,7 @@
     import All from "./pages/All.svelte";
     import Player from "./components/Player.svelte";
     import Intro from "./components/Intro.svelte";
+    import Offline from "./pages/Offline.svelte";
 
     autoLoadAlternatives();
 
@@ -73,3 +74,5 @@
 {/if}
 
 <MainLoader />
+
+<Offline />
