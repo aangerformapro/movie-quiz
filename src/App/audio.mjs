@@ -31,7 +31,7 @@ function playAudio(el)
             setTimeout(() =>
             {
                 resolve(el);
-            }, (el.duration * 1000) + 200);
+            }, ((el.duration || 3) * 1000) + 200);
 
             if (el.paused && !el.muted)
             {
@@ -46,7 +46,11 @@ function playAudio(el)
             }
             else
             {
-                resolve(el);
+                setTimeout(() =>
+                {
+                    resolve(el);
+                }, 3000);
+
             }
 
         } else
