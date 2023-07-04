@@ -117,7 +117,7 @@ const createImageUrls = (endpoints, key) =>
     const dest = path.join(__DIR__, 'movies.json'), entries = [];
 
 
-    for (let page = 1; page <= 6; page++)
+    for (let page = 1; page <= 10; page++)
     {
         const list = await TheMovieDatabase.discoverMovies(page);
 
@@ -169,7 +169,7 @@ const createImageUrls = (endpoints, key) =>
     const dest = path.join(__DIR__, 'tv.json'), entries = [];
 
 
-    for (let page = 1; page <= 6; page++)
+    for (let page = 1; page <= 10; page++)
     {
         const list = await TheMovieDatabase.discoverSeries(page);
 
